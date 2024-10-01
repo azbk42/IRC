@@ -18,7 +18,7 @@ int main() {
     std::vector<int> client_sockets; // Stocker les sockets clients
     fd_set read_fds; // Ensemble de file descriptors surveillés
     int max_sd; // Pour garder une trace du descripteur le plus élevé
-    std::vector<client> clients;
+    std::vector<Client*> clients;
     // Créer le socket du serveur
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
@@ -92,8 +92,10 @@ int main() {
                 perror("accept");
                 continue;
             }
-            clients.push_back(client("Paul", "localhost", "server", client_fd));
-           
+            Client* new_client = new Client("Paul", "localhost", "server", 4);
+
+            clients.push_back(new_client);
+            delete clients[0];
 
             // Ajouter le nouveau client à la liste des sockets clients
             client_sockets.push_back(client_fd);
@@ -123,13 +125,13 @@ int main() {
 
                         std::string::size_type pos = user_infos.find(" ");
                         user_infos = user_infos.substr(pos + 1);
-                        clients[0].handle_user_command(user_infos);
+                        clients[0]->handle_user_command(user_infos);
 
-                        std::cout << "New client socket: " << clients[0].get_socket_fd() << std::endl;
-                        std::cout << "New client real_name: " << clients[0].get_real_name() << std::endl;
-                        std::cout << "New client server: " << clients[0].get_server_name() << std::endl;
-                        std::cout << "New client nickname: " << clients[0].get_nickname() << std::endl;
-                        std::cout << "New client hostname: " << clients[0].get_host_name() << std::endl;
+                        std::cout << "New client socket: " << clients[0]->get_socket_fd() << std::endl;
+                        std::cout << "New client real_name: " << clients[0]->get_real_name() << std::endl;
+                        std::cout << "New client server: " << clients[0]->get_server_name() << std::endl;
+                        std::cout << "New client nickname: " << clients[0]->get_nickname() << std::endl;
+                        std::cout << "New client hostname: " << clients[0]->get_host_name() << std::endl;
                     }
                     
                     
@@ -146,7 +148,6 @@ int main() {
             }
         }
     }
-
     // Fermer le socket du serveur
     close(server_fd);
 
