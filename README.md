@@ -7,6 +7,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Commands](#commands)
+- [References](references)
 
 ## Description
 
@@ -89,3 +90,16 @@ Les commandes suivantes sont réservées aux administrateurs du serveur IRC pour
 | `INVITE`      | Inviter un utilisateur dans un canal privé. | `/invite nickname #channel`             |
 | `BAN`         | Bannir un utilisateur d'un canal.        | `/mode #channel +b nickname`            |
 | `KILL`        | Déconnecter un utilisateur du serveur.   | `/kill nickname`                        |
+
+## References
+
+Voici quelques ressources utiles pour en apprendre davantage sur les protocoles IRC, les sockets internet, et le fonctionnement technique d'un serveur IRC :
+
+1. **Modern IRCv3 Specification** : Une documentation complète et moderne sur les protocoles IRC, y compris les réponses du serveur comme `RPL_WELCOME`.
+   - [Modern IRCv3 Specification](https://modern.ircdocs.horse/#rplwelcome-001)
+
+2. **Beej’s Guide to Network Programming** : Un guide détaillé sur les concepts et l'implémentation des sockets internet, utile pour comprendre les bases des réseaux en C.
+   - [Network Programming](https://beej.us/guide/bgnet/pdf/bgnet_a4_c_1.pdf)
+
+3. **Internet Relay Chat X Chicago** : Un petit résumé technique sur IRC, expliquant les concepts et la structure d'un serveur IRC.
+   - [Internet Relay Chat X Chicago](http://chi.cs.uchicago.edu/chirc/irc.html)
