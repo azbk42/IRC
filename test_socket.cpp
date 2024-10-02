@@ -8,8 +8,13 @@
 #include <vector>
 #include <algorithm> // Pour std::remove
 #include "client.hpp"
-#include "client.cpp"
-int main() {
+
+#include "parse.hpp"
+
+
+
+int main() 
+{
     int server_fd, client_fd;
     struct sockaddr_in server_addr, client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
@@ -92,10 +97,9 @@ int main() {
                 perror("accept");
                 continue;
             }
-            Client* new_client = new Client("Paul", "localhost", "server", 4);
+            Client* new_client = new Client("Paul", "localhost", "server", client_fd);
 
             clients.push_back(new_client);
-            delete clients[0];
 
             // Ajouter le nouveau client à la liste des sockets clients
             client_sockets.push_back(client_fd);
@@ -108,42 +112,45 @@ int main() {
             if (FD_ISSET(client_socket, &read_fds)) {
                 ssize_t bytes_read = read(client_socket, buffer, sizeof(buffer) - 1);
                 if (bytes_read <= 0) {
+
                     // Le client s'est déconnecté
                     std::cout << "Client disconnected: " << client_socket << std::endl;
                     close(client_socket);
                     client_sockets.erase(client_sockets.begin() + i);
                     i--; // Ajuster l'indice après la suppression
-                } else {
+                } 
+                else {
 
                     // Lire le message et le transmettre aux autres clients
                     buffer[bytes_read] = '\0'; // Terminer la chaîne
                     
                     std::cout << "Received message: " << buffer << std::endl;
 
+                    // OBJECTIF PARSING DES COMMANDES DEMAIN
                     std::string user_infos(buffer);
-                    if (user_infos.substr(0, 4) == "USER"){
+                    Parse parsing(user_infos);
+                    // TEST CODE EN DUR
+                    // if (user_infos.substr(0, 4) == "USER"){
 
-                        std::string::size_type pos = user_infos.find(" ");
-                        user_infos = user_infos.substr(pos + 1);
-                        clients[0]->handle_user_command(user_infos);
+                    //     std::string::size_type pos = user_infos.find(" ");
+                    //     user_infos = user_infos.substr(pos + 1);
+                    //     clients[0]->handle_cmd_user(user_infos);
 
-                        std::cout << "New client socket: " << clients[0]->get_socket_fd() << std::endl;
-                        std::cout << "New client real_name: " << clients[0]->get_real_name() << std::endl;
-                        std::cout << "New client server: " << clients[0]->get_server_name() << std::endl;
-                        std::cout << "New client nickname: " << clients[0]->get_nickname() << std::endl;
-                        std::cout << "New client hostname: " << clients[0]->get_host_name() << std::endl;
-                    }
+                    //     std::cout << "New client socket: " << clients[0]->get_socket_fd() << std::endl;
+                    //     std::cout << "New client real_name: " << clients[0]->get_real_name() << std::endl;
+                    //     std::cout << "New client server: " << clients[0]->get_server_name() << std::endl;
+                    //     std::cout << "New client nickname: " << clients[0]->get_nickname() << std::endl;
+                    //     std::cout << "New client hostname: " << clients[0]->get_host_name() << std::endl;
+                    // }
                     
-                    
-
-
 
                     // Réenvoyer le message à tous les autres clients
-                    for (int other_client_socket : client_sockets) {
-                        if (other_client_socket != client_socket) {
-                            send(other_client_socket, buffer, bytes_read, 0);
+                    for (std::vector<int>::iterator it = client_sockets.begin(); it != client_sockets.end(); ++it) {
+                        if (*it != client_socket) {
+                            send(*it, buffer, bytes_read, 0);
                         }
                     }
+
                 }
             }
         }

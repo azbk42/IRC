@@ -34,7 +34,17 @@ void Client::handle_cmd_user(std::string &user_infos)
 void Client::handle_cmd_nick(const std::string &nickname)
 {
     set_nickname(nickname);
-    
+    // quand un mec change de pseudo on informe tous les channels
+    // si une erreur on doit seulement retourner le bon message derreur au client emmeteur
+
+    // liste des erreurs: 
+    // nick deja utilise: ERR_NICKNAMEINUSE
+    // "<client> <nick> :Nickname is already in use"
+    // erreur de format: ERR_ERRONEUSNICKNAME
+    // "<client> <nick> :Erroneus nickname"
+    // pas de param apres nick: ERR_NONICKNAMEGIVEN
+    // "<client> :No nickname given"
+
 }
 
 // rejoindre un channel
