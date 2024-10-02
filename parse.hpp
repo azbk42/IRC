@@ -8,7 +8,7 @@
 #include <vector>
 #include <sys/socket.h>
 #include "define.hpp"
-
+#include "client.hpp"
 
 class Channel;
 class Client;
@@ -26,10 +26,10 @@ class Parse
         
         
         bool parse_nick(std::vector<Client*> &clients_list, int client_fd);
+        
         bool user_cmd(const std::string &str);
         bool channel_cmd(const std::string &str);
         bool operator_cmd(const std::string &str);
-
 
     private:
     

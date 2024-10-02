@@ -4,6 +4,11 @@
 #include <string>
 #include <chrono>
 #include <vector>
+#include <sys/socket.h>
+#include <stdio.h>
+#include <string.h>
+#include "define.hpp"
+
 // real_name
 // username
 // server
@@ -39,7 +44,7 @@ class Client
         // s'occuper de la commande USER
         void handle_cmd_user(std::string &user_infos);
         // changer le pseudo
-        void handle_cmd_nick(const std::string &nickname);
+        void handle_cmd_nick(const std::string &new_nickname, int client_socket);
         // rejoindre un channel
         void handle_cmd_join(const std::string &channel_name);
         // leave un channel

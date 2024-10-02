@@ -74,6 +74,12 @@ void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& p
         // _command = USER
         // _value = emauduit blabla
         // determiner a quel sous famille appartient la commande
+        for (int i = 0; i < clients.size(); i++){
+            if (clients[i]->get_socket_fd() == client_socket){
+                Client c = *clients[i];
+            }
+        }
+
         parser.parse_nick(clients, client_socket);
 
 

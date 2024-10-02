@@ -31,19 +31,16 @@ void Client::handle_cmd_user(std::string &user_infos)
 
 // HANDLE CMD
 
-void Client::handle_cmd_nick(const std::string &nickname)
+void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
 {
-    set_nickname(nickname);
+    // LES ERREURS ON ETE SETUP POUR LUI
+    std::string old_nick = get_nickname();
+    int socket = get_socket_fd();
+    set_nickname(new_nickname);
     // quand un mec change de pseudo on informe tous les channels
-    // si une erreur on doit seulement retourner le bon message derreur au client emmeteur
-
-    // liste des erreurs: 
-    // nick deja utilise: ERR_NICKNAMEINUSE
-    // "<client> <nick> :Nickname is already in use"
-    // erreur de format: ERR_ERRONEUSNICKNAME
-    // "<client> <nick> :Erroneus nickname"
-    // pas de param apres nick: ERR_NONICKNAMEGIVEN
-    // "<client> :No nickname given"
+    
+    //envoyer le message au client comme quoi on a bien changer de pseudo
+    send(client_socket, NICK_CHANGE(old_nick, new_nickname), strlen(NICK_CHANGE(old_nick, new_nickname)), 0);
 
 }
 

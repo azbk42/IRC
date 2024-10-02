@@ -62,18 +62,53 @@ void Parse::split_cmd_value(const std::string &full_command)
 
 bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd)
 {
-    if (_value.size() < 1 || _value.size() > 9) {
-        std::string server_name = SERVER_NAME;  // Remplace par le nom du client
-        std::string nick = _value;
+    std::string server_name = SERVER_NAME;
+    std::string nick = _value;
 
-        // Envoi de l'erreur ERR_ERRONEUSNICKNAME
-        send(client_fd, ERR_ERRONEUSNICKNAME(server_name, nick), strlen(ERR_ERRONEUSNICKNAME(server_name, nick)), 0);
+    if (_value.empty()){
+        send(client_fd, ERR_NONICKNAMEGIVEN(server_name), strlen(ERR_NONICKNAMEGIVEN(server_name)), 0);
+        _value.clear();
         return false;
     }
-    std::cout << "_value = " << _value << std::endl;
 
-    return false;
+    if (_value.size() > 9 || !isalpha(_value[0])) {
+        // Envoi de l'erreur ERR_ERRONEUSNICKNAME
+        send(client_fd, ERR_ERRONEUSNICKNAME(server_name, nick), strlen(ERR_ERRONEUSNICKNAME(server_name, nick)), 0);
+        _value.clear();
+        return false;
+    }
+
+    // handle invalid character
+    for (size_t i = 1; i < _value.size(); ++i) {
+        if (!isalnum(_value[i]) && _value.find_first_of("-[]\{}_|") == std::string::npos) {
+            send(client_fd, ERR_ERRONEUSNICKNAME(server_name, _value), strlen(ERR_ERRONEUSNICKNAME(server_name, _value)), 0);
+            std::cerr << "Error: Nickname contains invalid characters." << std::endl;
+            return false;
+        }
+    }
+    // handle identic nickname
+    for (int i = 0; i < clients_list.size(); i++){
+        if (clients_list[i]->get_nickname() == _value){
+            send(client_fd, ERR_NICKNAMEINUSE(server_name, nick), strlen(ERR_NICKNAMEINUSE(server_name, nick)), 0);
+            return false;
+        }
+    }
+
+    // tout est ok, on regarde quel client correspond au fd et on le change
+    // il faut maintenant avertir tous les clients des meme channels
+    for (int i = 0; i < clients_list.size(); i++){
+        if (clients_list[i]->get_socket_fd() == client_fd){
+            clients_list[i]->handle_cmd_nick(_value, client_fd);
+        }
+        std::cout << "novueau pseudo = " << clients_list[i]->get_nickname() << std::endl;
+    }
+
+
+
+    return true;
 }
+
+
 
 // bool Parse::user_cmd(const std::string &str)
 // {
