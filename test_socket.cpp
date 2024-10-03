@@ -45,7 +45,7 @@ void handleNewConnection(int server_fd, std::vector<int>& client_sockets, std::v
     }
 
     // Créer un nouvel objet Client (tu peux remplacer les valeurs par celles adaptées à ton application)
-    Client* new_client = new Client("Paul", "localhost", "server", client_fd);
+    Client* new_client = new Client(client_fd);
 
     // Ajouter le nouveau client à la liste
     clients.push_back(new_client);
@@ -71,16 +71,28 @@ void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& p
 
         // ici on va init la classe Parser et separer la Commande (_command) de la Value (_value)
         Parse parser(complete_message);
-        // _command = USER
-        // _value = emauduit blabla
-        // determiner a quel sous famille appartient la commande
-        for (int i = 0; i < clients.size(); i++){
-            if (clients[i]->get_socket_fd() == client_socket){
-                Client c = *clients[i];
+        // Déclaration de la référence en dehors de la boucle
+        Client* client_actif = nullptr;
+
+        // Rechercher le client correspondant au client_socket
+        for (int i = 0; i < clients.size(); i++) {
+            if (clients[i]->get_socket_fd() == client_socket) {
+                client_actif = clients[i];  // Ici, on affecte le pointeur
+                break; // Sortir de la boucle une fois trouvé
             }
         }
 
-        parser.parse_nick(clients, client_socket);
+        // Vérifier si un client a été trouvé
+        if (client_actif != nullptr) {
+            // PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
+            // d'envoyer à tous les clients du même chan
+            if (parser.get_cmd() == "NICK")
+                parser.parse_nick(clients, client_socket);
+            if (parser.get_cmd() == "USER")
+                parser.parse_user(clients, client_socket, *client_actif); // Passer par référence
+        } else {
+            std::cerr << "Client non trouvé pour le socket " << client_socket << std::endl;
+        }
 
 
         // Broadcast the message to all other clients

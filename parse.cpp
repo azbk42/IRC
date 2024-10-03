@@ -2,6 +2,13 @@
 #include <string.h>
 #include <stdio.h>
 
+// GET
+
+std::string Parse::get_cmd() const
+{
+    return _command;
+}
+
 // array of functions pointers
 void user_cmd(Client& client, Channel &channel, const std::string &str)
 {
@@ -82,7 +89,6 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd)
     for (size_t i = 1; i < _value.size(); ++i) {
         if (!isalnum(_value[i]) && _value.find_first_of("-[]\{}_|") == std::string::npos) {
             send(client_fd, ERR_ERRONEUSNICKNAME(server_name, _value), strlen(ERR_ERRONEUSNICKNAME(server_name, _value)), 0);
-            std::cerr << "Error: Nickname contains invalid characters." << std::endl;
             return false;
         }
     }
@@ -100,14 +106,75 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd)
         if (clients_list[i]->get_socket_fd() == client_fd){
             clients_list[i]->handle_cmd_nick(_value, client_fd);
         }
-        std::cout << "novueau pseudo = " << clients_list[i]->get_nickname() << std::endl;
+        std::cout << "noveauu pseudo = " << clients_list[i]->get_nickname() << std::endl;
     }
-
-
 
     return true;
 }
 
+void Parse::extract_user_info(const std::string& value, Client& client_actif)
+{
+    size_t pos = value.find(":");
+    if (pos != std::string::npos) {
+        std::string real_name = value.substr(pos + 1);
+        client_actif.set_real_name(real_name);
+    }
+
+    // Extraire username
+    pos = value.find(" ");
+    if (pos != std::string::npos) {
+        client_actif.set_username(value.substr(0, pos));
+        std::string new_str = value.substr(pos + 1);
+
+        // Extraire hostname
+        pos = new_str.find(" ");
+        if (pos != std::string::npos) {
+            client_actif.set_host(new_str.substr(0, pos));
+            new_str = new_str.substr(pos + 1);
+
+            // Extraire servername
+            pos = new_str.find(" ");
+            if (pos != std::string::npos) {
+                client_actif.set_server(new_str.substr(0, pos));
+            }
+        }
+    }
+}
+
+bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+{
+    std::string server_name = SERVER_NAME;
+
+    // verif if USER is already done
+    if (client_actif.get_user_setup() == true){
+        send(client_fd, ERR_ALREADYREGISTERED(server_name), strlen(ERR_ALREADYREGISTERED(server_name)), 0);
+        return false;
+    }
+    // verif nb_parameter
+    if (std::count(_value.begin(), _value.end(), ' ') < 3){
+        send(client_fd, ERR_NEEDMOREPARAMS("USER", server_name), strlen(ERR_NEEDMOREPARAMS("USER", server_name)), 0);
+    }
+
+
+    // si tout est bon on extract et on informe le client pour valider la connexion
+    extract_user_info(_value, client_actif);
+    
+    std::string welcome_message = ":" + server_name + " 001 " + client_actif.get_nickname() + 
+                              " :\x03""04Welcome to the Internet Relay Network " + 
+                              client_actif.get_nickname() + "!" + 
+                              client_actif.get_username() + "@" + client_actif.get_hostname() + 
+                              " - ft_irc project for 42 Paris\x03""\r\n";
+
+    send(client_fd, welcome_message.c_str(), welcome_message.size(), 0);
+
+
+
+    std::cout << "username: " << client_actif.get_username() << std::endl;
+    std::cout << "hostname: " << client_actif.get_hostname() << std::endl;
+    std::cout << "servername: " << client_actif.get_server_name() << std::endl;
+    std::cout << "realname: " << client_actif.get_real_name() << std::endl;
+    return true;
+}
 
 
 // bool Parse::user_cmd(const std::string &str)
@@ -123,7 +190,6 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd)
 // }
 // bool Parse::channel_cmd(const std::string &str)
 // {
-
 //     // JOIN : Rejoindre un canal spécifié par son nom (ex: JOIN #channel).
 //     // PART : Quitter un canal spécifié.
 //     // MODE : Gérer les modes des canaux ou des utilisateurs (ex: mode opérateur, modéré, etc.).

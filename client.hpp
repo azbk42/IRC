@@ -22,24 +22,28 @@ class Client
 {
     public:
 
-        Client(std::string real_name, std::string server, std::string host, int socket);
+        Client(int socket);
         ~Client();
 
         std::string get_real_name() const;
         std::string get_nickname() const;
         std::string get_server_name() const;
-        std::string get_host_name() const;
+        std::string get_hostname() const;
+        std::string get_username() const;
+
         int get_socket_fd() const;
         bool get_status_away() const;
         bool get_status_connected() const;
+        bool get_user_setup() const;
 
-        void set_nickname(std::string _nickname);
-        void set_real_name(std::string name);
-        void set_server(std::string server);
-        void set_host(std::string host);
+        void set_nickname(const std::string &nickname);
+        void set_username(const std::string &username);
+        void set_real_name(const std::string &name);
+        void set_server(const std::string &server);
+        void set_host(const std::string &host);
         void set_away(bool status);
         void set_connected(bool status);
-        void set_nickname_setup();
+        void set_user_setup();
 
         // s'occuper de la commande USER
         void handle_cmd_user(std::string &user_infos);
@@ -59,12 +63,13 @@ class Client
         
         //a regarder si cest la premiere fois que ce client envois un message
         //cela voudra dire que cest pour setup ses infos    
-        bool _nickname_setup;
+        bool _user_setup;
         bool _away;
         bool _connected;
 
         std::string _real_name;
         std::string _nickname;
+        std::string _username;
         std::string _server_name;
         std::string _host_name;
         int _socket_fd;

@@ -4,28 +4,7 @@
 
 void Client::handle_cmd_user(std::string &user_infos)
 {
-    std::string::size_type pos = user_infos.find(":");
-    if (pos != std::string::npos){
-        std::string name = user_infos.substr(pos + 1);
-        set_real_name(name);
-        set_nickname_setup();
-
-        std::string other_infos = user_infos.substr(0, pos - 1);
-
-        std::string::size_type index = other_infos.find(" ");
-        name = other_infos.substr(0, index);
-        set_nickname(name);
-        other_infos = other_infos.substr(index +1);
-
-        index = other_infos.find(" ");
-        name = other_infos.substr(0, index);
-        set_host(name);
-        name = other_infos.substr(index + 1);
-        set_server(name);
-    }
-    else{
-        std::cerr << "You need a nickname" << std::endl;
-    }
+    
 }
 
 
@@ -73,9 +52,11 @@ std::string Client::get_real_name() const {return _real_name;};
 
 std::string Client::get_nickname() const {return _nickname;};
 
+std::string Client::get_username() const {return _username;};
+
 std::string Client::get_server_name() const {return _server_name;};
 
-std::string Client::get_host_name() const {return _host_name;};
+std::string Client::get_hostname() const {return _host_name;};
 
 int Client::get_socket_fd() const {return _socket_fd;};
 
@@ -83,25 +64,32 @@ bool Client::get_status_away() const {return _away;};
 
 bool Client::get_status_connected() const {return _connected;};
 
+bool Client::get_user_setup() const {return _user_setup;};
+
 
 //SETTER
 // rajouter une gestion d'erreur sur le nickname
-void Client::set_nickname(std::string username)
+void Client::set_nickname(const std::string &nickname)
 {
-    _nickname = username;
+    _nickname = nickname;
 }
 
-void Client::set_real_name(std::string name)
+void Client::set_username(const std::string &username)
+{
+    _username = username;
+}
+
+void Client::set_real_name(const std::string &name)
 {
     _real_name = name;
 }
 
-void Client::set_server(std::string server)
+void Client::set_server(const std::string &server)
 {
     _server_name = server;
 }
 
-void Client::set_host(std::string host)
+void Client::set_host(const std::string &host)
 {
     _host_name = host;
 }
@@ -115,14 +103,13 @@ void Client::set_connected(bool status)
     _connected = status;
 }
 
-void Client::set_nickname_setup()
+void Client::set_user_setup()
 {
-    _nickname_setup = true;
+    _user_setup = true;
 }
 
-Client::Client(std::string real_name, std::string server, std::string host, int socket):
-            _real_name(real_name), _server_name(server), _host_name(host), _socket_fd(socket),\
-            _nickname_setup(false), _away(false), _connected(true)
+Client::Client(int socket): _real_name("real_name"), _server_name("server"), _host_name("host"), _socket_fd(socket),\
+            _user_setup(false), _away(false), _connected(true), _username("username")
 {
     _arrival_time = std::chrono::system_clock::now();
 
