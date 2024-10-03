@@ -67,7 +67,7 @@ void Parse::split_cmd_value(const std::string &full_command)
 }
 
 
-bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd)
+bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     std::string server_name = SERVER_NAME;
     std::string nick = _value;
@@ -141,6 +141,40 @@ void Parse::extract_user_info(const std::string& value, Client& client_actif)
     }
 }
 
+// bool Parse::parse_pass(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+// {
+//     std::string server_name = SERVER_NAME;
+//     if (_value != PASSWORD){
+//         send(client_fd, ERR_PASSWDMISMATCH(server_name), strlen(ERR_PASSWDMISMATCH(server_name)), 0);
+//         close(client_fd);
+//         return false;
+//     }
+//     return true;
+// }
+
+bool Parse::parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+{
+    std::string full_quit_message;
+    if (_value.empty()){
+        std::string full_quit_message = client_actif.get_nickname() + "exited\r\n";
+    }
+    else{
+        std::string full_quit_message = ":" + client_actif.get_nickname() + " QUIT :" + _value + "\r\n";
+    }
+    send(client_fd, full_quit_message.c_str(), full_quit_message.size(), 0);
+
+    return true;
+}
+
+
+bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+{
+    std::string pong = "PONG :" + _value + "\r\n";
+    send(client_fd, pong.c_str(), pong.length(), 0);
+
+    return true;
+}
+
 bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     std::string server_name = SERVER_NAME;
@@ -163,11 +197,9 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
                               " :\x03""04Welcome to the Internet Relay Network " + 
                               client_actif.get_nickname() + "!" + 
                               client_actif.get_username() + "@" + client_actif.get_hostname() + 
-                              " - ft_irc project for 42 Paris\x03""\r\n";
+                              " - ft_irc 42 Paris\x03""\r\n";
 
     send(client_fd, welcome_message.c_str(), welcome_message.size(), 0);
-
-
 
     std::cout << "username: " << client_actif.get_username() << std::endl;
     std::cout << "hostname: " << client_actif.get_hostname() << std::endl;

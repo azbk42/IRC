@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <string>
-#include <chrono>
 #include <vector>
 #include <sys/socket.h>
 #include <stdio.h>
@@ -74,7 +73,7 @@ class Client
         std::string _host_name;
         int _socket_fd;
 
-        std::chrono::time_point<std::chrono::system_clock> _arrival_time;
+        //std::chrono::time_point<std::chrono::system_clock> _arrival_time;
 
         const std::vector<Channel*>& get_channels() const;
         // je dois build un vector de channel pour savoir ou le client se trouve

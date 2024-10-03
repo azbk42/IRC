@@ -1,6 +1,7 @@
 #pragma once
 
 #define SERVER_NAME "localhost"
+#define PASSWORD "password"
 
 // HANDLE ERROR
 // ERROR NICK
@@ -11,6 +12,9 @@
 #define ERR_NEEDMOREPARAMS(command, client) (":" + server_name + " 461 " + client + " " + command + \
                             " :Not enough parameters\r\n").c_str()
 #define ERR_ALREADYREGISTERED(client) (":" + server_name + " 462 " + client + " :You may not reregister\r\n").c_str()
+
+// ERROR PASS
+#define ERR_PASSWDMISMATCH(client) (":" + server_name + " 464 " + client + " :Password incorrect\r\n").c_str()
 
 // ACCEPT
 #define NICK_CHANGE(old_nick, new_nick) (":" + old_nick + " NICK " + new_nick + "\r\n").c_str()

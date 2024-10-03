@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cctype>
 #include <vector>
+#include <unistd.h>
 #include <sys/socket.h>
 #include "define.hpp"
 #include "client.hpp"
@@ -26,9 +27,12 @@ class Parse
         void split_cmd_value(const std::string &_str);
         
         
-        bool parse_nick(std::vector<Client*> &clients_list, int client_fd);
+        bool parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         bool parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
-
+        bool parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
+        // parsing du MDP A faire dans la class serveur
+        bool parse_pass(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
+        bool parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
 
         bool user_cmd(const std::string &str);
         bool channel_cmd(const std::string &str);

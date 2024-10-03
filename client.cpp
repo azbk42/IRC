@@ -1,7 +1,7 @@
 #include "client.hpp"
 #include <iomanip>
-// METHOD
 
+// METHOD
 void Client::handle_cmd_user(std::string &user_infos)
 {
     
@@ -111,7 +111,7 @@ void Client::set_user_setup()
 Client::Client(int socket): _real_name("real_name"), _server_name("server"), _host_name("host"), _socket_fd(socket),\
             _user_setup(false), _away(false), _connected(true), _username("username")
 {
-    _arrival_time = std::chrono::system_clock::now();
+    //_arrival_time = std::chrono::system_clock::now();
 
     // format pour imprimer le temps sous la forme:
     // heure darrive: Tue Oct  1 14:26:09 2024

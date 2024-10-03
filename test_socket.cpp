@@ -18,21 +18,19 @@ int prepareSelect(fd_set& read_fds, int server_fd, std::vector<int>& client_sock
     int max_sd = server_fd;
 
     // Ajouter les sockets clients à l'ensemble
-    for (int client_socket : client_sockets) {
-        if (client_socket > 0) {
-            FD_SET(client_socket, &read_fds);
-        }
-        if (client_socket > max_sd) {
-            max_sd = client_socket;
-        }
+    for (std::vector<int>::iterator it = client_sockets.begin(); it != client_sockets.end(); ++it) {
+    int client_socket = *it;
+    if (client_socket > 0) {
+        FD_SET(client_socket, &read_fds);
     }
+    if (client_socket > max_sd) {
+        max_sd = client_socket;
+    }
+}
+
 
     // Utiliser select pour surveiller les sockets
     int activity = select(max_sd + 1, &read_fds, NULL, NULL, NULL);
-    if (activity < 0 && errno != EINTR) {
-        perror("select error");
-        return -1;
-    }
 
     return activity;
 }
@@ -55,8 +53,19 @@ void handleNewConnection(int server_fd, std::vector<int>& client_sockets, std::v
     std::cout << "New connection, socket fd is " << client_fd << std::endl;
 }
 
+void handleClientDisconnection(int client_socket, std::vector<int>& client_sockets, std::vector<Client*>& clients, int i) {
+    std::cout << "Client disconnected: " << client_socket << std::endl;
+    close(client_socket);
 
-void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& partial_messages, std::vector<int>& client_sockets, std::vector<Client*> clients) {
+    // Supprimer le client du vecteur des sockets clients
+    client_sockets.erase(client_sockets.begin() + i);
+
+    // Supprimer le client du vecteur des clients
+    clients.erase(clients.begin() + i);
+}
+
+void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& partial_messages, std::vector<int>& client_sockets, std::vector<Client*> clients) 
+{
     // Check if the message contains a newline character
     size_t newline_pos;
     while ((newline_pos = partial_messages[client_socket].find('\n')) != std::string::npos) {
@@ -72,7 +81,7 @@ void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& p
         // ici on va init la classe Parser et separer la Commande (_command) de la Value (_value)
         Parse parser(complete_message);
         // Déclaration de la référence en dehors de la boucle
-        Client* client_actif = nullptr;
+        Client* client_actif = NULL;
 
         // Rechercher le client correspondant au client_socket
         for (int i = 0; i < clients.size(); i++) {
@@ -83,11 +92,15 @@ void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& p
         }
 
         // Vérifier si un client a été trouvé
-        if (client_actif != nullptr) {
+        if (client_actif != NULL) {
             // PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
             // d'envoyer à tous les clients du même chan
+            if (parser.get_cmd() == "QUIT")
+                parser.parse_quit(clients, client_socket, *client_actif);
+            if (parser.get_cmd() == "PING")
+                parser.parse_ping(clients, client_socket, *client_actif);
             if (parser.get_cmd() == "NICK")
-                parser.parse_nick(clients, client_socket);
+                parser.parse_nick(clients, client_socket, *client_actif);
             if (parser.get_cmd() == "USER")
                 parser.parse_user(clients, client_socket, *client_actif); // Passer par référence
         } else {
@@ -103,6 +116,8 @@ void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& p
         }
     }
 }
+
+
 
 
 int main() 
@@ -182,17 +197,13 @@ int main()
                 ssize_t bytes_read = read(client_socket, buffer, sizeof(buffer) - 1);
                 if (bytes_read == 0) {
                     // Client disconnected
-                    std::cout << "Client disconnected: " << client_socket << std::endl;
-                    close(client_socket);
-                    client_sockets.erase(client_sockets.begin() + i);
+                    // std::cout << "Client disconnected: " << client_socket << std::endl;
+                    // close(client_socket);
+                    // client_sockets.erase(client_sockets.begin() + i);
+                    // clients.erase(clients.begin() + i);
+                    handleClientDisconnection(client_socket, client_sockets, clients, i);
                     i--; // Adjust index after deletion
-                } 
-                else if (bytes_read < 0) {
-                    if (errno != EWOULDBLOCK && errno != EAGAIN) {
-                        // Read error, handle it (but don't close the server)
-                        perror("read error");
-                    }
-                } 
+                }
                 else {
 
                     buffer[bytes_read] = '\0'; // Null-terminate the string
@@ -200,7 +211,7 @@ int main()
                     
                     // on ajoute le message par rapport au socket tant quil n'y a pas de \n 
                     partial_messages[client_socket] += message;
-
+                    
                     // ici commence le parsing du message, il va boucler tant quil trouve un \n et traiter les commandes
                     // on va donc proceder a la reception du message, le traiter, et renvoyer les informations demandees a tous les clients concernes.
                     processAndBroadcastMessage(client_socket, partial_messages, client_sockets, clients);
