@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 16:23:20 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/04 17:16:06 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class Server //-> class for server
 		std::string _password; //-> server password
 		std::vector<pollfd> _pollFds;
 		std::vector<Client> _clients;
-		std::vector<Channel> _chans;
+		// std::vector<Channel> _chans;
 
 	public:
 		Server(int Port, std::string Password);
@@ -71,6 +71,7 @@ class Server //-> class for server
 		void ReceiveData(int fd); //-> receive new data from clients
 		void SendtoAll(int expFd, char *buffer, int bytes_recv); //-> send data to all clients
 		void CloseServerFd(); //-> close the server file descriptor
+		void CloseClientSocket(int fd);
 		
 		static void Handler_sigint(int sig);
 };

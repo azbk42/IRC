@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 16:30:42 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/04 17:45:22 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,29 @@ int Server::GetFd() const {return _serverFd;}
 int Server::GetPort() const {return _port;} 
 
 void Server::CloseServerFd() {
+	for (size_t i = _pollFds.size() - 1; i > 0; i--) {
+		if (close(_pollFds[i].fd) == -1)
+			std::cerr << "Failed to close client socket" << std::endl; // throw?
+		_pollFds.erase(_pollFds.begin() + i);
+		_clients.erase(_clients.begin() + (i - 1));
+	}
 	if (_serverFd != -1){
 		if (close(_serverFd) == -1)
 			std::cerr << "Failed to close server socket" << std::endl; // throw?
 		else
 			std::cout << RED << "Server <" << _serverFd << "> Disconnected" << WHITE << std::endl;
+	}
+}
+
+void Server::CloseClientSocket(int fd){
+	if (close(fd) == -1)
+		std::cout << "Failed to close client socket" << std::endl;
+	for (size_t i = 0; i < _pollFds.size(); i++) {
+		if (_pollFds[i].fd == fd){
+			_pollFds.erase(_pollFds.begin() + i);
+			_clients.erase(_clients.begin() + (i - 1));
+			break;
+		}
 	}
 }
 
@@ -97,21 +115,20 @@ void Server::ReceiveData(int fd){
 		if (bytesRecv == -1)
 			std::cout << "Failed to receive data" << std::endl;
 		else if (bytesRecv == 0) {
+			CloseClientSocket(fd);
 			std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
-			close(fd);
-			for (size_t i = 0; i < _pollFds.size() ;i++) {
-				if (_pollFds[i].fd == fd){
-					_pollFds.erase(_pollFds.begin() + i);
-					_clients.erase(_clients.begin() + i);
-					break;
-				}
-			}
 		}
 	}
 	else {
 		buffer[bytesRecv] = '\0';
 		std::cout << YELLOW << "Client <" << fd << "> Data: " << WHITE << buffer;
-		// inclure le parsing ici
+		// @Emauduit : inclure le parsing ici
+		// if(parse_pass() == false){ // @Emauduit: pour le tester sans toucher a ton code, j'ai utilise la condition suivante : std::string buf(buffer); if (buf == "bad_pass\n"){
+		// 	send(fd, "bad password\n", 14, 0);
+		// 	CloseClientSocket(fd);
+		// 	std::cout << RED << "Client <" << fd << "> Bad password" << WHITE << std::endl; // coupe la connexion cote server, 
+		// 	// mais il faut entrer qqch pour que le client comprenne qu'il est sorti - verifier si pareil sur irssi, sinon ajouter un envoi cote client
+		// }
 		SendtoAll(fd, buffer, bytesRecv);
 	}
 }
