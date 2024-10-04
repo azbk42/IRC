@@ -95,6 +95,8 @@ void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& p
         if (client_actif != NULL) {
             // PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
             // d'envoyer à tous les clients du même chan
+            if (parser.get_cmd() == "JOIN")
+                parser.parse_join();
             if (parser.get_cmd() == "QUIT")
                 parser.parse_quit(clients, client_socket, *client_actif);
             if (parser.get_cmd() == "PING")
@@ -205,7 +207,6 @@ int main()
                     i--; // Adjust index after deletion
                 }
                 else {
-
                     buffer[bytes_read] = '\0'; // Null-terminate the string
                     std::string message(buffer);
                     

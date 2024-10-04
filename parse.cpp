@@ -141,6 +141,12 @@ void Parse::extract_user_info(const std::string& value, Client& client_actif)
     }
 }
 
+bool Parse::parse_join()
+{
+
+    return true;
+}
+
 // bool Parse::parse_pass(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 // {
 //     std::string server_name = SERVER_NAME;
@@ -246,7 +252,6 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
 // //     k : Définit ou supprime une clé (mot de passe) pour accéder au canal.
 // //     o : Donne ou retire les privilèges d'opérateur de canal à un utilisateur.
 // //     l : Définit ou supprime la limite maximale d'utilisateurs pouvant rejoindre le canal.
-
 //     return true;
 // }
 

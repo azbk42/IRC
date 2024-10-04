@@ -7,8 +7,8 @@ void Channel::modif_topic(const std::string &topic)
     // envoyer le topic a tous les utilisateurs
 }
 
-
-Channel::Channel()
+Channel::Channel(const std::string &name): 
+    _name(name), _topic(""), _password(""), _pass(false), nb_client(0)
 {
 
 }
