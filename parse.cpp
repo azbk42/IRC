@@ -9,30 +9,6 @@ std::string Parse::get_cmd() const
     return _command;
 }
 
-// array of functions pointers
-void user_cmd(Client& client, Channel &channel, const std::string &str)
-{
-
-
-}
-
-Command cmd_function[] = 
-{
-    {"USER", &user_cmd},
-    // {"NICK", &nick_cmd},
-    // {"Quit", &quit_cmd},
-    // {"JOIN", &join_cmd},
-    // {"TOPIC", &topic_cmd},
-    // {"PART", &part_cmd},
-    // {"NAMES", &name_cmd},
-    // {"LIST", &list_cmd},
-    // {"INVITE", &invite_cmd},
-    // {"KICK", &kick_cmd},
-    // {"MODE", &mode_cmd},
-    
-};
-
-
 // METHOD
 void Parse::split_cmd_value(const std::string &full_command)
 {
@@ -141,8 +117,25 @@ void Parse::extract_user_info(const std::string& value, Client& client_actif)
     }
 }
 
-bool Parse::parse_join()
+
+
+bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
+    std::string channel_name = _value.substr(1);
+    for (int i = 0; i < channels.size(); i++){
+        if (channels[i]->get_name() == channel_name){
+
+        }
+    }
+    // creation dun nouveau chan
+    Channel *chan = new Channel(channel_name);
+
+    channels.push_back(chan);
+    std::string nickname = client_actif.get_nickname();
+    channels[0]->add_client(nickname, client_fd);
+    
+    channels[0]->send_welcome_message(nickname, client_fd);
+
 
     return true;
 }

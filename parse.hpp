@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include "define.hpp"
 #include "client.hpp"
+#include "channel.hpp"
 
 class Channel;
 class Client;
@@ -17,8 +18,8 @@ class Client;
 class Parse
 {
     public:
-        Parse(const std::string &str);
-        
+
+        Parse(const std::string &str);    
         ~Parse();
 
         std::string get_cmd() const;
@@ -33,7 +34,7 @@ class Parse
         bool parse_pass(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         bool parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         // channel
-        bool parse_join();
+        bool parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
 
         bool user_cmd(const std::string &str);
         bool channel_cmd(const std::string &str);
@@ -48,17 +49,4 @@ class Parse
         std::string _value;
 
         void extract_user_info(const std::string& value, Client& client_actif);
-};
-
-typedef void (*f)(Client&, Channel&, const std::string&);
-typedef bool (*f_parse)(int, const std::string&, const std::string&);
-
-struct Command{
-    std::string command;
-    f func;
-};
-
-struct find_parse{
-    std::string command;
-    f_parse func;
 };

@@ -13,7 +13,8 @@
 // server
 // socket_fd
 // liste des canaux
-// 
+//
+ 
 class Channel;
 // class client qui va nous servir a savoir toute les informations propre a un client unique
 // ou il se trouve, son nom, son nick, si il est abs ou connecte
@@ -58,6 +59,7 @@ class Client
         void handle_cmd_quit(const std::string &message);
 
     private:
+        
         Client();
         
         //a regarder si cest la premiere fois que ce client envois un message

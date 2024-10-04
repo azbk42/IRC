@@ -2,27 +2,41 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 #include <map>
+#include <algorithm>
+#include <cctype>
+#include <vector>
+#include <unistd.h>
+#include <sys/socket.h>
+#include "define.hpp"
+#include "client.hpp"
+#include "parse.hpp"
 
 class Channel
 {
     public:
 
-        Channel(const std::string &name);
+        Channel(std::string &name);
         ~Channel();
 
         void modif_topic(const std::string &topic);
-        
+        void add_client(const std::string &name, const int fd_client);
+        void send_message_to_all();
+        void send_welcome_message(const std::string &name, const int fd_client);
+
+        const std::string get_name() const;
+        std::string get_topic() const;
+        std::string get_password() const;
+        bool get_pass() const;
+
 
     private:
 
         // variable a false si pas de mdp ou true si yen a un
         bool _pass;
-        size_t nb_client;
+        size_t _nb_client;
 
-
-        const std::string _name;
+        const std::string _name_channel;
         std::string _topic;
         std::map<std::string, int> _client;
         std::vector<std::string> _operator;

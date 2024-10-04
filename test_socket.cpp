@@ -64,7 +64,7 @@ void handleClientDisconnection(int client_socket, std::vector<int>& client_socke
     clients.erase(clients.begin() + i);
 }
 
-void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& partial_messages, std::vector<int>& client_sockets, std::vector<Client*> clients) 
+void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& partial_messages, std::vector<int>& client_sockets, std::vector<Client*> clients, std::vector<Channel*> channels) 
 {
     // Check if the message contains a newline character
     size_t newline_pos;
@@ -95,8 +95,9 @@ void processAndBroadcastMessage(int client_socket, std::map<int, std::string>& p
         if (client_actif != NULL) {
             // PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
             // d'envoyer à tous les clients du même chan
+        
             if (parser.get_cmd() == "JOIN")
-                parser.parse_join();
+                parser.parse_join(clients, client_socket, *client_actif, channels);
             if (parser.get_cmd() == "QUIT")
                 parser.parse_quit(clients, client_socket, *client_actif);
             if (parser.get_cmd() == "PING")
@@ -215,7 +216,7 @@ int main()
                     
                     // ici commence le parsing du message, il va boucler tant quil trouve un \n et traiter les commandes
                     // on va donc proceder a la reception du message, le traiter, et renvoyer les informations demandees a tous les clients concernes.
-                    processAndBroadcastMessage(client_socket, partial_messages, client_sockets, clients);
+                    processAndBroadcastMessage(client_socket, partial_messages, client_sockets, clients, channels);
             }
         }
     }

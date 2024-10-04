@@ -6,6 +6,7 @@ Commandes restantes:
     - je pense - parsing de QUIT dans la class server
     - parsing de LIST dans le server pour savoir tous les diffrents noms de channels
 
+
     other class:
     - parsing de PART
     - parsing de MODE
