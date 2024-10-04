@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 12:14:04 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 12:41:37 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:53:27 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 			return 1;
 		}
 	}
-	int port = atoi(argv[1]); // revoir si atoi et isdigit n'ont pas d'equivalent en c++ ?
+	int port = atoi(argv[1]);
 	if (port < 1024 || port > 49151){ 	// confirmer 49151, 65535 d'apres beej
 		std::cout << "Error: port must be between 1024 and 49151" << std::endl;
 		return 1;

@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 12:33:48 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:06:23 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,11 @@ Server &Server::operator=(const Server &rhs){
 	}
 	return *this;
 }
-		
+
+int Server::GetFd() const {return _serverFd;}
+
+int Server::GetPort() const {return _port;} 
+
 void Server::CloseServerFd() {
 	if (_serverFd != -1){
 		if (close(_serverFd) == -1)
@@ -51,7 +55,7 @@ void Server::SendtoAll(int expFd, char *buffer, int bytes_recv){
 				std::cout << "Failed to send data to " << dest_fd << std::endl;
 			}
 		}
-	}		
+	}
 }
 
 void Server::AcceptClient(){
@@ -91,6 +95,7 @@ void Server::ReceiveData(int fd){
 			for (size_t i = 0; i < _pollFds.size() ;i++) {
 				if (_pollFds[i].fd == fd){
 					_pollFds.erase(_pollFds.begin() + i);
+					_clients.erase(_clients.begin() + i);
 					break;
 				}
 			}

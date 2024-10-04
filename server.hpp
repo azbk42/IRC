@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 12:20:13 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:56:05 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ class Server //-> class for server
 		~Server(); //-> destructor
 		Server &operator=(const Server &rhs); //-> assignation operator
 		
-		int GetFd(){return _serverFd;}; //-> getter for fd
-		int GetPort(){return _port;}; //-> getter for port
+		int GetFd() const; //-> getter for fd
+		int GetPort() const; //-> getter for port
 		
 		void InitListener(); //-> initialize and get the listener socket
 		void Polling(); //-> poll()
