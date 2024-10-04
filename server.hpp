@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 12:56:05 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/04 16:23:20 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,16 @@ class Client //-> class for client
 class Server //-> class for server
 {
 	private:
+		static bool _signal; //-> signal for sigint
 		int _port; //-> server port
 		int _serverFd; //-> server socket file descriptor
+		std::string _password; //-> server password
 		std::vector<pollfd> _pollFds;
 		std::vector<Client> _clients;
+		std::vector<Channel> _chans;
 
 	public:
-		Server(); //-> default constructor
+		Server(int Port, std::string Password);
 		Server(const Server &rhs); //-> copy constructor
 		~Server(); //-> destructor
 		Server &operator=(const Server &rhs); //-> assignation operator
@@ -68,4 +71,6 @@ class Server //-> class for server
 		void ReceiveData(int fd); //-> receive new data from clients
 		void SendtoAll(int expFd, char *buffer, int bytes_recv); //-> send data to all clients
 		void CloseServerFd(); //-> close the server file descriptor
+		
+		static void Handler_sigint(int sig);
 };

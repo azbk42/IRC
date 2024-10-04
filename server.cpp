@@ -6,13 +6,18 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 13:06:23 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/04 16:30:42 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
-Server::Server() : _port(6667), _serverFd(-1){}
+bool Server::_signal = false;
+
+Server::Server(int Port, std::string Password) : _port(Port), _serverFd(-1), _password(Password) {
+	std::cout << "Port: " << _port << std::endl;
+	std::cout << "Password: " << _password << std::endl;
+}
 
 Server::Server(const Server &rhs){
 	_port = rhs._port;
@@ -22,7 +27,9 @@ Server::Server(const Server &rhs){
 	return ;
 }
 
-Server::~Server(){ CloseServerFd(); }
+Server::~Server(){ 
+	std::cout << "destructeur called" << std::endl;
+	CloseServerFd(); }
 
 Server &Server::operator=(const Server &rhs){
 	if (this != &rhs){
@@ -70,7 +77,7 @@ void Server::AcceptClient(){
 	
 	if (fcntl(newFd, F_SETFL, O_NONBLOCK) == -1)
 		std::cout << "Failed to set non-blocking fd for client" <<std::endl;
-	
+
 	clientPoll.fd = newFd;
 	clientPoll.events = POLLIN;
 	clientPoll.revents = 0;
@@ -110,9 +117,9 @@ void Server::ReceiveData(int fd){
 }
 
 void Server::Polling(){
-	for(;;)
+	while(Server::_signal == false)
 	{
-		if (poll(_pollFds.data(), _pollFds.size(), -1) == -1)
+		if (poll(_pollFds.data(), _pollFds.size(), -1) == -1 && Server::_signal == false)
 			throw(std::runtime_error("Failed to poll"));
 		// ou if((poll(&_pollFds[0],_pollFds.size(),-1) == -1) ?
 		for (size_t i = 0; i < _pollFds.size(); i++){ //-> check all fds
@@ -156,4 +163,9 @@ void Server::InitListener() {
 	serverPoll.revents = 0;
 	_pollFds.push_back(serverPoll);
 	std::cout << GREEN << "Server <" << _serverFd << "> Listening" << WHITE << std::endl;
+}
+
+void Server::Handler_sigint(int sig){
+	(void)sig;
+	Server::_signal = true;
 }
