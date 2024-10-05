@@ -19,3 +19,11 @@
 // ACCEPT
 #define NICK_CHANGE(old_nick, new_nick) (":" + old_nick + " NICK " + new_nick + "\r\n").c_str()
 
+// ################################################################################
+// #                                    COLORS                                    #
+// ################################################################################
+
+#define RED "\e[1;31m" //-> for red color
+#define WHITE "\e[0;37m" //-> for white color
+#define GREEN "\e[1;32m" //-> for green color
+#define YELLOW "\e[1;33m" //-> for yellow color

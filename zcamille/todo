@@ -30,3 +30,8 @@ gestion des mdp quand on veut join plusieurs channel:
 /join #canal mdp #canal2 = va recevoir que #canal mdp
 /join #canal #canal4 #canal3 = ne va recevoir que #canal et #canal4
             ( donc ici limiter a 2 canal max )
+
+
+
+variable signal en haut de server.cpp:
+    - A voir si on ne peut pas l'init dans le constructeur de server(): _signal(false)

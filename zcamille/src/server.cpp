@@ -23,7 +23,7 @@ Server::Server(const Server &rhs){
 	_port = rhs._port;
 	_serverFd = rhs._serverFd;
 	_pollFds = rhs._pollFds;
-	_clients = rhs._clients;
+	_clients_array = rhs._clients_array;
 	return ;
 }
 
@@ -37,7 +37,7 @@ Server &Server::operator=(const Server &rhs){
 		_port = rhs._port;
 		_serverFd = rhs._serverFd;
 		_pollFds = rhs._pollFds;
-		_clients = rhs._clients;
+		_clients_array = rhs._clients_array;
 	}
 	return *this;
 }
@@ -51,7 +51,8 @@ void Server::CloseServerFd() {
 		if (close(_pollFds[i].fd) == -1)
 			std::cerr << "Failed to close client socket" << std::endl; // throw?
 		_pollFds.erase(_pollFds.begin() + i);
-		_clients.erase(_clients.begin() + (i - 1));
+		delete _clients_array[i - 1]; // ajout de cette fonction pour free le client alloue avec new
+		_clients_array.erase(_clients_array.begin() + (i - 1));
 	}
 	if (_serverFd != -1){
 		if (close(_serverFd) == -1)
@@ -67,7 +68,8 @@ void Server::CloseClientSocket(int fd){
 	for (size_t i = 0; i < _pollFds.size(); i++) {
 		if (_pollFds[i].fd == fd){
 			_pollFds.erase(_pollFds.begin() + i);
-			_clients.erase(_clients.begin() + (i - 1));
+			delete _clients_array[i - 1]; // ajout de cette fonction pour free le client alloue avec new
+			_clients_array.erase(_clients_array.begin() + (i - 1));
 			break;
 		}
 	}
@@ -85,17 +87,16 @@ void Server::SendtoAll(int expFd, char *buffer, int bytes_recv){
 }
 
 void Server::AcceptClient(){
-	Client newClient;
 	struct sockaddr_in client_addr;
 	struct pollfd clientPoll;
 	socklen_t len = sizeof(client_addr);
 	
 	int newFd = accept(_serverFd, (sockaddr *)&client_addr, &len);
 	if (newFd == -1)
-		std::cout << "Failed to accept client" <<std::endl;
+		std::cout << "Failed to accept client" <<std::endl; // faire un return 
 	
 	if (fcntl(newFd, F_SETFL, O_NONBLOCK) == -1)
-		std::cout << "Failed to set non-blocking fd for client" <<std::endl;
+		std::cout << "Failed to set non-blocking fd for client" <<std::endl; // faire un return car si ca error plus besoin de faire la suite
 
 	clientPoll.fd = newFd;
 	clientPoll.events = POLLIN;
@@ -103,8 +104,8 @@ void Server::AcceptClient(){
 
 	std::cout << GREEN << "Client <" << newFd << "> Connected" << WHITE << std::endl;
 	_pollFds.push_back(clientPoll);
-	newClient.SetFd(newFd);
-	_clients.push_back(newClient);
+	Client* new_client = new Client(newFd);
+	_clients_array.push_back(new_client);
 }
 
 void Server::ReceiveData(int fd){
@@ -122,7 +123,7 @@ void Server::ReceiveData(int fd){
 	}
 	else {
 		buffer[bytesRecv] = '\0';
-
+		// DEBUT DE CODE ELOUAN
 		
 		std::string message(buffer);
 		_partial_message[fd] += message;
@@ -135,9 +136,38 @@ void Server::ReceiveData(int fd){
 			// Remove the processed message from the buffer
 			_partial_message[fd].erase(0, newline_pos + 1);
 
-			std::cout << YELLOW << "Client <" << fd << "> Data: " << WHITE << complete_message;
+			std::cout << YELLOW << "Client <" << fd << "> Data: " << WHITE << complete_message << std::endl;
+
+			Parse parser(complete_message);
+			Client* client_actif = NULL;
+			for (int i = 0; i < _clients_array.size(); i++) {
+				if (_clients_array[i]->get_socket_fd() == fd) {
+					client_actif = _clients_array[i];  // Ici, on affecte le pointeur
+					break; // Sortir de la boucle une fois trouvé
+				}
+			}
+
+			// Vérifier si un client a été trouvé
+			if (client_actif != NULL) {
+				// PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
+				// d'envoyer à tous les clients du même chan
+			
+				// if (parser.get_cmd() == "JOIN")
+				//     parser.parse_join(_clients_array, fd, *client_actif, channels);
+				if (parser.get_cmd() == "QUIT")
+					parser.parse_quit(_clients_array, fd, *client_actif);
+				if (parser.get_cmd() == "PING")
+					parser.parse_ping(_clients_array, fd, *client_actif);
+				if (parser.get_cmd() == "NICK")
+					parser.parse_nick(_clients_array, fd, *client_actif);
+				if (parser.get_cmd() == "USER")
+					parser.parse_user(_clients_array, fd, *client_actif); // Passer par référence
+			} else {
+				std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
+			}
 
 		}
+		
 
 		// @Emauduit : inclure le parsing ici
 		// if(parse_pass() == false){ // @Emauduit: pour le tester sans toucher a ton code, j'ai utilise la condition suivante : std::string buf(buffer); if (buf == "bad_pass\n"){

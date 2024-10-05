@@ -27,26 +27,10 @@
 // #include <cstdlib>
 // #include <cstdio>
 
-#define RED "\e[1;31m" //-> for red color
-#define WHITE "\e[0;37m" //-> for white color
-#define GREEN "\e[1;32m" //-> for green color
-#define YELLOW "\e[1;33m" //-> for yellow color
-
-// #include "client.hpp" //-> for client class
-
-class Client //-> class for client
-{
-	private:
-
-		int _clientFd; //-> client file descriptor
-		// std::string _ip; //-> client ip address
-	public:
-		Client(){}; //-> default constructor
-		int GetFd(){return _clientFd;} //-> getter for fd
-
-		void SetFd(int fd){_clientFd = fd;} //-> setter for fd
-		// void setIpAdd(std::string ipadd){_ip = ipadd;} //-> setter for ipadd
-};
+#include "channel.hpp"
+#include "client.hpp"
+#include "parse.hpp"
+#include "include.hpp"
 
 class Server //-> class for server
 {
@@ -56,15 +40,16 @@ class Server //-> class for server
 		int _serverFd; //-> server socket file descriptor
 		std::string _password; //-> server password
 		std::vector<pollfd> _pollFds;
-		std::vector<Client> _clients;
 		// std::vector<Channel> _chans;
 		
 		/* ELOUAN */
 		std::map<int, std::string> _partial_message;
+		std::vector<Client*> _clients_array;
+    	std::vector<Channel*> _channels_array;
 		/* ELOUAN */
 
 	public:
-		Server(int Port, std::string Password);
+		Server(int Port, std::string PasSsword);
 		Server(const Server &rhs); //-> copy constructor
 		~Server(); //-> destructor
 		Server &operator=(const Server &rhs); //-> assignation operator

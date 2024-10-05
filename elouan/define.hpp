@@ -19,3 +19,4 @@
 // ACCEPT
 #define NICK_CHANGE(old_nick, new_nick) (":" + old_nick + " NICK " + new_nick + "\r\n").c_str()
 
+
