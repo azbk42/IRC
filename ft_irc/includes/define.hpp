@@ -22,6 +22,10 @@
 // ERROR PASS
 #define ERR_PASSWDMISMATCH(client) (":" + server_name + " 464 " + client + " :Password incorrect\r\n").c_str()
 
+// ERROR JOIN
+#define ERR_INVITEONLYCHAN(client, channel) (client + " 473 #" + channel + " :Cannot join channel (+i) - Invite only\r\n")
+
+
 
 // ################################################################################
 // #                                    VALID IRSSI                               #
@@ -39,3 +43,6 @@
 #define WHITE "\e[0;37m" //-> for white color
 #define GREEN "\e[1;32m" //-> for green color
 #define YELLOW "\e[1;33m" //-> for yellow color
+#define CYAN "\e[1;36m"   // Couleur cyan vive
+#define MAGENTA "\e[1;35m" // Couleur magenta vive
+#define BLUE "\e[1;34m"    // Couleur bleue vive

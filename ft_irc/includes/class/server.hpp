@@ -65,5 +65,10 @@ class Server //-> class for server
 		void CloseServerFd(); //-> close the server file descriptor
 		void CloseClientSocket(int fd);
 		
+		/* ELOUAN */
+		void process_message(int fd); // -> check if message end with \n and process command
+		/* ELOUAN */
+
 		static void Handler_sigint(int sig);
+
 };

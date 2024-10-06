@@ -11,8 +11,6 @@ std::string Parse::get_cmd() const
     return _command;
 }
 
-
-
 // ################################################################################
 // #                                   PARSING                                    #
 // ################################################################################
@@ -35,14 +33,14 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client
         return false;
     }
 
-    // handle invalid character
+    // Handle invalid character
     for (size_t i = 1; i < _value.size(); ++i) {
         if (!isalnum(_value[i]) && _value.find_first_of("-[]\{}_|") == std::string::npos) {
             send(client_fd, ERR_ERRONEUSNICKNAME(server_name, _value), strlen(ERR_ERRONEUSNICKNAME(server_name, _value)), 0);
             return false;
         }
     }
-    // handle identic nickname
+    // Handle identic nickname
     for (int i = 0; i < clients_list.size(); i++){
         if (clients_list[i]->get_nickname() == _value){
             send(client_fd, ERR_NICKNAMEINUSE(server_name, nick), strlen(ERR_NICKNAMEINUSE(server_name, nick)), 0);
@@ -50,13 +48,12 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client
         }
     }
 
-    // tout est ok, on regarde quel client correspond au fd et on le change
-    // il faut maintenant avertir tous les clients des meme channels
+    // Tout est ok, on regarde quel client correspond au fd et on le change
+    // Il faut maintenant avertir tous les clients des meme channels
     for (int i = 0; i < clients_list.size(); i++){
         if (clients_list[i]->get_socket_fd() == client_fd){
             clients_list[i]->handle_cmd_nick(_value, client_fd);
         }
-        std::cout << "noveauu pseudo = " << clients_list[i]->get_nickname() << std::endl;
     }
 
     return true;
@@ -65,21 +62,28 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client
 
 bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
+    std::string nickname = client_actif.get_nickname();
+
     std::string channel_name = _value.substr(1);
+
+    // ajout channel existant
     for (int i = 0; i < channels.size(); i++){
         if (channels[i]->get_name() == channel_name){
-
+            // verif si il est autorise
+            if (channels[i]->authorization_check(nickname) == false){
+                std::string error_message = ERR_INVITEONLYCHAN(nickname, channel_name);
+                send(client_fd, error_message.c_str(), error_message.size(), 0);
+                return false;
+            }
+            channels[i]->add_client(nickname, client_fd, client_actif);
+            return true;
         }
     }
-    // creation dun nouveau chan
+    // ajout channel non cree
     Channel *chan = new Channel(channel_name);
-
     channels.push_back(chan);
-    std::string nickname = client_actif.get_nickname();
-    channels[0]->add_client(nickname, client_fd);
-    
-    channels[0]->send_welcome_message(nickname, client_fd);
-
+    int len = channels.size() - 1; // -> on doit calculer a chaque fois pour bien utiliser les method du dernier channel de la list ( celui quon vient de creer)
+    channels[len]->add_client(nickname, client_fd, client_actif);
 
     return true;
 }
@@ -122,18 +126,18 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
 {
     std::string server_name = SERVER_NAME;
 
-    // verif if USER is already done
+    // Verif if USER is already done
     if (client_actif.get_user_setup() == true){
         send(client_fd, ERR_ALREADYREGISTERED(server_name), strlen(ERR_ALREADYREGISTERED(server_name)), 0);
         return false;
     }
-    // verif nb_parameter
+    // Verif nb_parameter
     if (std::count(_value.begin(), _value.end(), ' ') < 3){
         send(client_fd, ERR_NEEDMOREPARAMS("USER", server_name), strlen(ERR_NEEDMOREPARAMS("USER", server_name)), 0);
     }
 
 
-    // si tout est bon on extract et on informe le client pour valider la connexion
+    // Si tout est bon on recupere les donnees et on informe le client pour valider la connexion
     extract_user_info(_value, client_actif);
     
     std::string welcome_message = ":" + server_name + " 001 " + client_actif.get_nickname() + 
@@ -144,10 +148,10 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
 
     send(client_fd, welcome_message.c_str(), welcome_message.size(), 0);
 
-    std::cout << "username: " << client_actif.get_username() << std::endl;
-    std::cout << "hostname: " << client_actif.get_hostname() << std::endl;
-    std::cout << "servername: " << client_actif.get_server_name() << std::endl;
-    std::cout << "realname: " << client_actif.get_real_name() << std::endl;
+    // std::cout << "username: " << client_actif.get_username() << std::endl;
+    // std::cout << "hostname: " << client_actif.get_hostname() << std::endl;
+    // std::cout << "servername: " << client_actif.get_server_name() << std::endl;
+    // std::cout << "realname: " << client_actif.get_real_name() << std::endl;
     return true;
 }
 
@@ -199,7 +203,7 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
 // ################################################################################
 void Parse::split_cmd_value(const std::string &full_command)
 {
-    std::cout << "full command: " << _str << std::endl;
+    //std::cout << "full command: " << _str << std::endl;
 
     // Trouver la position du premier espace
     size_t pos = full_command.find(" ");
@@ -219,14 +223,14 @@ void Parse::split_cmd_value(const std::string &full_command)
     // Extraire la valeur après l'espace, s'il y en a
     if (pos + 1 >= full_command.size()) {
         _value.clear(); // Pas de valeur après l'espace
-        std::cout << "Command = " << _command << std::endl;
-        std::cout << "Value = (empty)" << std::endl;
+        std::cout << CYAN << "Command = " << WHITE << _command << std::endl;
+        std::cout << GREEN << "Value = (empty)" << WHITE << std::endl;
         return;
     }
 
     _value = full_command.substr(pos + 1);
-    std::cout << "Command = " << _command << std::endl;
-    std::cout << "Value = " << _value << std::endl;
+    std::cout << CYAN << "Command = " << WHITE << _command << std::endl;
+    std::cout << GREEN << "Value = " << WHITE << _value << std::endl;
 }
 
 

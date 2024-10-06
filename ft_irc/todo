@@ -6,7 +6,6 @@ Commandes restantes:
     - je pense - parsing de QUIT dans la class server
     - parsing de LIST dans le server pour savoir tous les diffrents noms de channels
 
-
     other class:
     - parsing de PART
     - parsing de MODE
@@ -30,7 +29,7 @@ gestion des mdp quand on veut join plusieurs channel:
 /join #canal mdp #canal2 = va recevoir que #canal mdp
 /join #canal #canal4 #canal3 = ne va recevoir que #canal et #canal4
             ( donc ici limiter a 2 canal max )
-
+On doit setup la commande WHOIS qui genere les erreurs quand on essaye de se co a plusieurs sur un channel
 
 
 variable signal en haut de server.cpp:
@@ -39,3 +38,13 @@ variable signal en haut de server.cpp:
 jai change le vector de client en "_clients_array" 
 pour plus de lisibilite quand on traitera que 1 client avec une variable "client"
 
+
+
+
+
+
+commande pour se connecter directement a irssi avec les infos que lon veut
+
+irssi -c 127.0.0.1 -p <port> -w <password> -n <nickname>
+
+irssi -c localhost -p 6667 -w pass -n azbk

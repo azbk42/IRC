@@ -67,6 +67,10 @@ void Server::CloseServerFd()
 		delete _clients_array[i - 1]; // ajout de cette fonction pour free le client alloue avec new
 		_clients_array.erase(_clients_array.begin() + (i - 1));
 	}
+	for (size_t i = 0; i < _channels_array.size(); i++){
+		delete _channels_array[i];
+	}
+
 	if (_serverFd != -1){
 		if (close(_serverFd) == -1)
 			std::cerr << "Failed to close server socket" << std::endl; // throw?
@@ -128,6 +132,46 @@ void Server::AcceptClient()
 }
 
 
+void Server::process_message(int fd)
+{
+	size_t newline_pos;
+	while ((newline_pos = _partial_message[fd].find('\n')) != std::string::npos) {
+		// Extract the complete message up to the newline
+		std::string complete_message = _partial_message[fd].substr(0, newline_pos + 1);
+
+		// Remove the processed message from the buffer
+		_partial_message[fd].erase(0, newline_pos + 1);
+
+		std::cout << YELLOW << "Client <" << fd << "> Data: " << WHITE << complete_message << std::endl;
+
+		Parse parser(complete_message);
+		Client* client_actif = NULL;
+		for (int i = 0; i < _clients_array.size(); i++) {
+			if (_clients_array[i]->get_socket_fd() == fd) {
+				client_actif = _clients_array[i];  // Ici, on affecte le pointeur
+				break; // Sortir de la boucle une fois trouvé
+			}
+		}
+		// Vérifier si un client a été trouvé
+		if (client_actif != NULL) {
+			// PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
+			// d'envoyer à tous les clients du même chan
+		
+			if (parser.get_cmd() == "JOIN")
+			    parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
+			if (parser.get_cmd() == "QUIT")
+				parser.parse_quit(_clients_array, fd, *client_actif);
+			if (parser.get_cmd() == "PING")
+				parser.parse_ping(_clients_array, fd, *client_actif);
+			if (parser.get_cmd() == "NICK")
+				parser.parse_nick(_clients_array, fd, *client_actif);
+			if (parser.get_cmd() == "USER")
+				parser.parse_user(_clients_array, fd, *client_actif); // Passer par référence
+		} else {
+			std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
+		}
+	}
+}
 
 void Server::ReceiveData(int fd)
 {
@@ -146,50 +190,10 @@ void Server::ReceiveData(int fd)
 	else {
 		buffer[bytesRecv] = '\0';
 		// DEBUT DE CODE ELOUAN
-		
 		std::string message(buffer);
 		_partial_message[fd] += message;
 
-		size_t newline_pos;
-		while ((newline_pos = _partial_message[fd].find('\n')) != std::string::npos) {
-			// Extract the complete message up to the newline
-			std::string complete_message = _partial_message[fd].substr(0, newline_pos + 1);
-
-			// Remove the processed message from the buffer
-			_partial_message[fd].erase(0, newline_pos + 1);
-
-			std::cout << YELLOW << "Client <" << fd << "> Data: " << WHITE << complete_message << std::endl;
-
-			Parse parser(complete_message);
-			Client* client_actif = NULL;
-			for (int i = 0; i < _clients_array.size(); i++) {
-				if (_clients_array[i]->get_socket_fd() == fd) {
-					client_actif = _clients_array[i];  // Ici, on affecte le pointeur
-					break; // Sortir de la boucle une fois trouvé
-				}
-			}
-
-			// Vérifier si un client a été trouvé
-			if (client_actif != NULL) {
-				// PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
-				// d'envoyer à tous les clients du même chan
-			
-				// if (parser.get_cmd() == "JOIN")
-				//     parser.parse_join(_clients_array, fd, *client_actif, channels);
-				if (parser.get_cmd() == "QUIT")
-					parser.parse_quit(_clients_array, fd, *client_actif);
-				if (parser.get_cmd() == "PING")
-					parser.parse_ping(_clients_array, fd, *client_actif);
-				if (parser.get_cmd() == "NICK")
-					parser.parse_nick(_clients_array, fd, *client_actif);
-				if (parser.get_cmd() == "USER")
-					parser.parse_user(_clients_array, fd, *client_actif); // Passer par référence
-			} else {
-				std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
-			}
-
-		}
-		
+		process_message(fd);
 		// @Emauduit : inclure le parsing ici
 		// if(parse_pass() == false){ // @Emauduit: pour le tester sans toucher a ton code, j'ai utilise la condition suivante : std::string buf(buffer); if (buf == "bad_pass\n"){
 		// 	send(fd, "bad password\n", 14, 0);
@@ -197,7 +201,9 @@ void Server::ReceiveData(int fd)
 		// 	std::cout << RED << "Client <" << fd << "> Bad password" << WHITE << std::endl; // coupe la connexion cote server, 
 		// 	// mais il faut entrer qqch pour que le client comprenne qu'il est sorti - verifier si pareil sur irssi, sinon ajouter un envoi cote client
 		// }
-		SendtoAll(fd, buffer, bytesRecv);
+		
+		std::cout << YELLOW << "-----------------------------------------------------" << WHITE << std::endl;
+		//SendtoAll(fd, buffer, bytesRecv);
 	}
 }
 

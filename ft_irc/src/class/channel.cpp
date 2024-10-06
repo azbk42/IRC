@@ -13,6 +13,16 @@ std::string Channel::get_password() const {return _password;};
 
 bool Channel::get_pass() const {return _pass;};
 
+
+void Channel::set_i(const std::string &i)
+{
+    if (i == "+"){
+        _i = true;
+    }
+    else if (i == "-"){
+        _i = false;
+    }
+}
 // ################################################################################
 // #                                                       #
 // ################################################################################
@@ -21,6 +31,16 @@ void Channel::modif_topic(const std::string &topic)
     _topic = topic;
     // envoyer le topic a tous les utilisateurs
 }
+
+void Channel::send_message_to_all(const std::string &message, const int fd_client)
+{
+    for (std::map<std::string, int>::iterator it = _client.begin(); it != _client.end(); ++it){
+        if (it->second != fd_client){
+            send(it->second, message.c_str(), message.size(), 0);
+        }
+    }
+}
+
 
 // ################################################################################
 // #                                 WELCOME MESSAGE                              #
@@ -59,14 +79,33 @@ void Channel::send_welcome_message(const std::string &client, const int fd_clien
 // #                                                                              #
 // ################################################################################
 
-void Channel::add_client(const std::string &name, const int fd_client)
+void Channel::add_client(const std::string &name, const int fd_client, Client &client_actif)
 {
     this->_client[name] = fd_client;
     this->_nb_client += 1;
     if (_nb_client == 1){
         _operator.push_back(name);
     }
-    
+    send_welcome_message(name, fd_client);
+    std::string join_message = ":" + name + "!" + client_actif.get_username() + "@" + client_actif.get_hostname() +\
+                                " JOIN :#" + get_name() + "\r\n";
+    send_message_to_all(join_message, fd_client);
+
+}
+
+bool Channel::authorization_check(const std::string &nickname)
+{
+    // si cest en invite only on check si il est dans la liste des noms
+    if (_i == true){
+        
+        for (int i = 0; i < _invite_name.size(); i++){
+            if (_invite_name[i] == nickname){
+                return true;
+            }
+        }
+        return false;
+    }
+    return true;
 
 }
 
@@ -75,7 +114,8 @@ void Channel::add_client(const std::string &name, const int fd_client)
 // ################################################################################
 
 Channel::Channel(std::string &name): 
-    _name_channel(name), _topic(""), _password(""), _pass(false), _nb_client(0)
+    _name_channel(name), _topic(""), _password(""), _pass(false), _nb_client(0),
+    _i(false)
 {
 
 }
