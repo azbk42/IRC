@@ -23,6 +23,8 @@ class Parse
         ~Parse();
 
         std::string get_cmd() const;
+		std::string get_value() const;
+
         // pour le parsing traiter le 1er mot comme si il etait en majuscule tout le temps
         // function pour separer le premier mot du reste de la phrase (car dans IRC le premier mot est toujours une commande)
         void split_cmd_value(const std::string &_str);
@@ -30,8 +32,6 @@ class Parse
         bool parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         bool parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         bool parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
-        // parsing du MDP A faire dans la class serveur
-        bool parse_pass(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         bool parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         // channel
         bool parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);

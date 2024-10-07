@@ -6,10 +6,12 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 17:16:06 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/07 15:47:29 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#pragma once
+
+#ifndef SERVER_HPP
+# define SERVER_HPP
 
 #include <iostream>
 #include <vector> //-> for vector
@@ -40,7 +42,6 @@ class Server //-> class for server
 		int _serverFd; //-> server socket file descriptor
 		std::string _password; //-> server password
 		std::vector<pollfd> _pollFds;
-		// std::vector<Channel> _chans;
 		
 		/* ELOUAN */
 		std::map<int, std::string> _partial_message;
@@ -64,6 +65,7 @@ class Server //-> class for server
 		void SendtoAll(int expFd, char *buffer, int bytes_recv); //-> send data to all clients
 		void CloseServerFd(); //-> close the server file descriptor
 		void CloseClientSocket(int fd);
+		bool check_pass(int client_fd, std::string enteredPwd);
 		
 		/* ELOUAN */
 		void process_message(int fd); // -> check if message end with \n and process command
@@ -72,3 +74,5 @@ class Server //-> class for server
 		static void Handler_sigint(int sig);
 
 };
+
+#endif

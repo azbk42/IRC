@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 17:45:22 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/07 15:48:35 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,11 @@ Server::Server(const Server &rhs)
 {
 	_port = rhs._port;
 	_serverFd = rhs._serverFd;
+	_password = rhs._password;
 	_pollFds = rhs._pollFds;
 	_clients_array = rhs._clients_array;
+	_channels_array = rhs._channels_array;
+	_partial_message = rhs._partial_message;
 	return ;
 }
 
@@ -58,6 +61,9 @@ int Server::GetFd() const {return _serverFd;}
 
 int Server::GetPort() const {return _port;} 
 
+// ################################################################################
+// #                                  CLOSE FDS                                   #
+// ################################################################################
 void Server::CloseServerFd()
 {
 	for (size_t i = _pollFds.size() - 1; i > 0; i--) {
@@ -81,6 +87,7 @@ void Server::CloseServerFd()
 
 void Server::CloseClientSocket(int fd)
 {
+	std::cout << RED <<"Closing client socket" << std::endl;
 	if (close(fd) == -1)
 		std::cout << "Failed to close client socket" << std::endl;
 	for (size_t i = 0; i < _pollFds.size(); i++) {
@@ -93,6 +100,10 @@ void Server::CloseClientSocket(int fd)
 	}
 }
 
+// ################################################################################
+// #                            COMMUNICATION CLIENT                              #
+// ################################################################################
+
 void Server::SendtoAll(int expFd, char *buffer, int bytes_recv)
 {
 	for (size_t j = 0; j < _pollFds.size(); j++) {
@@ -104,9 +115,6 @@ void Server::SendtoAll(int expFd, char *buffer, int bytes_recv)
 		}
 	}
 }
-// ################################################################################
-// #                            COMMUNICATION CLIENT                              #
-// ################################################################################
 
 void Server::AcceptClient()
 {
@@ -116,11 +124,16 @@ void Server::AcceptClient()
 	
 	int newFd = accept(_serverFd, (sockaddr *)&client_addr, &len);
 	if (newFd == -1)
-		std::cout << "Failed to accept client" <<std::endl; // faire un return 
-	
+	{
+		std::cout << "Failed to accept client" <<std::endl; 
+		return ;
+	}
 	if (fcntl(newFd, F_SETFL, O_NONBLOCK) == -1)
-		std::cout << "Failed to set non-blocking fd for client" <<std::endl; // faire un return car si ca error plus besoin de faire la suite
-
+	{
+		std::cout << "Failed to set non-blocking fd for client" <<std::endl;
+		close (newFd);
+		return ;
+	}
 	clientPoll.fd = newFd;
 	clientPoll.events = POLLIN;
 	clientPoll.revents = 0;
@@ -130,7 +143,6 @@ void Server::AcceptClient()
 	Client* new_client = new Client(newFd);
 	_clients_array.push_back(new_client);
 }
-
 
 void Server::process_message(int fd)
 {
@@ -153,12 +165,24 @@ void Server::process_message(int fd)
 			}
 		}
 		// Vérifier si un client a été trouvé
-		if (client_actif != NULL) {
+		if (client_actif != NULL && client_actif->get_checked_pwd() == false) {
+			if (parser.get_cmd() == "PASS"){
+				bool status = check_pass(fd, parser.get_value());
+				if (status == true)
+					client_actif->set_checked_pwd(status);
+			}
+			else if (parser.get_cmd() == "CAP"){
+				continue;
+			}
+			else {
+				send(fd, "Please enter password", 21, 0);
+				CloseClientSocket(fd);}
+		}
+		else if (client_actif != NULL && client_actif->get_checked_pwd() == true) {
 			// PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
 			// d'envoyer à tous les clients du même chan
-		
 			if (parser.get_cmd() == "JOIN")
-			    parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
+				parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
 			if (parser.get_cmd() == "QUIT")
 				parser.parse_quit(_clients_array, fd, *client_actif);
 			if (parser.get_cmd() == "PING")
@@ -167,10 +191,23 @@ void Server::process_message(int fd)
 				parser.parse_nick(_clients_array, fd, *client_actif);
 			if (parser.get_cmd() == "USER")
 				parser.parse_user(_clients_array, fd, *client_actif); // Passer par référence
-		} else {
+		}
+		else {
 			std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
 		}
 	}
+}
+
+bool Server::check_pass(int client_fd, std::string enteredPwd){
+    std::string server_name = SERVER_NAME;
+	if (enteredPwd != _password){
+        std::cout << RED << "Password incorrect" << std::endl;
+		send(client_fd, ERR_PASSWDMISMATCH(server_name), strlen(ERR_PASSWDMISMATCH(server_name)), 0);
+        CloseClientSocket(client_fd);
+		return (false);
+    }
+	std::cout << GREEN << "Password correct" << std::endl;
+	return (true);
 }
 
 void Server::ReceiveData(int fd)
@@ -192,20 +229,13 @@ void Server::ReceiveData(int fd)
 		// DEBUT DE CODE ELOUAN
 		std::string message(buffer);
 		_partial_message[fd] += message;
-
 		process_message(fd);
-		// @Emauduit : inclure le parsing ici
-		// if(parse_pass() == false){ // @Emauduit: pour le tester sans toucher a ton code, j'ai utilise la condition suivante : std::string buf(buffer); if (buf == "bad_pass\n"){
-		// 	send(fd, "bad password\n", 14, 0);
-		// 	CloseClientSocket(fd);
-		// 	std::cout << RED << "Client <" << fd << "> Bad password" << WHITE << std::endl; // coupe la connexion cote server, 
-		// 	// mais il faut entrer qqch pour que le client comprenne qu'il est sorti - verifier si pareil sur irssi, sinon ajouter un envoi cote client
-		// }
+		}
 		
 		std::cout << YELLOW << "-----------------------------------------------------" << WHITE << std::endl;
 		//SendtoAll(fd, buffer, bytesRecv);
 	}
-}
+// }
 
 // ################################################################################
 // #                            COMMUNICATION CLIENT                              #

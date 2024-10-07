@@ -35,6 +35,7 @@ class Client
         bool get_status_away() const;
         bool get_status_connected() const;
         bool get_user_setup() const;
+		bool get_checked_pwd() const;
 
         void set_nickname(const std::string &nickname);
         void set_username(const std::string &username);
@@ -44,6 +45,7 @@ class Client
         void set_away(bool status);
         void set_connected(bool status);
         void set_user_setup();
+		void set_checked_pwd(bool status);
 
         // s'occuper de la commande USER
         void handle_cmd_user(std::string &user_infos);
@@ -74,6 +76,7 @@ class Client
         std::string _server_name;
         std::string _host_name;
         int _socket_fd;
+		bool _checked_pwd;
 
         //std::chrono::time_point<std::chrono::system_clock> _arrival_time;
 

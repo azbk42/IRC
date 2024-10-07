@@ -11,6 +11,11 @@ std::string Parse::get_cmd() const
     return _command;
 }
 
+std::string Parse::get_value() const {
+	return _value;
+}
+
+
 // ################################################################################
 // #                                   PARSING                                    #
 // ################################################################################
@@ -87,17 +92,6 @@ bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client
 
     return true;
 }
-
-// bool Parse::parse_pass(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
-// {
-//     std::string server_name = SERVER_NAME;
-//     if (_value != PASSWORD){
-//         send(client_fd, ERR_PASSWDMISMATCH(server_name), strlen(ERR_PASSWDMISMATCH(server_name)), 0);
-//         close(client_fd);
-//         return false;
-//     }
-//     return true;
-// }
 
 bool Parse::parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
