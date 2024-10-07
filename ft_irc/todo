@@ -4,13 +4,15 @@ Commandes restantes:
     - definir le mot de pass pour pouvoir se co au serveur
     - parsing de PASS dans la class server
     - je pense - parsing de QUIT dans la class server
-    - parsing de LIST dans le server pour savoir tous les diffrents noms de channels
+    - parsing de LIST dans le server pour savoir tous les diffrents noms de channels class server
 
     other class:
     - parsing de PART
     - parsing de MODE
     - parsing de KICK
     - parsing de TOPIC
+    - parsing de NAMES ( bon la commande fonctionne toute seule)
+    
 
     flag a gerer pour MODE:
     // //     i : Le canal devient sur invitation uniquement.
