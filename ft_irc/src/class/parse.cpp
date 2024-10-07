@@ -1,6 +1,7 @@
 #include "parse.hpp"
 #include <string.h>
 #include <stdio.h>
+#include <sstream>
 
 // ################################################################################
 // #                                  GET                                         #
@@ -59,9 +60,101 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client
     return true;
 }
 
+bool Parse::check_invalid_char_join(const std::string &chan_name, int client_fd, Client &client_actif)
+{
+
+    if (chan_name.length() > 50){
+         std::string error_message = ERR_CHANNELNAMETOOLONG(client_actif.get_nickname(), chan_name);
+        send(client_fd, error_message.c_str(), error_message.size(), 0);
+        std::cout << "LEN TROP GRANDE" << std::endl;
+        return false;
+    }
+    // check si ya un # au debut du nom
+    if (chan_name.length() > 0 && chan_name[0] != '#') {
+        std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
+        send(client_fd, error_message.c_str(), error_message.size(), 0);
+        std::cout << "NO DOLLS" << std::endl;
+        return false;
+    }
+    // check si apres le # il ny a rien
+    if (chan_name.length() > 0 && chan_name[0] == '#' && chan_name[1] == '\0') {
+        std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
+        send(client_fd, error_message.c_str(), error_message.size(), 0);
+        std::cout << "BACK 0 FIND" << std::endl;
+        return false;
+    }
+
+    // checi si , ou : ou space
+    if (chan_name.find(",") != std::string::npos ||\
+        chan_name.find(":") != std::string::npos ||\
+        chan_name.find(" ") != std::string::npos) {
+        std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
+        send(client_fd, error_message.c_str(), error_message.size(), 0);
+        std::cout << "INVALID CHARACTER" << std::endl;
+        return false;
+    }
+    // char non printable
+    for (size_t i = 0; i < chan_name.size(); i++) {
+        if (chan_name[i] < 32 || chan_name[i] > 127) {
+            std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
+            send(client_fd, error_message.c_str(), error_message.size(), 0);
+            std::cout << "NON-PRINTABLE CHARACTER DETECTED" << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+std::vector<std::string> Parse::split_by_comma(const std::string &input) 
+{
+    std::vector<std::string> result;
+    std::stringstream ss(input);
+    std::string item;
+    while (std::getline(ss, item, ',')) {
+        result.push_back(item);
+    }
+    return result;
+}
+
+std::map<std::string, std::string> Parse::init_channel_map(std::map<std::string, std::string> channels, std::string str)
+{
+    std::string names;
+    std::string passwords;
+
+    // Séparer les noms des canaux et les mots de passe par un espace
+    size_t pos = str.find(" ");
+    if (pos != std::string::npos) {
+        names = str.substr(0, pos);           // Partie contenant les noms des canaux
+        passwords = str.substr(pos + 1);      // Partie contenant les mots de passe
+    } else {
+        names = str;                          // Si aucun mot de passe n'est fourni
+    }
+
+    // Séparer les noms des canaux
+    std::vector<std::string> channels_list = split_by_comma(names);
+    std::vector<std::string> passwords_list = split_by_comma(passwords);
+
+    // Remplir la map avec les canaux et les mots de passe
+    for (size_t i = 0; i < channels_list.size(); ++i) {
+        if (i < passwords_list.size()) {
+            channels[channels_list[i]] = passwords_list[i];  // Assigner le mot de passe si disponible
+        } else {
+            channels[channels_list[i]] = "";  // Aucun mot de passe fourni, chaîne vide
+        }
+    }
+
+    return channels;
+}
+
 
 bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
+    // std::map<std::string, std::string> chan;
+
+    if (check_invalid_char_join(_value, client_fd, client_actif) == false){
+        return false;
+    }
+
     std::string nickname = client_actif.get_nickname();
 
     std::string channel_name = _value.substr(1);

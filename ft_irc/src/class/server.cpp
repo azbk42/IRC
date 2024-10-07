@@ -148,15 +148,15 @@ void Server::process_message(int fd)
 		Client* client_actif = NULL;
 		for (int i = 0; i < _clients_array.size(); i++) {
 			if (_clients_array[i]->get_socket_fd() == fd) {
-				client_actif = _clients_array[i];  // Ici, on affecte le pointeur
-				break; // Sortir de la boucle une fois trouvé
+				client_actif = _clients_array[i]; 
+				break;
 			}
 		}
 		// Vérifier si un client a été trouvé
 		if (client_actif != NULL) {
 			// PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
 			// d'envoyer à tous les clients du même chan
-		
+
 			if (parser.get_cmd() == "JOIN")
 			    parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
 			if (parser.get_cmd() == "QUIT")

@@ -36,10 +36,6 @@ class Parse
         // channel
         bool parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
 
-        bool user_cmd(const std::string &str);
-        bool channel_cmd(const std::string &str);
-        bool operator_cmd(const std::string &str);
-
     private:
     
         Parse();
@@ -49,4 +45,8 @@ class Parse
         std::string _value;
 
         void extract_user_info(const std::string& value, Client& client_actif);
+        bool check_invalid_char_join(const std::string &chan_name, int client_fd, Client &client_actif);
+        std::map<std::string, std::string> init_channel_map(std::map<std::string, std::string> channels, std::string str);
+        std::vector<std::string> split_by_comma(const std::string &input);
+
 };
