@@ -43,30 +43,6 @@ void Client::minus_nb_channel()
         _nb_chan -= 1;
 }
 
-// rejoindre un channel
-void Client::handle_cmd_join(const std::string &channel_name)
-{
-    
-}
-
-// leave un channel
-void Client::handle_cmd_part(const std::string &channel_name)
-{
-
-}
-
-// envoyer un mess prive
-void Client::handle_cmd_privmsg(const std::string &message, const std::string &target)
-{
-
-}
-
-// quitter le serveur avec un message
-void Client::handle_cmd_quit(const std::string &message)
-{
-
-}
-
 // ################################################################################
 // #                                    GET                                       #
 // ################################################################################

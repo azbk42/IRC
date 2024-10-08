@@ -56,13 +56,6 @@ class Client
         // changer le pseudo
         void handle_cmd_nick(const std::string &new_nickname, int client_socket);
         // rejoindre un channel
-        void handle_cmd_join(const std::string &channel_name);
-        // leave un channel
-        void handle_cmd_part(const std::string &channel_name);
-        // envoyer un mess prive
-        void handle_cmd_privmsg(const std::string &message, const std::string &target);
-        // quitter le serveur avec un message
-        void handle_cmd_quit(const std::string &message);
 
     private:
         

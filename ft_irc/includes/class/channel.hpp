@@ -33,6 +33,8 @@ class Channel
         bool get_pass() const;
 
         void set_i(const std::string &i);
+		bool is_in_channel(const std::string &name);
+
 
 
     private:

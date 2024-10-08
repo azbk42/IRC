@@ -125,3 +125,11 @@ Channel::~Channel()
 {
 
 }
+
+bool Channel::is_in_channel(const std::string &name)
+{
+    if (_client.find(name) != _client.end())
+        return true;
+    else
+        return false;
+}

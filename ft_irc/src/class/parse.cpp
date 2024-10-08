@@ -74,19 +74,13 @@ bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client
     return true;
 }
 
-bool Parse::parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
-{
-    std::string full_quit_message;
-    if (_value.empty()){
-        std::string full_quit_message = client_actif.get_nickname() + "exited\r\n";
-    }
-    else{
-        std::string full_quit_message = ":" + client_actif.get_nickname() + " QUIT :" + _value + "\r\n";
-    }
-    send(client_fd, full_quit_message.c_str(), full_quit_message.size(), 0);
-
-    return true;
-}
+// bool Parse::parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+// {
+//     Quit command();
+// 	command.quit(client_fd, &client_actif, _value, _server);
+	
+//     return true;
+// }
 
 
 bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)

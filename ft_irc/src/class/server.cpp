@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/08 15:58:41 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/08 18:24:47 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,11 @@ void Server::CloseClientSocket(int fd)
 			_clients_array.erase(_clients_array.begin() + (i - 1));
 			break;
 		}
+		// enlever 1 utilisateurs aux chans etc?
+		// std::map<std::string, int> _client;
+        // std::vector<std::string> _operator;
+        // std::vector<std::string> _invite_name;
+		// lier a fonction part 
 	}
 }
 
@@ -170,8 +175,8 @@ void Server::process_message(int fd)
 		// Vérifier si un client a été trouvé
 		if (client_actif != NULL && client_actif->get_checked_pwd() == false) {
 			if (parser.get_cmd() == "PASS") {
-				Pass command(fd, parser.get_value(), client_actif, this);
-				command.check_pass();
+				Pass passwd(fd, parser.get_value(), client_actif, this);
+				passwd.check_pass();
 			}
 			else if (parser.get_cmd() == "CAP"){
 				continue;
@@ -186,14 +191,24 @@ void Server::process_message(int fd)
 		
 			if (parser.get_cmd() == "JOIN")
 				parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
-			if (parser.get_cmd() == "QUIT")
-				parser.parse_quit(_clients_array, fd, *client_actif);
+			if (parser.get_cmd() == "QUIT"){
+				Quit quit(fd, client_actif, parser.get_value(), _channels_array); // revoir quand on envoie une ref??
+				quit.send_quit_msg();
+				CloseClientSocket(fd);
+			}		
 			if (parser.get_cmd() == "PING")
 				parser.parse_ping(_clients_array, fd, *client_actif);
 			if (parser.get_cmd() == "NICK")
 				parser.parse_nick(_clients_array, fd, *client_actif);
 			if (parser.get_cmd() == "USER")
 				parser.parse_user(_clients_array, fd, *client_actif); // Passer par référence
+			if (parser.get_cmd() == "LIST"){
+				send(fd, "List of channels", strlen("List of channels"), 0);
+				std::cout << "List of channels sent" << std::endl;
+			}
+
+				// List list(_channels_array, fd);
+				
 		}
 		else {
 			std::cerr << "Client non trouvé pour le socket " << fd << std::endl;

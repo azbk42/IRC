@@ -12,6 +12,7 @@
 #include "client.hpp"
 #include "channel.hpp"
 #include "join.hpp"
+#include "quit.hpp"
 
 class Channel;
 class Client;

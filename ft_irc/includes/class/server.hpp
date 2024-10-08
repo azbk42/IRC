@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/08 15:38:21 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/08 17:05:53 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,9 @@ class Server //-> class for server
 		int _serverFd; //-> server socket file descriptor
 		std::string _password; //-> server password
 		std::vector<pollfd> _pollFds;
-		
-		/* ELOUAN */
 		std::map<int, std::string> _partial_message;
 		std::vector<Client*> _clients_array;
     	std::vector<Channel*> _channels_array;
-		/* ELOUAN */
 
 	public:
 		Server(int Port, std::string PasSsword);
