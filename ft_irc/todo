@@ -23,17 +23,9 @@ Commandes restantes:
        -l +l : Définit ou supprime la limite maximale d'utilisateurs pouvant rejoindre le canal.
 
 
-creation des channels quand on fait JOIN
+creation des channels quand on fait JOIN done
 
-gestion des mdp quand on veut join plusieurs channel:
-/join #canal1,#canal2 motdepasse1,motdepasse2
-
-/join #canal mdp = va envoyer #canal mdp
-/join #canal mdp #canal2 = va recevoir que #canal mdp
-/join #canal #canal4 #canal3 = ne va recevoir que #canal et #canal4
-            ( donc ici limiter a 2 canal max )
 On doit setup la commande WHOIS qui genere les erreurs quand on essaye de se co a plusieurs sur un channel
-
 
 variable signal en haut de server.cpp:
     - A voir si on ne peut pas l'init dans le constructeur de server(): _signal(false)

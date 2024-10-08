@@ -21,7 +21,7 @@ std::string Parse::get_value() const {
 // #                                   PARSING                                    #
 // ################################################################################
 
-bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
     std::string server_name = SERVER_NAME;
     std::string nick = _value;
@@ -39,14 +39,15 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client
         return false;
     }
 
-    // Handle invalid character
+    // Vérification des caractères invalides dans le pseudo
     for (size_t i = 1; i < _value.size(); ++i) {
-        if (!isalnum(_value[i]) && _value.find_first_of("-[]\{}_|") == std::string::npos) {
+        if (!isalnum(_value[i]) && _value.find_first_of("-[]\\{}_|") == std::string::npos) {
             send(client_fd, ERR_ERRONEUSNICKNAME(server_name, _value), strlen(ERR_ERRONEUSNICKNAME(server_name, _value)), 0);
             return false;
         }
     }
-    // Handle identic nickname
+
+    // Vérification si le pseudo est déjà utilisé
     for (int i = 0; i < clients_list.size(); i++){
         if (clients_list[i]->get_nickname() == _value){
             send(client_fd, ERR_NICKNAMEINUSE(server_name, nick), strlen(ERR_NICKNAMEINUSE(server_name, nick)), 0);
@@ -54,16 +55,25 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client
         }
     }
 
-    // Tout est ok, on regarde quel client correspond au fd et on le change
-    // Il faut maintenant avertir tous les clients des meme channels
-    for (int i = 0; i < clients_list.size(); i++){
-        if (clients_list[i]->get_socket_fd() == client_fd){
-            clients_list[i]->handle_cmd_nick(_value, client_fd);
+    // Le pseudo est valide, changement du pseudo du client actif
+    std::string old_nickname = client_actif.get_nickname();
+    client_actif.set_nickname(_value);
+    
+    std::string confirmation_message = ":" + old_nickname + " NICK :" + _value + "\n";
+    send(client_fd, confirmation_message.c_str(), confirmation_message.size(), 0);
+
+    // Envoi du changement de pseudo à tous les clients des mêmes canaux
+    for (int i = 0; i < channels.size(); i++){
+        if (channels[i]->is_in_channel(old_nickname)){
+            std::string message = NICK_CHANGE(old_nickname, _value);
+            channels[i]->send_message_to_all(message, client_fd); // Envoie à tous les autres clients du canal
         }
     }
 
+
     return true;
 }
+
 
 bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {

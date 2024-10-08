@@ -24,6 +24,7 @@ class Channel
         void add_client(const std::string &name, const int fd_client, Client &client_actif);
         void send_message_to_all(const std::string &message, const int fd_client);
         void send_welcome_message(const std::string &name, const int fd_client);
+        bool is_in_channel(const std::string &name);
 
         bool authorization_check(const std::string &nickname);
 

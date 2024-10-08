@@ -22,15 +22,13 @@ class Parse;
 class Join
 {
     public:
-
         Join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, std::string value);
         ~Join();
         bool init_cmd_join();
 
     private:
-    
-        std::vector<Client*> _clients_list;
-        std::vector<Channel*> _channels_list;
+        std::vector<Client*> &_clients_list;
+        std::vector<Channel*> &_channels_list;  // <- Passe par référence ici
         std::string _value;
         Client *_client_actif;
         int _fd;
@@ -40,5 +38,4 @@ class Join
         bool _check_invalid_char_join(const std::string &chan_name, int client_fd, Client &client_actif);
         bool _process_channel(const std::string &chan_name);
         void creation_channel(std::string channel_name, std::string nickname);
-
 };

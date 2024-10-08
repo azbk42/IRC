@@ -18,7 +18,7 @@ void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
     std::string old_nick = get_nickname();
     int socket = get_socket_fd();
     set_nickname(new_nickname);
-    // quand un mec change de pseudo on informe tous les channels
+    
     
     //envoyer le message au client comme quoi on a bien changer de pseudo
     send(client_socket, NICK_CHANGE(old_nick, new_nickname), strlen(NICK_CHANGE(old_nick, new_nickname)), 0);
@@ -41,30 +41,6 @@ void Client::minus_nb_channel()
 {
     if (_nb_chan > 0)
         _nb_chan -= 1;
-}
-
-// rejoindre un channel
-void Client::handle_cmd_join(const std::string &channel_name)
-{
-    
-}
-
-// leave un channel
-void Client::handle_cmd_part(const std::string &channel_name)
-{
-
-}
-
-// envoyer un mess prive
-void Client::handle_cmd_privmsg(const std::string &message, const std::string &target)
-{
-
-}
-
-// quitter le serveur avec un message
-void Client::handle_cmd_quit(const std::string &message)
-{
-
 }
 
 // ################################################################################

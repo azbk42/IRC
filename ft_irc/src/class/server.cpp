@@ -191,7 +191,7 @@ void Server::process_message(int fd)
 			if (parser.get_cmd() == "PING")
 				parser.parse_ping(_clients_array, fd, *client_actif);
 			if (parser.get_cmd() == "NICK")
-				parser.parse_nick(_clients_array, fd, *client_actif);
+				parser.parse_nick(_clients_array, fd, *client_actif, _channels_array);
 			if (parser.get_cmd() == "USER")
 				parser.parse_user(_clients_array, fd, *client_actif); // Passer par référence
 		}

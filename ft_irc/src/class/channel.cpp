@@ -34,12 +34,14 @@ void Channel::modif_topic(const std::string &topic)
 
 void Channel::send_message_to_all(const std::string &message, const int fd_client)
 {
-    for (std::map<std::string, int>::iterator it = _client.begin(); it != _client.end(); ++it){
-        if (it->second != fd_client){
+    for (std::map<std::string, int>::iterator it = _client.begin(); it != _client.end(); ++it) {
+        // On n'envoie pas le message au client qui a changé son pseudo
+        if (it->second != fd_client) {
             send(it->second, message.c_str(), message.size(), 0);
         }
     }
 }
+
 
 
 // ################################################################################
@@ -78,6 +80,14 @@ void Channel::send_welcome_message(const std::string &client, const int fd_clien
 // ################################################################################
 // #                                                                              #
 // ################################################################################
+
+bool Channel::is_in_channel(const std::string &name)
+{
+    if (_client.find(name) != _client.end())
+        return true;
+    else
+        return false;
+}
 
 void Channel::add_client(const std::string &name, const int fd_client, Client &client_actif)
 {
