@@ -28,8 +28,6 @@
 #define ERR_CHANNELNAMETOOLONG(client, channel) (":" + client + " 403 " + channel + " :Channel name is too long (maximum is 50 characters)\r\n")
 #define ERR_TOOMANYCHANNELS(client, channel) (":" + client + " 405 " + channel + "r\n")
 
-
-
 // ################################################################################
 // #                                    VALID IRSSI                               #
 // ################################################################################

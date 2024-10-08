@@ -96,9 +96,18 @@ bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd,
     return true;
 }
 
+void Join::creation_channel(std::string channel_name, std::string nickname)
+{
+    Channel *chan = new Channel(channel_name);
+    _channels_list.push_back(chan);
+    int len = _channels_list.size() - 1; // -> on doit calculer a chaque fois pour bien utiliser les method du dernier channel de la list ( celui quon vient de creer)
+    _channels_list[len]->add_client(nickname, _fd, *_client_actif);
+}
+
 bool Join::_process_channel(const std::string &chan_name)
 {
     std::string nickname = _client_actif->get_nickname();
+
     if (_client_actif->check_nb_chan() == false){
         std::cout << "ERROR TO MUCH CHAN" << std::endl;
        std::string error_message = ERR_TOOMANYCHANNELS(nickname, chan_name);
@@ -122,10 +131,7 @@ bool Join::_process_channel(const std::string &chan_name)
         }
     }
     // ajout channel non cree
-    Channel *chan = new Channel(channel_name);
-    _channels_list.push_back(chan);
-    int len = _channels_list.size() - 1; // -> on doit calculer a chaque fois pour bien utiliser les method du dernier channel de la list ( celui quon vient de creer)
-    _channels_list[len]->add_client(nickname, _fd, *_client_actif);
+    creation_channel(channel_name, nickname);
 
     return true;
 }
