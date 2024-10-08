@@ -26,6 +26,7 @@
 #define ERR_INVITEONLYCHAN(client, channel) (client + " 473 #" + channel + " :Cannot join channel (+i) - Invite only\r\n")
 #define ERR_NOSUCHCHANNEL(client, channel) (":" + client + " 403 " + channel + " :No such channel\r\n")
 #define ERR_CHANNELNAMETOOLONG(client, channel) (":" + client + " 403 " + channel + " :Channel name is too long (maximum is 50 characters)\r\n")
+#define ERR_TOOMANYCHANNELS(client, channel) (":" + client + " 405 " + channel + "r\n")
 
 
 

@@ -44,6 +44,10 @@ class Client
         void set_away(bool status);
         void set_connected(bool status);
         void set_user_setup();
+        
+        void add_nb_channel();
+        void minus_nb_channel();
+        bool check_nb_chan();
 
         // s'occuper de la commande USER
         void handle_cmd_user(std::string &user_infos);
@@ -74,6 +78,7 @@ class Client
         std::string _server_name;
         std::string _host_name;
         int _socket_fd;
+        int _nb_chan;
 
         //std::chrono::time_point<std::chrono::system_clock> _arrival_time;
 

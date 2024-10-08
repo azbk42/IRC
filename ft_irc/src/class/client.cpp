@@ -24,6 +24,24 @@ void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
     send(client_socket, NICK_CHANGE(old_nick, new_nickname), strlen(NICK_CHANGE(old_nick, new_nickname)), 0);
 
 }
+bool Client::check_nb_chan()
+{
+    std::cout << "NB CHAN = " << _nb_chan << std::endl;
+    if (_nb_chan >= 5)
+        return false;
+    else
+        return true;
+}
+
+void Client::add_nb_channel()
+{
+    _nb_chan += 1;
+}
+void Client::minus_nb_channel()
+{
+    if (_nb_chan > 0)
+        _nb_chan -= 1;
+}
 
 // rejoindre un channel
 void Client::handle_cmd_join(const std::string &channel_name)
@@ -122,7 +140,7 @@ void Client::set_user_setup()
 // ################################################################################
 
 Client::Client(int socket): _real_name("real_name"), _server_name("server"), _host_name("host"), _socket_fd(socket),\
-            _user_setup(false), _away(false), _connected(true), _username("username")
+            _user_setup(false), _away(false), _connected(true), _username("username"), _nb_chan(0)
 {
     //_arrival_time = std::chrono::system_clock::now();
 

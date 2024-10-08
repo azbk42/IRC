@@ -83,6 +83,7 @@ void Channel::add_client(const std::string &name, const int fd_client, Client &c
 {
     this->_client[name] = fd_client;
     this->_nb_client += 1;
+    client_actif.add_nb_channel();
     if (_nb_client == 1){
         _operator.push_back(name);
     }
