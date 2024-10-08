@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/07 15:47:29 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/08 15:38:21 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class Server //-> class for server
 		
 		int GetFd() const; //-> getter for fd
 		int GetPort() const; //-> getter for port
+		std::string GetPassword() const; //-> getter for password
 		
 		void InitListener(); //-> initialize and get the listener socket
 		void Polling(); //-> poll()

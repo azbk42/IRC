@@ -6,11 +6,12 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/07 15:48:35 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/08 15:50:21 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
+#include "pass.hpp"
 
 bool Server::_signal = false;
 
@@ -59,7 +60,9 @@ Server &Server::operator=(const Server &rhs)
 
 int Server::GetFd() const {return _serverFd;}
 
-int Server::GetPort() const {return _port;} 
+int Server::GetPort() const {return _port;}
+
+std::string Server::GetPassword() const {return _password;}
 
 // ################################################################################
 // #                                  CLOSE FDS                                   #
@@ -166,10 +169,9 @@ void Server::process_message(int fd)
 		}
 		// Vérifier si un client a été trouvé
 		if (client_actif != NULL && client_actif->get_checked_pwd() == false) {
-			if (parser.get_cmd() == "PASS"){
-				bool status = check_pass(fd, parser.get_value());
-				if (status == true)
-					client_actif->set_checked_pwd(status);
+			if (parser.get_cmd() == "PASS") {
+				Pass command(fd, parser.get_value(), client_actif, this);
+				command.check_pass();
 			}
 			else if (parser.get_cmd() == "CAP"){
 				continue;
@@ -198,17 +200,17 @@ void Server::process_message(int fd)
 	}
 }
 
-bool Server::check_pass(int client_fd, std::string enteredPwd){
-    std::string server_name = SERVER_NAME;
-	if (enteredPwd != _password){
-        std::cout << RED << "Password incorrect" << std::endl;
-		send(client_fd, ERR_PASSWDMISMATCH(server_name), strlen(ERR_PASSWDMISMATCH(server_name)), 0);
-        CloseClientSocket(client_fd);
-		return (false);
-    }
-	std::cout << GREEN << "Password correct" << std::endl;
-	return (true);
-}
+// bool Server::check_pass(int client_fd, std::string enteredPwd){
+//     std::string server_name = SERVER_NAME;
+// 	if (enteredPwd != _password){
+//         std::cout << RED << "Password incorrect" << std::endl;
+// 		send(client_fd, ERR_PASSWDMISMATCH(server_name), strlen(ERR_PASSWDMISMATCH(server_name)), 0);
+//         CloseClientSocket(client_fd);
+// 		return (false);
+//     }
+// 	std::cout << GREEN << "Password correct" << std::endl;
+// 	return (true);
+// }
 
 void Server::ReceiveData(int fd)
 {

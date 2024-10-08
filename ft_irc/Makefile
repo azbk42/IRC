@@ -4,7 +4,7 @@
 
 NAME = ircserv
 CC = c++
-CFLAGS = -g3 -std=c++98 -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/class
+CFLAGS = -g3 -std=c++98 -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/class/cmd -I$(INCLUDE_DIR)/class
 MAKEFLAGS += --no-print-directory
 
 ################################################################################
@@ -13,17 +13,20 @@ MAKEFLAGS += --no-print-directory
 
 SRC_DIR = src
 CLASS_DIR = $(SRC_DIR)/class
+CMD_DIR = $(CLASS_DIR)/cmd
 INCLUDE_DIR = ./includes
 
 # fichier in src/class
 SRC_CLASS = server.cpp client.cpp parse.cpp channel.cpp
 
+SRC_CMD = pass.cpp
 # fichier in src/
 SRC_FILES = handle_arg.cpp
 
 
 SRC = $(addprefix $(CLASS_DIR)/, $(SRC_CLASS)) \
       $(addprefix $(SRC_DIR)/, $(SRC_FILES)) \
+	  $(addprefix $(CMD_DIR)/, $(SRC_CMD)) \
 		main.cpp
 
 ################################################################################
