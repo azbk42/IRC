@@ -89,6 +89,9 @@ bool Client::get_status_connected() const {return _connected;};
 
 bool Client::get_user_setup() const {return _user_setup;};
 
+bool Client::get_checked_pwd() const {return _checked_pwd;};
+
+
 
 // ################################################################################
 // #                                    SET                                       #
@@ -135,12 +138,17 @@ void Client::set_user_setup()
     _user_setup = true;
 }
 
+void Client::set_checked_pwd(bool status)
+{
+	_checked_pwd = status;
+}
+
 // ################################################################################
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################
 
 Client::Client(int socket): _real_name("real_name"), _server_name("server"), _host_name("host"), _socket_fd(socket),\
-            _user_setup(false), _away(false), _connected(true), _username("username"), _nb_chan(0)
+            _user_setup(false), _away(false), _connected(true), _username("username"), _checked_pwd(false), _nb_chan(0)
 {
     //_arrival_time = std::chrono::system_clock::now();
 
@@ -151,7 +159,6 @@ Client::Client(int socket): _real_name("real_name"), _server_name("server"), _ho
 }
 Client::Client()
 {
-
 
 }
 

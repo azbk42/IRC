@@ -1,8 +1,8 @@
 
 Commandes restantes:
     sever class:
-    - definir le mot de pass pour pouvoir se co au serveur
-    - parsing de PASS dans la class server
+    - definir le mot de pass pour pouvoir se co au serveur - done
+    - parsing de PASS dans la class server - done
     - je pense - parsing de QUIT dans la class server
     - parsing de LIST dans le server pour savoir tous les diffrents noms de channels class server
 

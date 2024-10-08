@@ -19,8 +19,7 @@ INCLUDE_DIR = ./includes
 # fichier in src/class
 SRC_CLASS = server.cpp client.cpp parse.cpp channel.cpp
 
-SRC_CMD = join.cpp
-
+SRC_CMD = join.cpp pass.cpp
 # fichier in src/
 SRC_FILES = handle_arg.cpp
 
