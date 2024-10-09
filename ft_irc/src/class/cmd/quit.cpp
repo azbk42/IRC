@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:02:05 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/08 18:25:39 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:46:40 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void Quit::send_quit_msg() {
 	// The QUIT command is used to terminate a client’s connection to the server. 
 	// The server acknowledges this by replying with an ERROR message and closing the connection to the client.
 
-	
+
 	// If a client connection is closed without the client issuing a QUIT command to the server, 
 	//the server MUST distribute a QUIT message to other clients informing them of this, 
 	// distributed in the same was an ordinary QUIT message. 
