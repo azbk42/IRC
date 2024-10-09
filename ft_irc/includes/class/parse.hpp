@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include "define.hpp"
 #include "client.hpp"
+#include "nick.hpp"
 #include "channel.hpp"
 #include "join.hpp"
 

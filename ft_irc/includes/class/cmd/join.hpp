@@ -28,7 +28,7 @@ class Join
 
     private:
         std::vector<Client*> &_clients_list;
-        std::vector<Channel*> &_channels_list;  // <- Passe par référence ici
+        std::vector<Channel*> &_channels_list;
         std::string _value;
         Client *_client_actif;
         int _fd;

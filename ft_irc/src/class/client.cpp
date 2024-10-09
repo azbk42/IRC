@@ -14,7 +14,7 @@ void Client::handle_cmd_user(std::string &user_infos)
 
 void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
 {
-    // LES ERREURS ON ETE SETUP POUR LUI
+    // LES ERREURS ONT ETE SETUP POUR LUI
     std::string old_nick = get_nickname();
     int socket = get_socket_fd();
     set_nickname(new_nickname);
@@ -26,7 +26,6 @@ void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
 }
 bool Client::check_nb_chan()
 {
-    std::cout << "NB CHAN = " << _nb_chan << std::endl;
     if (_nb_chan >= 5)
         return false;
     else

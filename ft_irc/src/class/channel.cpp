@@ -120,6 +120,13 @@ bool Channel::authorization_check(const std::string &nickname)
 
 }
 
+void Channel::update_name_client(const std::string &old_nickname, const std::string &new_nickname)
+{
+    int client_fd = _client[old_nickname];
+    _client.erase(old_nickname);
+    _client[new_nickname] = client_fd;
+}
+
 // ################################################################################
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################

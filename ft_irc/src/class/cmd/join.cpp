@@ -45,11 +45,7 @@ std::map<std::string, std::string> Join::_init_channel_map(std::string str)
             channels[channels_list[i]] = "";  // Aucun mot de passe fourni, chaîne vide
         }
     }
-
-    std::cout << "Channels and passwords:" << std::endl;
-    for (std::map<std::string, std::string>::const_iterator it = channels.begin(); it != channels.end(); ++it) {
-        std::cout << "Channel: " << it->first << ", Password: " << (it->second.empty() ? "No password" : it->second) << std::endl;
-    }
+    
     return channels;
 }
 
@@ -109,8 +105,8 @@ bool Join::_process_channel(const std::string &chan_name)
     std::string nickname = _client_actif->get_nickname();
 
     if (_client_actif->check_nb_chan() == false){
-        std::cout << "ERROR TO MUCH CHAN" << std::endl;
-       std::string error_message = ERR_TOOMANYCHANNELS(nickname, chan_name);
+        std::cout << RED << "ERROR TO MUCH CHAN" << WHITE << std::endl;
+        std::string error_message = ERR_TOOMANYCHANNELS(nickname, chan_name);
         send(_fd, error_message.c_str(), error_message.size(), 0);
         return false;
     }
@@ -141,7 +137,7 @@ bool Join::init_cmd_join()
     map_channel = _init_channel_map(_value);
 
     for (std::map<std::string, std::string>::const_iterator it = map_channel.begin(); it != map_channel.end(); ++it) {
-        std::cout << "Channel: " << it->first << ", Password: " << (it->second.empty() ? "No password" : it->second) << std::endl;
+       //std::cout << "Channel: " << it->first << ", Password: " << (it->second.empty() ? "No password" : it->second) << std::endl;
    
         if (_check_invalid_char_join(it->first, _fd, *_client_actif) == false){
             continue;
