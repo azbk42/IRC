@@ -13,6 +13,8 @@ std::string Channel::get_password() const {return _password;};
 
 bool Channel::get_pass() const {return _pass;};
 
+std::map<std::string, int> Channel::get_clients() const {return _client;};
+
 
 void Channel::set_i(const std::string &i)
 {
@@ -34,13 +36,13 @@ void Channel::modif_topic(const std::string &topic)
 
 void Channel::send_message_to_all(const std::string &message, const int fd_client)
 {
-    for (std::map<std::string, int>::iterator it = _client.begin(); it != _client.end(); ++it){
-        if (it->second != fd_client){
+    for (std::map<std::string, int>::iterator it = _client.begin(); it != _client.end(); ++it) {
+        // On n'envoie pas le message au client qui a changé son pseudo
+        if (it->second != fd_client) {
             send(it->second, message.c_str(), message.size(), 0);
         }
     }
 }
-
 
 // ################################################################################
 // #                                 WELCOME MESSAGE                              #
@@ -79,6 +81,14 @@ void Channel::send_welcome_message(const std::string &client, const int fd_clien
 // #                                                                              #
 // ################################################################################
 
+bool Channel::is_in_channel(const std::string &name)
+{
+    if (_client.find(name) != _client.end())
+        return true;
+    else
+        return false;
+}
+
 void Channel::add_client(const std::string &name, const int fd_client, Client &client_actif)
 {
     this->_client[name] = fd_client;
@@ -110,11 +120,18 @@ bool Channel::authorization_check(const std::string &nickname)
 
 }
 
+void Channel::update_name_client(const std::string &old_nickname, const std::string &new_nickname)
+{
+    int client_fd = _client[old_nickname];
+    _client.erase(old_nickname);
+    _client[new_nickname] = client_fd;
+}
+
 // ################################################################################
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################
 
-Channel::Channel(std::string &name): 
+Channel::Channel(const std::string &name): 
     _name_channel(name), _topic(""), _password(""), _pass(false), _nb_client(0),
     _i(false)
 {

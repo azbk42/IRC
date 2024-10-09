@@ -21,53 +21,17 @@ std::string Parse::get_value() const {
 // #                                   PARSING                                    #
 // ################################################################################
 
-bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, Server* server)
 {
-    std::string server_name = SERVER_NAME;
-    std::string nick = _value;
-
-    if (_value.empty()){
-        send(client_fd, ERR_NONICKNAMEGIVEN(server_name), strlen(ERR_NONICKNAMEGIVEN(server_name)), 0);
-        _value.clear();
-        return false;
-    }
-
-    if (_value.size() > 9 || !isalpha(_value[0])) {
-        // Envoi de l'erreur ERR_ERRONEUSNICKNAME
-        send(client_fd, ERR_ERRONEUSNICKNAME(server_name, nick), strlen(ERR_ERRONEUSNICKNAME(server_name, nick)), 0);
-        _value.clear();
-        return false;
-    }
-
-    // Handle invalid character
-    for (size_t i = 1; i < _value.size(); ++i) {
-        if (!isalnum(_value[i]) && _value.find_first_of("-[]\{}_|") == std::string::npos) {
-            send(client_fd, ERR_ERRONEUSNICKNAME(server_name, _value), strlen(ERR_ERRONEUSNICKNAME(server_name, _value)), 0);
-            return false;
-        }
-    }
-    // Handle identic nickname
-    for (int i = 0; i < clients_list.size(); i++){
-        if (clients_list[i]->get_nickname() == _value){
-            send(client_fd, ERR_NICKNAMEINUSE(server_name, nick), strlen(ERR_NICKNAMEINUSE(server_name, nick)), 0);
-            return false;
-        }
-    }
-
-    // Tout est ok, on regarde quel client correspond au fd et on le change
-    // Il faut maintenant avertir tous les clients des meme channels
-    for (int i = 0; i < clients_list.size(); i++){
-        if (clients_list[i]->get_socket_fd() == client_fd){
-            clients_list[i]->handle_cmd_nick(_value, client_fd);
-        }
-    }
+    Nick command(clients_list, client_fd, client_actif, channels);
+    command.init_cmd_nick(_value, server);
 
     return true;
 }
 
+
 bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
-
     Join command(clients_list, client_fd, client_actif, channels, _value);
     command.init_cmd_join();
 

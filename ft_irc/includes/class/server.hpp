@@ -38,6 +38,7 @@ class Server //-> class for server
 {
 	private:
 		static bool _signal; //-> signal for sigint
+		bool _first_nick;
 		int _port; //-> server port
 		int _serverFd; //-> server socket file descriptor
 		std::string _password; //-> server password
