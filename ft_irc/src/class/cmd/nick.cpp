@@ -5,6 +5,13 @@
 // #                                    METHOD                                    #
 // ################################################################################
 
+std::string Nick::to_uppercase(const std::string &str) 
+{
+    std::string upper_str = str;
+    std::transform(upper_str.begin(), upper_str.end(), upper_str.begin(), ::toupper);
+    return upper_str;
+}
+
 bool Nick::check_all_errors(const std::string &new_nickname)
 {
     // penser a rajouter la verif si un utilisateur porte deja le nickname au debut de la connexion
@@ -29,16 +36,19 @@ bool Nick::check_all_errors(const std::string &new_nickname)
         }
     }
 
+    std::string uppercase_nickname = to_uppercase(new_nickname);
+    std::string nick_compare;
     // verif si le pseudo est déjà utilisé
+    // comparaison des deux nickname en uppercase
     for (int i = 0; i < _clients_list.size(); i++){
-        if (_clients_list[i]->get_nickname() == new_nickname){
+        nick_compare = _clients_list[i]->get_nickname();
+        if (nick_compare == uppercase_nickname){
             send(_fd, ERR_NICKNAMEINUSE(server_name, new_nickname), strlen(ERR_NICKNAMEINUSE(server_name, new_nickname)), 0);
             return false;
         }
     }
 
     return true;
-
 }
 
 void Nick::send_message_to_all_one_time(const std::string &message, const int i, std::set<int> &clients_already_notified)
@@ -99,18 +109,18 @@ bool Nick::modification_actual_nickname(const std::string &new_nickname)
     return true;
 }
 
-bool Nick::init_cmd_nick(const std::string &new_nickname)
+bool Nick::init_cmd_nick(const std::string &new_nickname, Server *server)
 {
-    if (check_all_errors(new_nickname) == false){
+    if (check_all_errors(new_nickname) == false || \
+        modification_actual_nickname(new_nickname) == false){
         std::cerr << RED << "Error in nickname creation" << WHITE << std::endl;
+
+        if (_client_actif->GetFirstNick() == true)
+            server->CloseClientSocket(_fd);
         return false;
     }
 
-    if (modification_actual_nickname(new_nickname) == false ){
-        std::cerr << RED << "Error in nickname creation" << WHITE << std::endl;
-        return false;
-    }
-
+    _client_actif->SetFirstNick();
     return true;
 }
 

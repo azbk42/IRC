@@ -65,6 +65,12 @@ int Server::GetPort() const {return _port;}
 std::string Server::GetPassword() const {return _password;}
 
 // ################################################################################
+// #                                    SET                                       #
+// ################################################################################
+
+
+
+// ################################################################################
 // #                                  CLOSE FDS                                   #
 // ################################################################################
 void Server::CloseServerFd()
@@ -151,10 +157,9 @@ void Server::process_message(int fd)
 {
 	size_t newline_pos;
 	while ((newline_pos = _partial_message[fd].find('\n')) != std::string::npos) {
-		// Extract the complete message up to the newline
+		
 		std::string complete_message = _partial_message[fd].substr(0, newline_pos + 1);
 
-		// Remove the processed message from the buffer
 		_partial_message[fd].erase(0, newline_pos + 1);
 
 		std::cout << YELLOW << "Client <" << fd << "> Data: " << WHITE << complete_message << std::endl;
@@ -178,7 +183,8 @@ void Server::process_message(int fd)
 			}
 			else {
 				send(fd, "Please enter password", 21, 0);
-				CloseClientSocket(fd);}
+				CloseClientSocket(fd);
+			}
 		}
 		else if (client_actif != NULL && client_actif->get_checked_pwd() == true) {
 			// PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
@@ -191,9 +197,9 @@ void Server::process_message(int fd)
 			if (parser.get_cmd() == "PING")
 				parser.parse_ping(_clients_array, fd, *client_actif);
 			if (parser.get_cmd() == "NICK")
-				parser.parse_nick(_clients_array, fd, *client_actif, _channels_array);
+				parser.parse_nick(_clients_array, fd, *client_actif, _channels_array, this);
 			if (parser.get_cmd() == "USER")
-				parser.parse_user(_clients_array, fd, *client_actif); // Passer par référence
+				parser.parse_user(_clients_array, fd, *client_actif);
 		}
 		else {
 			std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
@@ -233,7 +239,7 @@ void Server::ReceiveData(int fd)
 		std::string message(buffer);
 		_partial_message[fd] += message;
 		process_message(fd);
-		}
+	}
 		
 		std::cout << YELLOW << "-----------------------------------------------------" << WHITE << std::endl;
 		//SendtoAll(fd, buffer, bytesRecv);

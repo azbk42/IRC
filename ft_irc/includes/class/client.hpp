@@ -30,6 +30,7 @@ class Client
         std::string get_server_name() const;
         std::string get_hostname() const;
         std::string get_username() const;
+        bool GetFirstNick() const;
 
         int get_socket_fd() const;
         bool get_status_away() const;
@@ -46,6 +47,7 @@ class Client
         void set_connected(bool status);
         void set_user_setup();
 		void set_checked_pwd(bool status);
+        void SetFirstNick();
         
         void add_nb_channel();
         void minus_nb_channel();
@@ -66,7 +68,8 @@ class Client
         bool _user_setup;
         bool _away;
         bool _connected;
-
+        bool _first_nick;
+        
         std::string _real_name;
         std::string _nickname;
         std::string _username;

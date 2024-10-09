@@ -66,12 +66,18 @@ bool Client::get_user_setup() const {return _user_setup;};
 
 bool Client::get_checked_pwd() const {return _checked_pwd;};
 
+bool Client::GetFirstNick() const {return _first_nick;};
+
+
+
 
 
 // ################################################################################
 // #                                    SET                                       #
 // ################################################################################
-// rajouter une gestion d'erreur sur le nickname
+
+void Client::SetFirstNick() { _first_nick = false;};
+
 void Client::set_nickname(const std::string &nickname)
 {
     _nickname = nickname;
@@ -123,7 +129,8 @@ void Client::set_checked_pwd(bool status)
 // ################################################################################
 
 Client::Client(int socket): _real_name("real_name"), _server_name("server"), _host_name("host"), _socket_fd(socket),\
-            _user_setup(false), _away(false), _connected(true), _username("username"), _checked_pwd(false), _nb_chan(0)
+            _user_setup(false), _away(false), _connected(true), _username("username"), _checked_pwd(false), _nb_chan(0),
+            _first_nick(true)
 {
     //_arrival_time = std::chrono::system_clock::now();
 

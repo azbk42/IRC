@@ -21,10 +21,10 @@ std::string Parse::get_value() const {
 // #                                   PARSING                                    #
 // ################################################################################
 
-bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, Server* server)
 {
     Nick command(clients_list, client_fd, client_actif, channels);
-    command.init_cmd_nick(_value);
+    command.init_cmd_nick(_value, server);
 
     return true;
 }
