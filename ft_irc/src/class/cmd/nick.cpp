@@ -41,25 +41,57 @@ bool Nick::check_all_errors(const std::string &new_nickname)
 
 }
 
+void Nick::send_message_to_all_one_time(const std::string &message, const int i, std::set<int> &clients_already_notified)
+{
+    // Parcourir tous les clients dans le canal i
+    // recuperation de la liste des clients present dans le chan avec leur fd
+    std::map<std::string, int> map = _channels_list[i]->get_clients(); 
+    
+    std::map<std::string, int>::iterator it;
+    
+    for (it = map.begin(); it != map.end(); ++it) {
+        int client_fd = it->second;
+
+        // verif si le client a deja ete notif
+        if (clients_already_notified.find(client_fd) == clients_already_notified.end()) {
+            
+            send(client_fd, message.c_str(), message.size(), 0);
+
+            // add le client a la liste des clients qui ont deja recu le mess
+            clients_already_notified.insert(client_fd);
+        }
+    }
+}
+
+
 bool Nick::modification_actual_nickname(const std::string &new_nickname)
 {
 
     // changement du pseudo
     std::string old_nickname = _client_actif->get_nickname();
+
     _client_actif->set_nickname(new_nickname);
     
     std::string confirmation_message = ":" + old_nickname + " NICK :" + new_nickname + "\n";
     send(_fd, confirmation_message.c_str(), confirmation_message.size(), 0);
 
+    // set cest pour avoir une liste ou il ne peut pas avoir de doublon
+    // donc je stock ici les fd qui ont deja recu un message pour ne pas leur envoyer deux fois
+    std::set<int> clients_already_notified;
+    clients_already_notified.insert(_fd);
+
     // send a tous les gens qui se trouve dans le meme chan
     for (int i = 0; i < _channels_list.size(); i++){
         if (_channels_list[i]->is_in_channel(old_nickname)){
+            
             std::string message = NICK_CHANGE(old_nickname, new_nickname);
-            _channels_list[i]->send_message_to_all(message, _fd);
+            send_message_to_all_one_time(message, i, clients_already_notified);
+
+            // je change le nom du client dans la <map> _client du channel
             _channels_list[i]->update_name_client(old_nickname, new_nickname);
         }
     }
-    // il faut que jupdate le old nick en nick name dans les channels
+
     return true;
 }
 

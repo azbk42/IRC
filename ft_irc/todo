@@ -27,12 +27,6 @@ creation des channels quand on fait JOIN done
 
 On doit setup la commande WHOIS qui genere les erreurs quand on essaye de se co a plusieurs sur un channel
 
-variable signal en haut de server.cpp:
-    - A voir si on ne peut pas l'init dans le constructeur de server(): _signal(false)
-
-jai change le vector de client en "_clients_array" 
-pour plus de lisibilite quand on traitera que 1 client avec une variable "client"
-
 
 commande pour se connecter directement a irssi avec les infos que lon veut
 

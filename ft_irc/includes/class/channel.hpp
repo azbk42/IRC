@@ -17,7 +17,7 @@ class Channel
 {
     public:
 
-        Channel(std::string &name);
+        Channel(const std::string &name);
         ~Channel();
 
         void modif_topic(const std::string &topic);
@@ -33,6 +33,7 @@ class Channel
         std::string get_topic() const;
         std::string get_password() const;
         bool get_pass() const;
+        std::map<std::string, int> get_clients() const;
 
         void set_i(const std::string &i);
 

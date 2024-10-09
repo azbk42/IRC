@@ -13,6 +13,8 @@ std::string Channel::get_password() const {return _password;};
 
 bool Channel::get_pass() const {return _pass;};
 
+std::map<std::string, int> Channel::get_clients() const {return _client;};
+
 
 void Channel::set_i(const std::string &i)
 {
@@ -41,8 +43,6 @@ void Channel::send_message_to_all(const std::string &message, const int fd_clien
         }
     }
 }
-
-
 
 // ################################################################################
 // #                                 WELCOME MESSAGE                              #
@@ -131,7 +131,7 @@ void Channel::update_name_client(const std::string &old_nickname, const std::str
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################
 
-Channel::Channel(std::string &name): 
+Channel::Channel(const std::string &name): 
     _name_channel(name), _topic(""), _password(""), _pass(false), _nb_client(0),
     _i(false)
 {
