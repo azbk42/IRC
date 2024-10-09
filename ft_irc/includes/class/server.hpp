@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/08 17:05:53 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:12:23 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 #include "client.hpp"
 #include "parse.hpp"
 #include "include.hpp"
+#include "pass.hpp"
+#include "list.hpp"
 
 class Server //-> class for server
 {

@@ -34,10 +34,9 @@ class Channel
         std::string get_password() const;
         bool get_pass() const;
         std::map<std::string, int> get_clients() const;
+		size_t get_nb_client() const;
 
         void set_i(const std::string &i);
-		bool is_in_channel(const std::string &name);
-
 
 
     private:

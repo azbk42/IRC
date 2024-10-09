@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:05:01 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/08 18:29:39 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:08:28 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,19 @@
 
 #include "channel.hpp"
 
-// class List{
-// 	private:
-// 		std::vector<Channel*> _channels_array;
-// 		int _client_fd;
+class List{
+	private:
+		int _client_fd;
+		std::vector<Channel*> _channels_array;
+		Client *_client;
 		
-// 	public:
-// 		List(std::vector<Channel*> channels_array, int client_fd);
-// 		~List();
+	public:
+		List(Client *client_actif, std::vector<Channel*> channels_array, int client_fd);
+		~List();
 		
-// 		void send_list();
-// }
+		void send_list();
+		void send_channel(std::string client_name, std::string server_name, Channel *channel);
+		std::string int_to_string(int value);
+};
 
 #endif

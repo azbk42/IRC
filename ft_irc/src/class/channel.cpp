@@ -15,6 +15,9 @@ bool Channel::get_pass() const {return _pass;};
 
 std::map<std::string, int> Channel::get_clients() const {return _client;};
 
+size_t Channel::get_nb_client() const {return _nb_client;};
+
+
 
 void Channel::set_i(const std::string &i)
 {
@@ -143,10 +146,10 @@ Channel::~Channel()
 
 }
 
-bool Channel::is_in_channel(const std::string &name)
-{
-    if (_client.find(name) != _client.end())
-        return true;
-    else
-        return false;
-}
+// bool Channel::is_in_channel(const std::string &name)
+// {
+//     if (_client.find(name) != _client.end())
+//         return true;
+//     else
+//         return false;
+// }

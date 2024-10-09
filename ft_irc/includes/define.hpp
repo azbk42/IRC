@@ -11,22 +11,29 @@
 // ################################################################################
 
 // ERROR NICK
-#define ERR_NICKNAMEINUSE(client, nick) (client + " " + nick + " :Nickname is already in use\r\n").c_str()
-#define ERR_ERRONEUSNICKNAME(client, nick) (client + " " + nick + " :Erroneous nickname\r\n").c_str()
-#define ERR_NONICKNAMEGIVEN(client) (client + " :No nickname given\r\n").c_str()
+#define ERR_NICKNAMEINUSE(server, nick) (server + " " + nick + " :Nickname is already in use\r\n").c_str()
+#define ERR_ERRONEUSNICKNAME(server, nick) (server + " " + nick + " :Erroneous nickname\r\n").c_str()
+#define ERR_NONICKNAMEGIVEN(server) (server + " :No nickname given\r\n").c_str()
 // ERROR USER
-#define ERR_NEEDMOREPARAMS(command, client) (":" + server_name + " 461 " + client + " " + command + \
+#define ERR_NEEDMOREPARAMS(command, server) (":" + server_name + " 461 " + server + " " + command + \
                             " :Not enough parameters\r\n").c_str()
-#define ERR_ALREADYREGISTERED(client) (":" + server_name + " 462 " + client + " :You may not reregister\r\n").c_str()
+#define ERR_ALREADYREGISTERED(server) (":" + server_name + " 462 " + server + " :You may not reregister\r\n").c_str()
 
 // ERROR PASS
-#define ERR_PASSWDMISMATCH(client) (":" + server_name + " 464 " + client + " :Password incorrect\r\n").c_str()
+#define ERR_PASSWDMISMATCH(server) (":" + server_name + " 464 " + server + " :Password incorrect\r\n").c_str()
 
 // ERROR JOIN
-#define ERR_INVITEONLYCHAN(client, channel) (client + " 473 #" + channel + " :Cannot join channel (+i) - Invite only\r\n")
-#define ERR_NOSUCHCHANNEL(client, channel) (":" + client + " 403 " + channel + " :No such channel\r\n")
-#define ERR_CHANNELNAMETOOLONG(client, channel) (":" + client + " 403 " + channel + " :Channel name is too long (maximum is 50 characters)\r\n")
-#define ERR_TOOMANYCHANNELS(client, channel) (":" + client + " 405 " + channel + "r\n")
+#define ERR_INVITEONLYCHAN(server, channel) (server + " 473 #" + channel + " :Cannot join channel (+i) - Invite only\r\n")
+#define ERR_NOSUCHCHANNEL(server, channel) (":" + server + " 403 " + channel + " :No such channel\r\n")
+#define ERR_CHANNELNAMETOOLONG(server, channel) (":" + server + " 403 " + channel + " :Channel name is too long (maximum is 50 characters)\r\n")
+#define ERR_TOOMANYCHANNELS(server, channel) (":" + server + " 405 " + channel + "r\n")
+
+// ################################################################################
+// #                                    REPLIES IRSSI                               #
+// ################################################################################
+
+#define RPL_LIST(server, channel, client_count, topic) (":" + server_name + " 322 " + server + " #" + channel + " " + client_count + " :" + topic + "\r\n").c_str()
+#define RPL_LISTEND(server) (":" + server_name + " 323 " + server + " :End of /LIST\r\n").c_str()
 
 // ################################################################################
 // #                                    VALID IRSSI                               #
