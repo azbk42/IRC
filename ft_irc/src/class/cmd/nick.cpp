@@ -72,6 +72,7 @@ bool Nick::modification_actual_nickname(const std::string &new_nickname)
 
     _client_actif->set_nickname(new_nickname);
     
+    // ici cest le message pour envoyer au client emeteur
     std::string confirmation_message = ":" + old_nickname + " NICK :" + new_nickname + "\n";
     send(_fd, confirmation_message.c_str(), confirmation_message.size(), 0);
 
@@ -82,9 +83,12 @@ bool Nick::modification_actual_nickname(const std::string &new_nickname)
 
     // send a tous les gens qui se trouve dans le meme chan
     for (int i = 0; i < _channels_list.size(); i++){
+        // pour savoir si le client emeteur est dans le channel
         if (_channels_list[i]->is_in_channel(old_nickname)){
             
             std::string message = NICK_CHANGE(old_nickname, new_nickname);
+            // envois le message a tous les clients du chan SAUF si ils ont deja recu un message avant 
+            //( qui va etre check avec clients_already_notified)
             send_message_to_all_one_time(message, i, clients_already_notified);
 
             // je change le nom du client dans la <map> _client du channel
