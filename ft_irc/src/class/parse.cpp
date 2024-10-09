@@ -46,7 +46,6 @@ bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client
 //     return true;
 // }
 
-
 bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     std::string pong = "PONG :" + _value + "\r\n";
@@ -85,6 +84,16 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
     // std::cout << "hostname: " << client_actif.get_hostname() << std::endl;
     // std::cout << "servername: " << client_actif.get_server_name() << std::endl;
     // std::cout << "realname: " << client_actif.get_real_name() << std::endl;
+    return true;
+}
+
+bool Parse::parse_part(std::vector<Client*> &clients_list, int client_fd, Client *client_actif, std::vector<Channel*> &channels)
+{
+	Part part(channels, client_fd, client_actif, _value);
+	// (clients_list, client_fd, client_actif, channels, _value)
+	part.init_cmd_part();
+
+
     return true;
 }
 

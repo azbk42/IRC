@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:02:05 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/09 11:46:40 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:30:19 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,17 @@ Quit::Quit(int fd, Client* client, std::string reason, std::vector<Channel*> cha
 Quit::~Quit() {};
 
 void Quit::send_quit_msg() {
-	std::string full_quit_message;
-    full_quit_message = _client->get_nickname() + "has quit [QUIT: " + _reason + "]\r\n"; // nick [full] 
+	std::string nickname = _client->get_nickname();
+	std::string quit_message = QUIT_MESSAGE(nickname, _reason);
+    //quit_message = _client->get_nickname() + "has quit [QUIT: " + _reason + "]\r\n"; // nick [full] 
     // azbk_ [~ctruchot@bc22-251f-212f-9745-7c26.210.62.ip] has quit [Quit: 
         //   ciao]
-	send(_client_fd, full_quit_message.c_str(), full_quit_message.size(), 0);
+	// send(_client_fd, full_quit_message.c_str(), full_quit_message.size(), 0);
 	for (int i = 0; i < _channels.size(); i++){
-        if (_channels[i]->is_in_channel(_client->get_nickname())){
-            _channels[i]->send_message_to_all(full_quit_message, _client_fd); // Envoie à tous les autres clients du canal
-        }
+        if (_channels[i]->is_in_channel(nickname)){
+            _channels[i]->send_message_to_all(quit_message, _client_fd); // Envoie à tous les autres clients du canal
+			//
+		}
 	}
 	
 	// The QUIT command is used to terminate a client’s connection to the server. 

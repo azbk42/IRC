@@ -28,12 +28,19 @@
 #define ERR_CHANNELNAMETOOLONG(server, channel) (":" + server + " 403 " + channel + " :Channel name is too long (maximum is 50 characters)\r\n")
 #define ERR_TOOMANYCHANNELS(server, channel) (":" + server + " 405 " + channel + "r\n")
 
+// ERROR PART
+#define ERR_NOTONCHANNEL(server, channel)(":" + server_name + " 442" + channel + " :You're not on that channel\r\n").c_str()
+#define ERR_NOSUCHCHANNEL2(server, channel) (":" + server + " 403 " + channel + " :No such channel\r\n").c_str()
+
+
 // ################################################################################
 // #                                    REPLIES IRSSI                               #
 // ################################################################################
 
 #define RPL_LIST(server, channel, client_count, topic) (":" + server_name + " 322 " + server + " #" + channel + " " + client_count + " :" + topic + "\r\n").c_str()
 #define RPL_LISTEND(server) (":" + server_name + " 323 " + server + " :End of /LIST\r\n").c_str()
+
+#define QUIT_MESSAGE(nickname, message) (":" + nickname + " QUIT :" + message + "\r\n").c_str()
 
 // ################################################################################
 // #                                    VALID IRSSI                               #

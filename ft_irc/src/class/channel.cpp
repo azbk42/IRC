@@ -107,6 +107,21 @@ void Channel::add_client(const std::string &name, const int fd_client, Client &c
 
 }
 
+void Channel::remove_client(const std::string &name, const int fd_client, Client &client_actif)
+{
+    _client.erase(name);
+	for (int i = 0; i < _operator.size(); i++){
+		if (_operator[i] == name){
+			_operator.erase(_operator.begin() + i);
+			break;
+		}
+	} // prevoir une csq si seule operateur ? 
+    _nb_client -= 1; // prevoir csq si plus personne dans le chan ? chan supprime ?
+    // client_actif.remove_nb_channel();
+    // send_message_to_all(quit_message, fd_client);
+
+}
+
 bool Channel::authorization_check(const std::string &nickname)
 {
     // si cest en invite only on check si il est dans la liste des noms
@@ -145,11 +160,3 @@ Channel::~Channel()
 {
 
 }
-
-// bool Channel::is_in_channel(const std::string &name)
-// {
-//     if (_client.find(name) != _client.end())
-//         return true;
-//     else
-//         return false;
-// }

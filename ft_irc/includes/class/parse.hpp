@@ -14,6 +14,7 @@
 #include "channel.hpp"
 #include "join.hpp"
 #include "quit.hpp"
+#include "part.hpp"
 
 class Channel;
 class Client;
@@ -39,7 +40,7 @@ class Parse
         bool parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         // channel
         bool parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
-
+		bool parse_part(std::vector<Client*> &clients_list, int client_fd, Client *client_actif, std::vector<Channel*> &channels);
     private:
     
         Parse();

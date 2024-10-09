@@ -37,7 +37,7 @@ class Channel
 		size_t get_nb_client() const;
 
         void set_i(const std::string &i);
-
+		void remove_client(const std::string &name, const int fd_client, Client &client_actif);
 
     private:
 
