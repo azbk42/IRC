@@ -31,9 +31,7 @@ bool Parse::parse_bot(int client_fd, Client &client_actif, Bot bot)
 
         std::string command = _value.substr(pos + 1);
         std::cout << MAGENTA << "command = " << command << std::endl;
-        if (bot.process_command(command, client_actif) == false ){
-            return false;
-        }
+        bot.process_command(command, client_actif);
     }
     else{
         return false;
