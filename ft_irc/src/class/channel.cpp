@@ -80,6 +80,13 @@ void Channel::send_welcome_message(const std::string &client, const int fd_clien
     send(fd_client, end_of_names_msg.c_str(), end_of_names_msg.length(), 0);
 }
 
+void Channel::send_part_message(const std::string &client, const int fd_client)
+{
+    // Message de bienvenue
+    std::string part_msg = ":" + client + " PART :" + _name_channel + "\r\n";
+    send(fd_client, part_msg.c_str(), part_msg.length(), 0);
+}
+
 // ################################################################################
 // #                                                                              #
 // ################################################################################
@@ -94,7 +101,7 @@ bool Channel::is_in_channel(const std::string &name)
 
 void Channel::add_client(const std::string &name, const int fd_client, Client &client_actif)
 {
-    this->_client[name] = fd_client;
+	this->_client[name] = fd_client;
     this->_nb_client += 1;
     client_actif.add_nb_channel();
     if (_nb_client == 1){
@@ -107,19 +114,18 @@ void Channel::add_client(const std::string &name, const int fd_client, Client &c
 
 }
 
-void Channel::remove_client(const std::string &name, const int fd_client, Client &client_actif)
+void Channel::remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason)
 {
-    _client.erase(name);
+	_client.erase(name); // erase client from the channel's client list
+	
 	for (int i = 0; i < _operator.size(); i++){
-		if (_operator[i] == name){
+		if (_operator[i] == name){ // if operator, remove from operator list
 			_operator.erase(_operator.begin() + i);
 			break;
 		}
 	} // prevoir une csq si seule operateur ? 
     _nb_client -= 1; // prevoir csq si plus personne dans le chan ? chan supprime ?
-    // client_actif.remove_nb_channel();
-    // send_message_to_all(quit_message, fd_client);
-
+    client_actif.minus_nb_channel();
 }
 
 bool Channel::authorization_check(const std::string &nickname)

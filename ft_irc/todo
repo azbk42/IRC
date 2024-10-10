@@ -4,7 +4,7 @@ Commandes restantes:
     - definir le mot de pass pour pouvoir se co au serveur - done
     - parsing de PASS dans la class server - done
     - je pense - parsing de QUIT dans la class server - need la fonction pour send to all chans
-    - parsing de LIST dans le server pour savoir tous les diffrents noms de channels class server
+    - parsing de LIST dans le server pour savoir tous les diffrents noms de channels class server - done sans param
 
     other class:
     - parsing de PART 

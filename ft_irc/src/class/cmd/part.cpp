@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:55:49 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/09 16:53:02 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:19:13 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,42 +30,57 @@ std::vector<std::string> Part::_split_by_comma(const std::string &input)
     }
     return result;
 }
-void Part::_check_channel(std::string channel){
-	channel.erase(0, 1);// supprimer le #
+
+void Part::_check_channel(std::string channel, std::string reason){
+	if (channel[0] == '#')
+		channel.erase(0, 1);// supprimer le #
 	
 	std::string server_name = SERVER_NAME;
 	for (int i = 0 ; i < _channels_list.size(); i++){
 		if (_channels_list[i]->get_name() == channel){ // verifier que le channel existe
 			if (_channels_list[i]->is_in_channel(_client_actif->get_nickname()) == true){ // verifier que le client est dans le channel
-				
-				_channels_list[i]->remove_client; // supprimer le client du channel
-				// envoyer message de depart
+				// message de départ à tous les membres du chan
+                std::string part_message = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " PART #" + channel + " :" + reason + "\r\n";
+                _channels_list[i]->send_message_to_all(part_message, _fd);
+
+                // message de confirmation au client
+                send(_fd, part_message.c_str(), part_message.length(), 0);
+
+                // Supprimer le client du chan
+                _channels_list[i]->remove_client(_client_actif->get_nickname(), _fd, *_client_actif, reason);
+				return ;
 			}
 			else
 				send(_fd, ERR_NOTONCHANNEL(server_name, channel), strlen(ERR_NOTONCHANNEL(server_name, channel)), 0);
 		}
-		// 	// verifier que le client est dans le channel
-		// 	// ERR_NOTONCHANNEL (442) 
-		else
-			send(_fd, ERR_NOSUCHCHANNEL2(server_name, channel), strlen(ERR_NOSUCHCHANNEL2(server_name, channel)), 0);
-	}
-	// verifier que le client est dans le channel
-	// supprimer le client du channel
-	// envoyer message de depart
+	} send(_fd, ERR_NOSUCHCHANNEL2(server_name, channel), strlen(ERR_NOSUCHCHANNEL2(server_name, channel)), 0);
+
 }
 
 void Part::init_cmd_part(){
-	std::vector<std::string> channels_part = _split_by_comma(_value);
-	std::string server_name = SERVER_NAME;
 
+	size_t pos = _value.find(" :");
+	std::string channels;
+	std::string reason;
+    if (pos != std::string::npos) {
+        channels = _value.substr(0, pos);           // Partie contenant les noms des canaux a quitter
+        reason = _value.substr(pos + 1);      // Partie contenant la raison
+		if (reason.size() > 1)
+			reason.erase(0, 1);
+    } else {
+        channels = _value;                          // Si aucun mot de passe n'est fourni
+    }
+	
+	std::vector<std::string> channels_part = _split_by_comma(channels);
+	std::string server_name = SERVER_NAME;
+	
 	for (int i = 0; i < channels_part.size(); i++){
-		if (channels_part[i][0] != '#'){
-			// erreur NOSUCHCHANNEL
+		if ((channels_part.size() > 1) && (channels_part[i][0] != '#')){
 			send(_fd, ERR_NOSUCHCHANNEL2(server_name, channels_part[i]), strlen(ERR_NOSUCHCHANNEL2(server_name, channels_part[i])), 0);
 			continue;
 		}
 		else {
-			_check_channel(channels_part[i]);
+			_check_channel(channels_part[i], reason);
 		}
 	}
 
