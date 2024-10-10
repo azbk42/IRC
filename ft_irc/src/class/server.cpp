@@ -191,8 +191,8 @@ void Server::process_message(int fd)
 			// PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
 			// d'envoyer à tous les clients du même chan
 		
-			if (parser.get_cmd() == "PRIVMSG")
-				bot.handle_heads(*client_actif);
+			// if (parser.get_cmd() == "PRIVMSG")
+			// 	bot.handle_heads(*client_actif);
 			if (parser.get_cmd() == "JOIN")
 				parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
 			if (parser.get_cmd() == "QUIT")

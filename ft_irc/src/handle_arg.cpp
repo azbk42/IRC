@@ -1,5 +1,12 @@
 #include "include.hpp"
 
+std::string to_uppercase(const std::string &str) 
+{
+    std::string upper_str = str;
+    std::transform(upper_str.begin(), upper_str.end(), upper_str.begin(), ::toupper);
+    return upper_str;
+}
+
 int checkPort(char *argv)
 {
 	for (int i = 0; argv[i]; i++){

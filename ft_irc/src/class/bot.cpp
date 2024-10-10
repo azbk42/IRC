@@ -100,13 +100,38 @@ std::string Bot::time_spent_on_server(Client &client_actif) const
 }
 
 
+void Bot::process_command(const std::string &command, Client &client_actif)
+{
+    // Tableau des commandes
+    std::string commands[] = {"!help", "!heads", "!tails", "!time"};
+
+    // Parcourir les commandes pour trouver une correspondance
+    for (size_t i = 0; i < 4; ++i) {
+        if (command == commands[i]) {
+            (this->*commandHandlers[i])(client_actif);  // Appel de la fonction correspondante
+            return;  // Sortir de la fonction après avoir trouvé la commande
+        }
+    }
+}
+
+// ################################################################################
+// #                       INIT ARRAY OF FUNCTION POINTERS                        #
+// ################################################################################
+
+void Bot::initialize_command_handlers()
+{
+    commandHandlers[0] = &Bot::handle_help;
+    commandHandlers[1] = &Bot::handle_heads;
+    commandHandlers[2] = &Bot::handle_tails;
+    commandHandlers[3] = &Bot::handle_time;
+}
 
 // ################################################################################
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################
 Bot::Bot(const std::string &name): _name(name)
 {
-
+    initialize_command_handlers();
 }
 
 Bot::~Bot() {};

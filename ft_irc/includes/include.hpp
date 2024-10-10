@@ -12,3 +12,4 @@
 // ################################################################################
 
 int checkPort(char *argv);
+std::string to_uppercase(const std::string &str);

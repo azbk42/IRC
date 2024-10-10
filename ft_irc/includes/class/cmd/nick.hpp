@@ -43,6 +43,5 @@ class Nick
     bool check_all_errors(const std::string &new_nickname);
     bool modification_actual_nickname(const std::string &new_nickname);
     void send_message_to_all_one_time(const std::string &message, const int i, std::set<int> &clients_already_notified);
-    std::string to_uppercase(const std::string &str);
 
 };

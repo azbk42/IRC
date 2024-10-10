@@ -5,13 +5,6 @@
 // #                                    METHOD                                    #
 // ################################################################################
 
-std::string Nick::to_uppercase(const std::string &str) 
-{
-    std::string upper_str = str;
-    std::transform(upper_str.begin(), upper_str.end(), upper_str.begin(), ::toupper);
-    return upper_str;
-}
-
 bool Nick::check_all_errors(const std::string &new_nickname)
 {
     // penser a rajouter la verif si un utilisateur porte deja le nickname au debut de la connexion
