@@ -1,11 +1,11 @@
 #include "client.hpp"
 #include <iomanip>
 
-// METHOD
-void Client::handle_cmd_user(std::string &user_infos)
-{
-    
-}
+// ################################################################################
+// #                                    TIME                                      #
+// ################################################################################
+
+
 
 
 // ################################################################################
@@ -68,8 +68,7 @@ bool Client::get_checked_pwd() const {return _checked_pwd;};
 
 bool Client::GetFirstNick() const {return _first_nick;};
 
-
-
+time_t Client::get_connection_time() const {return _connection_time;};
 
 
 // ################################################################################
@@ -130,16 +129,7 @@ void Client::set_checked_pwd(bool status)
 
 Client::Client(int socket): _real_name("real_name"), _server_name("server"), _host_name("host"), _socket_fd(socket),\
             _user_setup(false), _away(false), _connected(true), _username("username"), _checked_pwd(false), _nb_chan(0),
-            _first_nick(true)
-{
-    //_arrival_time = std::chrono::system_clock::now();
-
-    // format pour imprimer le temps sous la forme:
-    // heure darrive: Tue Oct  1 14:26:09 2024
-    // std::time_t arrival_time_t = std::chrono::system_clock::to_time_t(_arrival_time);
-    // std::cout << "heure darrive: " << std::ctime(&arrival_time_t) << std::endl;
-}
-Client::Client()
+            _first_nick(true), _connection_time(time(0))
 {
 
 }
@@ -147,13 +137,4 @@ Client::Client()
 Client::~Client() 
 {
 
-    // code pour donner la difference entre le temps de connexion et le temps de deco
-    // std::cout << "Client numero: " << _socket_fd << " id dead" << std::endl;
-    // auto end_time = std::chrono::system_clock::now();
-    // std::chrono::duration<double> elapsed_seconds = end_time - _arrival_time;
-
-    // double elapsed_time = elapsed_seconds.count();
-
-    // std::cout << "Elapsed time: ";
-    // std::cout << std::fixed << std::setprecision(3) << elapsed_time << " s" << std::endl;
 }

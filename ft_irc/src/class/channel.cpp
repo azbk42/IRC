@@ -32,6 +32,7 @@ void Channel::modif_topic(const std::string &topic)
 {
     _topic = topic;
     // envoyer le topic a tous les utilisateurs
+
 }
 
 void Channel::send_message_to_all(const std::string &message, const int fd_client)

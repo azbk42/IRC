@@ -19,13 +19,14 @@ bool Server::_signal = false;
 // #                       Constructor / Destructor                               #
 // ################################################################################
 
-Server::Server(int Port, std::string Password) : _port(Port), _serverFd(-1), _password(Password)
+Server::Server(int Port, std::string Password) : _port(Port), _serverFd(-1), _password(Password),
+												bot(BOT_NAME)
 {
 	std::cout << "Port: " << _port << std::endl;
 	std::cout << "Password: " << _password << std::endl;
 }
 
-Server::Server(const Server &rhs)
+Server::Server(const Server &rhs): bot(rhs.bot.get_name())
 {
 	_port = rhs._port;
 	_serverFd = rhs._serverFd;
@@ -190,6 +191,8 @@ void Server::process_message(int fd)
 			// PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
 			// d'envoyer à tous les clients du même chan
 		
+			if (parser.get_cmd() == "PRIVMSG")
+				bot.handle_time(*client_actif);
 			if (parser.get_cmd() == "JOIN")
 				parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
 			if (parser.get_cmd() == "QUIT")

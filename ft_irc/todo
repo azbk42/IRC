@@ -9,8 +9,8 @@ Commandes restantes:
     other class:
     - parsing de PART 
     - parsing de MODE
-    - parsing de KICK
-    - parsing de TOPIC
+    - parsing de KICK 
+    - parsing de TOPIC 
     - parsing de NAMES ( bon la commande fonctionne toute seule)
     - parsing de WHOIS
 

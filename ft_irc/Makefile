@@ -17,7 +17,7 @@ CMD_DIR = $(CLASS_DIR)/cmd
 INCLUDE_DIR = ./includes
 
 # fichier in src/class
-SRC_CLASS = server.cpp client.cpp parse.cpp channel.cpp
+SRC_CLASS = server.cpp client.cpp parse.cpp channel.cpp bot.cpp
 
 SRC_CMD = join.cpp pass.cpp nick.cpp
 # fichier in src/
