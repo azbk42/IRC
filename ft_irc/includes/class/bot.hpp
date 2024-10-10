@@ -5,6 +5,8 @@
 #include <ctime>
 #include <ctime>
 #include <sstream>
+#include <cstdlib>
+#include <vector>
 #include <sys/socket.h>
 
 #include "client.hpp"
@@ -18,6 +20,10 @@ class Bot
 
         const std::string get_name() const;
         void handle_time(Client &client_actif);
+        void handle_help(Client &client_actif);
+        
+        void handle_heads(Client &client_actif);
+        void handle_tails(Client &client_actif);
         
 
     private:
