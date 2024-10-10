@@ -100,18 +100,39 @@ std::string Bot::time_spent_on_server(Client &client_actif) const
 }
 
 
-void Bot::process_command(const std::string &command, Client &client_actif)
+bool Bot::process_command(const std::string &command, Client &client_actif)
 {
-    // Tableau des commandes
-    std::string commands[] = {"!help", "!heads", "!tails", "!time"};
+   int fd = client_actif.get_socket_fd();
+    std::string client_name = client_actif.get_nickname();
+    std::string bot_name = get_name();
 
-    // Parcourir les commandes pour trouver une correspondance
-    for (size_t i = 0; i < 4; ++i) {
+    std::vector<std::string> commands;
+    commands.push_back("!help");
+    commands.push_back("!heads");
+    commands.push_back("!tails");
+    commands.push_back("!time");
+
+    for (size_t i = 0; i < commands.size(); ++i) {
         if (command == commands[i]) {
-            (this->*commandHandlers[i])(client_actif);  // Appel de la fonction correspondante
-            return;  // Sortir de la fonction après avoir trouvé la commande
+            (this->*commandHandlers[i])(client_actif);
+            return true;
         }
     }
+
+    // si on ne trouve pas de commande correspondante on lui affiche la liste
+    std::vector<std::string> error_message_lines;
+    error_message_lines.push_back("Unknown command. Available commands are:");
+    for (size_t i = 0; i < commands.size(); ++i) {
+        error_message_lines.push_back(commands[i]);
+    }
+
+    // sens les lignes une par une
+    for (size_t i = 0; i < error_message_lines.size(); ++i) {
+        std::string message = ":" + bot_name + "!user@host PRIVMSG " + client_name + " :" + error_message_lines[i] + "\r\n";
+        send(fd, message.c_str(), message.length(), 0);
+    }
+
+    return false;
 }
 
 // ################################################################################

@@ -41,7 +41,7 @@ class Parse
         bool parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
 
         // bot
-        bool parse_time(int client_fd, Client &client_actif);
+        bool parse_bot(int client_fd, Client &client_actif, Bot bot);
     private:
     
         Parse();

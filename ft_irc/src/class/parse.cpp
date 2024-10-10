@@ -21,6 +21,28 @@ std::string Parse::get_value() const {
 // #                                   PARSING                                    #
 // ################################################################################
 
+bool Parse::parse_bot(int client_fd, Client &client_actif, Bot bot)
+{
+    size_t space = _value.find(" ");
+    std::string name = _value.substr(0, space);
+    std::cout << MAGENTA << "name = " << name << std::endl; 
+    if (to_uppercase(name) == to_uppercase(BOT_NAME)){
+        size_t pos = _value.find(":");
+
+        std::string command = _value.substr(pos + 1);
+        std::cout << MAGENTA << "command = " << command << std::endl;
+        if (bot.process_command(command, client_actif) == false ){
+            return false;
+        }
+    }
+    else{
+        return false;
+    }
+
+    return true;
+    
+}
+
 bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, Server* server)
 {
     Nick command(clients_list, client_fd, client_actif, channels);
@@ -28,7 +50,6 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client
 
     return true;
 }
-
 
 bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
