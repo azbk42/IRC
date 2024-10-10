@@ -6,12 +6,11 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/08 15:58:41 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/09 16:44:03 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
-#include "pass.hpp"
 
 bool Server::_signal = false;
 
@@ -107,6 +106,11 @@ void Server::CloseClientSocket(int fd)
 			_clients_array.erase(_clients_array.begin() + (i - 1));
 			break;
 		}
+		// enlever 1 utilisateurs aux chans etc?
+		// std::map<std::string, int> _client;
+        // std::vector<std::string> _operator;
+        // std::vector<std::string> _invite_name;
+		// lier a fonction part 
 	}
 }
 
@@ -154,6 +158,12 @@ void Server::AcceptClient()
 	_clients_array.push_back(new_client);
 }
 
+std::string to_string(int value) {
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
+}
+
 void Server::process_message(int fd)
 {
 	size_t newline_pos;
@@ -176,8 +186,10 @@ void Server::process_message(int fd)
 		// Vérifier si un client a été trouvé
 		if (client_actif != NULL && client_actif->get_checked_pwd() == false) {
 			if (parser.get_cmd() == "PASS") {
-				Pass command(fd, parser.get_value(), client_actif, this);
-				command.check_pass();
+				Pass passwd(fd, parser.get_value(), client_actif, _password);
+				if (passwd.check_pass() == 1)
+				    CloseClientSocket(fd);
+
 			}
 			else if (parser.get_cmd() == "CAP"){
 				continue;
@@ -195,32 +207,33 @@ void Server::process_message(int fd)
 			}
 			if (parser.get_cmd() == "JOIN")
 				parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
-			if (parser.get_cmd() == "QUIT")
-				parser.parse_quit(_clients_array, fd, *client_actif);
+			if (parser.get_cmd() == "QUIT"){
+				Quit quit(fd, client_actif, parser.get_value(), _channels_array); // revoir quand on envoie une ref??
+				quit.send_quit_msg();
+				CloseClientSocket(fd);
+			}		
 			if (parser.get_cmd() == "PING")
 				parser.parse_ping(_clients_array, fd, *client_actif);
 			if (parser.get_cmd() == "NICK")
 				parser.parse_nick(_clients_array, fd, *client_actif, _channels_array, this);
 			if (parser.get_cmd() == "USER")
 				parser.parse_user(_clients_array, fd, *client_actif);
+			if (parser.get_cmd() == "LIST"){
+				// parser.parse_list(server, channel, client_count, topic);
+				List list(client_actif, _channels_array, fd);
+				list.send_list();
+			}
+			if (parser.get_cmd() == "PART"){
+				parser.parse_part(_clients_array, fd, client_actif, _channels_array);
+			}
+
+				
 		}
 		else {
 			std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
 		}
 	}
 }
-
-// bool Server::check_pass(int client_fd, std::string enteredPwd){
-//     std::string server_name = SERVER_NAME;
-// 	if (enteredPwd != _password){
-//         std::cout << RED << "Password incorrect" << std::endl;
-// 		send(client_fd, ERR_PASSWDMISMATCH(server_name), strlen(ERR_PASSWDMISMATCH(server_name)), 0);
-//         CloseClientSocket(client_fd);
-// 		return (false);
-//     }
-// 	std::cout << GREEN << "Password correct" << std::endl;
-// 	return (true);
-// }
 
 void Server::ReceiveData(int fd)
 {

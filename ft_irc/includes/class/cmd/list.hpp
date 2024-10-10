@@ -1,36 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pass.hpp                                           :+:      :+:    :+:   */
+/*   list.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 14:22:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/09 15:16:40 by ctruchot         ###   ########.fr       */
+/*   Created: 2024/10/08 17:05:01 by ctruchot          #+#    #+#             */
+/*   Updated: 2024/10/09 15:08:28 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PASS_HPP
-# define PASS_HPP
+#ifndef LIST_HPP
+# define LIST_HPP
 
-#include "server.hpp"
-#include "client.hpp"
+#include "channel.hpp"
 
-class Pass
-{
+class List{
 	private:
-		int _fd;
-		std::string _enteredPwd;
-		std::string _serverPwd;
-
-		Client*_client;
+		int _client_fd;
+		std::vector<Channel*> _channels_array;
+		Client *_client;
 		
 	public:
-		Pass(int fd, std::string value, Client *client, std::string server_pwd);
-		~Pass();
-
-		int check_pass();
+		List(Client *client_actif, std::vector<Channel*> channels_array, int client_fd);
+		~List();
+		
+		void send_list();
+		void send_channel(std::string client_name, std::string server_name, Channel *channel);
+		std::string int_to_string(int value);
 };
-
 
 #endif

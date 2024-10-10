@@ -1,36 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pass.hpp                                           :+:      :+:    :+:   */
+/*   quit.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 14:22:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/09 15:16:40 by ctruchot         ###   ########.fr       */
+/*   Created: 2024/10/08 16:02:00 by ctruchot          #+#    #+#             */
+/*   Updated: 2024/10/08 18:24:09 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PASS_HPP
-# define PASS_HPP
+#ifndef QUIT_HPP
+# define QUIT_HPP
 
-#include "server.hpp"
+#include <iostream>
 #include "client.hpp"
+#include "server.hpp"
 
-class Pass
+class Quit
 {
 	private:
-		int _fd;
-		std::string _enteredPwd;
-		std::string _serverPwd;
-
-		Client*_client;
+		int _client_fd;
+		Client* _client;
+		std::string _reason;
+		std::vector<Channel*> _channels;
 		
 	public:
-		Pass(int fd, std::string value, Client *client, std::string server_pwd);
-		~Pass();
+		Quit(int fd, Client* client, std::string reason, std::vector<Channel*> channels);
+		~Quit();
 
-		int check_pass();
+		void send_quit_msg();		
 };
-
 
 #endif

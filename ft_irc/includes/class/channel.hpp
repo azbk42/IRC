@@ -24,6 +24,7 @@ class Channel
         void add_client(const std::string &name, const int fd_client, Client &client_actif);
         void send_message_to_all(const std::string &message, const int fd_client);
         void send_welcome_message(const std::string &name, const int fd_client);
+		void send_part_message(const std::string &name, const int fd_client);
         bool is_in_channel(const std::string &name);
         void update_name_client(const std::string &old_nickname, const std::string &new_nickname);
 
@@ -34,9 +35,11 @@ class Channel
         std::string get_password() const;
         bool get_pass() const;
         std::map<std::string, int> get_clients() const;
+		size_t get_nb_client() const;
 
         void set_i(const std::string &i);
-
+		void remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason);
+		
 
     private:
 

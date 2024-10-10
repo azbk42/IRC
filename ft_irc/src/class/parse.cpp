@@ -57,20 +57,13 @@ bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client
     return true;
 }
 
-bool Parse::parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
-{
-    std::string full_quit_message;
-    if (_value.empty()){
-        std::string full_quit_message = client_actif.get_nickname() + "exited\r\n";
-    }
-    else{
-        std::string full_quit_message = ":" + client_actif.get_nickname() + " QUIT :" + _value + "\r\n";
-    }
-    send(client_fd, full_quit_message.c_str(), full_quit_message.size(), 0);
-
-    return true;
-}
-
+// bool Parse::parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+// {
+//     Quit command();
+// 	command.quit(client_fd, &client_actif, _value, _server);
+	
+//     return true;
+// }
 
 bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
@@ -110,6 +103,16 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
     // std::cout << "hostname: " << client_actif.get_hostname() << std::endl;
     // std::cout << "servername: " << client_actif.get_server_name() << std::endl;
     // std::cout << "realname: " << client_actif.get_real_name() << std::endl;
+    return true;
+}
+
+bool Parse::parse_part(std::vector<Client*> &clients_list, int client_fd, Client *client_actif, std::vector<Channel*> &channels)
+{
+	Part part(channels, client_fd, client_actif, _value);
+	// (clients_list, client_fd, client_actif, channels, _value)
+	part.init_cmd_part();
+
+
     return true;
 }
 
