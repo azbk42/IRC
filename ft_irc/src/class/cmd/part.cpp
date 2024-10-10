@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:55:49 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/10 15:19:13 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/10 16:02:56 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ void Part::_check_channel(std::string channel, std::string reason){
 		if (_channels_list[i]->get_name() == channel){ // verifier que le channel existe
 			if (_channels_list[i]->is_in_channel(_client_actif->get_nickname()) == true){ // verifier que le client est dans le channel
 				// message de départ à tous les membres du chan
-                std::string part_message = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " PART #" + channel + " :" + reason + "\r\n";
-                _channels_list[i]->send_message_to_all(part_message, _fd);
+                std::string part_message = PART_MESSAGE(_client_actif->get_nickname(), _client_actif->get_username(), _client_actif->get_hostname(), channel, reason);
+				_channels_list[i]->send_message_to_all(part_message, _fd);
 
                 // message de confirmation au client
                 send(_fd, part_message.c_str(), part_message.length(), 0);

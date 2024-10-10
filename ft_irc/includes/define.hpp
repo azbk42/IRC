@@ -41,7 +41,8 @@
 #define RPL_LIST(server, channel, client_count, topic) (":" + server_name + " 322 " + server + " #" + channel + " " + client_count + " :" + topic + "\r\n").c_str()
 #define RPL_LISTEND(server) (":" + server_name + " 323 " + server + " :End of /LIST\r\n").c_str()
 
-#define QUIT_MESSAGE(nickname, message) (":" + nickname + " QUIT :" + message + "\r\n").c_str()
+#define QUIT_MESSAGE(nickname, username, hostname, message) (":" + nickname + "!" + username + "@" + hostname + " QUIT :" + message + "\r\n").c_str()
+#define PART_MESSAGE(nickname, username, hostname, channel, reason) (":" + nickname + "!" + username + "@" + hostname + " PART #" + channel + " :" + reason + "\r\n");
 
 // ################################################################################
 // #                                    VALID IRSSI                               #
