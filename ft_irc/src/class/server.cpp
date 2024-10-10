@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/09 16:44:03 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/10 16:18:18 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ void Server::process_message(int fd)
 				parser.parse_user(_clients_array, fd, *client_actif);
 			if (parser.get_cmd() == "LIST"){
 				// parser.parse_list(server, channel, client_count, topic);
-				List list(client_actif, _channels_array, fd);
+				List list(client_actif, _channels_array, fd, parser.get_value());
 				list.send_list();
 			}
 			if (parser.get_cmd() == "PART"){

@@ -34,7 +34,7 @@ class Join
         int _fd;
 
         std::map<std::string, std::string> _init_channel_map(std::string str);
-        std::vector<std::string> _split_by_comma(const std::string &input);
+        // std::vector<std::string> _split_by_comma(const std::string &input);
         bool _check_invalid_char_join(const std::string &chan_name, int client_fd, Client &client_actif);
         bool _process_channel(const std::string &chan_name);
         void creation_channel(std::string channel_name, std::string nickname);

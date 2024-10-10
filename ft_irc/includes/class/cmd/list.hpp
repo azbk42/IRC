@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:05:01 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/09 15:08:28 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/10 16:17:38 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ class List{
 		int _client_fd;
 		std::vector<Channel*> _channels_array;
 		Client *_client;
+		std::string _value;
 		
 	public:
-		List(Client *client_actif, std::vector<Channel*> channels_array, int client_fd);
+		List(Client *client_actif, std::vector<Channel*> channels_array, int client_fd, std::string list);
 		~List();
 		
 		void send_list();

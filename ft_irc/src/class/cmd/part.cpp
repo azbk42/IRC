@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:55:49 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/10 16:02:56 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/10 16:30:47 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,16 @@ Part::~Part() {}
 // ################################################################################
 
 
-std::vector<std::string> Part::_split_by_comma(const std::string &input)
-{
-    std::vector<std::string> result;
-    std::stringstream ss(input);
-    std::string item;
-    while (std::getline(ss, item, ',')) {
-        result.push_back(item);
-    }
-    return result;
-}
+// std::vector<std::string> Part::_split_by_comma(const std::string &input)
+// {
+//     std::vector<std::string> result;
+//     std::stringstream ss(input);
+//     std::string item;
+//     while (std::getline(ss, item, ',')) {
+//         result.push_back(item);
+//     }
+//     return result;
+// }
 
 void Part::_check_channel(std::string channel, std::string reason){
 	if (channel[0] == '#')
@@ -71,7 +71,7 @@ void Part::init_cmd_part(){
         channels = _value;                          // Si aucun mot de passe n'est fourni
     }
 	
-	std::vector<std::string> channels_part = _split_by_comma(channels);
+	std::vector<std::string> channels_part = split_by_comma(channels);
 	std::string server_name = SERVER_NAME;
 	
 	for (int i = 0; i < channels_part.size(); i++){
