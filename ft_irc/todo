@@ -33,3 +33,25 @@ commande pour se connecter directement a irssi avec les infos que lon veut
 irssi -c 127.0.0.1 -p <port> -w <password> -n <nickname>
 
 irssi -c localhost -p 6667 -w pass -n azbk
+
+
+
+DCC transfert de fichier:
+
+pour changer le repo de reception: ( sinon il va automatiquement dans /home/emauduit)
+
+/set dcc_download_path <chemin_du_dossier>
+
+dcc_download_path /home/emauduit/Documents/TEST
+
+envoyer un fichier:
+
+/dcc send <name> <chemin du fichier>
+
+reception:
+
+/dcc get <name du mec qui a envoye>
+
+dcc en attente:
+
+/dcc list

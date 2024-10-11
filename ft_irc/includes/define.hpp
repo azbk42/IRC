@@ -7,6 +7,7 @@
 #define SERVER_NAME "localhost"
 #define BOT_NAME "HelpMaster"
 
+#define CLIENT_NOT_FOUND -1
 // ################################################################################
 // #                                    ERROR IRSSI                               #
 // ################################################################################
@@ -33,6 +34,8 @@
 #define ERR_NOTONCHANNEL(server, channel)(":" + server_name + " 442" + channel + " :You're not on that channel\r\n").c_str()
 #define ERR_NOSUCHCHANNEL2(server, channel) (":" + server + " 403 " + channel + " :No such channel\r\n").c_str()
 
+// ERROR PRIVMSG
+#define ERR_NOSUCHNICK(server, sender, target) (":" + server + " 401 " + sender + " " + target + " :No such nick/channel\r\n")
 
 // ################################################################################
 // #                                    REPLIES IRSSI                               #

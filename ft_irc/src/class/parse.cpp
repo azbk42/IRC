@@ -43,9 +43,9 @@ bool Parse::parse_bot(int client_fd, Client &client_actif, Bot bot)
 
 bool Parse::parse_msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
-    
-    std::cout << MAGENTA << _value << std::endl;
-    
+    Msg privmsg(clients_list, client_fd, client_actif);
+    privmsg.init_cmd_msg(_value);
+        
     return true;
 }
 

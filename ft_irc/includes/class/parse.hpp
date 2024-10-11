@@ -1,5 +1,6 @@
 #pragma once
 
+#include "include.hpp"
 #include <iostream>
 #include <string>
 #include <map>
@@ -8,18 +9,13 @@
 #include <vector>
 #include <unistd.h>
 #include <sys/socket.h>
-#include "define.hpp"
-#include "client.hpp"
-#include "nick.hpp"
-#include "channel.hpp"
-#include "join.hpp"
-#include "quit.hpp"
-#include "part.hpp"
+
 
 class Channel;
 class Client;
 class Server;
 class Bot;
+class Msg;
 
 class Parse
 {
