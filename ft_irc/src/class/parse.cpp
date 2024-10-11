@@ -41,6 +41,14 @@ bool Parse::parse_bot(int client_fd, Client &client_actif, Bot bot)
     
 }
 
+bool Parse::parse_msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+{
+    Msg privmsg(clients_list, client_fd, client_actif);
+    privmsg.init_cmd_msg(_value);
+        
+    return true;
+}
+
 bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, Server* server)
 {
     Nick command(clients_list, client_fd, client_actif, channels);
