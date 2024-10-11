@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/10 16:18:18 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/11 15:44:14 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,6 +229,9 @@ void Server::process_message(int fd)
 			}
 			if (parser.get_cmd() == "PART"){
 				parser.parse_part(_clients_array, fd, client_actif, _channels_array);
+			}
+			if (parser.get_cmd() == "MODE"){
+				parser.parse_mode(_clients_array, fd, _channels_array);
 			}
 
 				

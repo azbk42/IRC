@@ -17,6 +17,8 @@ std::map<std::string, int> Channel::get_clients() const {return _client;};
 
 size_t Channel::get_nb_client() const {return _nb_client;};
 
+std::time_t Channel::get_creation_date() const {return _creation_time;};
+
 
 void Channel::set_i(const std::string &i)
 {
@@ -166,7 +168,12 @@ Channel::Channel(const std::string &name):
     _name_channel(name), _topic(""), _password(""), _pass(false), _nb_client(0),
     _i(false)
 {
-
+	_creation_time = time(NULL);
+	_flags["i"] = false;
+	_flags["t"] = false;
+	_flags["t"] = false;
+	_flags["k"] = false;
+	_flags["l"] = false;
 }
 
 Channel::~Channel()

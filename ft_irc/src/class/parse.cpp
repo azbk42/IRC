@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <sstream>
+#include "mode.hpp"
 
 // ################################################################################
 // #                                  GET                                         #
@@ -15,7 +16,6 @@ std::string Parse::get_cmd() const
 std::string Parse::get_value() const {
 	return _value;
 }
-
 
 // ################################################################################
 // #                                   PARSING                                    #
@@ -130,6 +130,15 @@ bool Parse::parse_part(std::vector<Client*> &clients_list, int client_fd, Client
 
 
     return true;
+}
+
+bool Parse::parse_mode(std::vector<Client*> &clients_list, int client_fd, std::vector<Channel*> &channels)
+{
+	Mode mode(clients_list, channels, client_fd, _value);
+	mode.init_cmd_mode();
+
+	return true;
+
 }
 
 

@@ -12,8 +12,6 @@
 #include "client.hpp"
 
 
-
-
 class Bot
 {
     public:

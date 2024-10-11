@@ -12,6 +12,7 @@
 #include "client.hpp"
 #include "parse.hpp"
 #include "server.hpp"
+#include <ctime>
 
 class Channel
 {
@@ -36,9 +37,11 @@ class Channel
         bool get_pass() const;
         std::map<std::string, int> get_clients() const;
 		size_t get_nb_client() const;
+		std::time_t get_creation_date() const;
 
         void set_i(const std::string &i);
 		int remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason);
+
 		
 
     private:
@@ -53,7 +56,9 @@ class Channel
         std::vector<std::string> _operator;
         std::vector<std::string> _invite_name;
         std::string _password;
+		time_t _creation_time;
 
+		std::map<std::string, bool> _flags;
         bool _i;
         // -i si le channel est en invite only +i, il faut creer un vector<string> avec les noms autorises
         // -k definir un mot de passe que le client va devoir fournir pour se connecter
