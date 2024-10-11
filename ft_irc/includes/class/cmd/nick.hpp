@@ -32,16 +32,16 @@ class Nick
 
     private:
 
-    std::vector<Client*> &_clients_list;
-    std::vector<Channel*> &_channels_list;
-    Client *_client_actif;
-    int _fd;
+        std::vector<Client*> &_clients_list;
+        std::vector<Channel*> &_channels_list;
+        Client *_client_actif;
+        int _fd;
 
-    std::string old_nickname;
-    std::string new_nickname;
+        std::string old_nickname;
+        std::string new_nickname;
 
-    bool check_all_errors(const std::string &new_nickname);
-    bool modification_actual_nickname(const std::string &new_nickname);
-    void send_message_to_all_one_time(const std::string &message, const int i, std::set<int> &clients_already_notified);
+        bool check_all_errors(const std::string &new_nickname);
+        bool modification_actual_nickname(const std::string &new_nickname);
+        void send_message_to_all_one_time(const std::string &message, const int i, std::set<int> &clients_already_notified);
 
 };

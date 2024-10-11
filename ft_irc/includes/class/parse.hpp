@@ -35,6 +35,7 @@ class Parse
         // function pour separer le premier mot du reste de la phrase (car dans IRC le premier mot est toujours une commande)
         void split_cmd_value(const std::string &_str);
         
+        bool parse_msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         bool parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, Server* server);
         bool parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         bool parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
