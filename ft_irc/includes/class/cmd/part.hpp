@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 16:12:03 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/10 15:24:19 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/10 16:31:04 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <iostream>
 #include <vector>
 #include "channel.hpp"
+#include "include.hpp"
 
 
 
@@ -27,7 +28,7 @@ class Part{
 		Client *_client_actif;
 		std::vector<Channel*> &_channels_list; // revoir pourquoi ref
 
-		std::vector<std::string> _split_by_comma(const std::string &input);
+		// std::vector<std::string> _split_by_comma(const std::string &input);
 		void _check_channel(std::string channel, std::string reason);
 
 

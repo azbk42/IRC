@@ -4,16 +4,16 @@
 // #                                PRIVATE METHOD                                #
 // ################################################################################
 
-std::vector<std::string> Join::_split_by_comma(const std::string &input) 
-{
-    std::vector<std::string> result;
-    std::stringstream ss(input);
-    std::string item;
-    while (std::getline(ss, item, ',')) {
-        result.push_back(item);
-    }
-    return result;
-}
+// std::vector<std::string> Join::_split_by_comma(const std::string &input) 
+// {
+//     std::vector<std::string> result;
+//     std::stringstream ss(input);
+//     std::string item;
+//     while (std::getline(ss, item, ',')) {
+//         result.push_back(item);
+//     }
+//     return result;
+// }
 
 std::map<std::string, std::string> Join::_init_channel_map(std::string str)
 {
@@ -30,8 +30,8 @@ std::map<std::string, std::string> Join::_init_channel_map(std::string str)
     }
 
     // Séparer les noms des canaux
-    std::vector<std::string> channels_list = _split_by_comma(names);
-    std::vector<std::string> passwords_list = _split_by_comma(passwords);
+    std::vector<std::string> channels_list = split_by_comma(names);
+    std::vector<std::string> passwords_list = split_by_comma(passwords);
 
     if (passwords_list.empty()){
         std::cout << "password empty" << std::endl;
