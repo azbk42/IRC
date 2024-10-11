@@ -9,6 +9,7 @@
 #include "client.hpp"
 #include "channel.hpp"
 // cmd
+#include "whois.hpp"
 #include "join.hpp"
 #include "list.hpp"
 #include "msg.hpp"

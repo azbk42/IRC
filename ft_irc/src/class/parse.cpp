@@ -41,6 +41,14 @@ bool Parse::parse_bot(int client_fd, Client &client_actif, Bot bot)
     
 }
 
+bool Parse::parse_whois(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+{
+    Whois who(clients_list, client_fd, client_actif);
+    who.init_cmd_msg(_value);
+
+    return true;
+}
+
 bool Parse::parse_msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     Msg privmsg(clients_list, client_fd, client_actif);

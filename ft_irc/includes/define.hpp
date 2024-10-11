@@ -37,6 +37,9 @@
 // ERROR PRIVMSG
 #define ERR_NOSUCHNICK(server, sender, target) (":" + server + " 401 " + sender + " " + target + " :No such nick/channel\r\n")
 
+// ERROR WHOIS
+#define ERR_NOSUCHSERVER(server, sender, target_server) (":" + server + " 402 " + sender + " " + target_server + " :No such server\r\n")
+
 // ################################################################################
 // #                                    REPLIES IRSSI                               #
 // ################################################################################
@@ -46,6 +49,18 @@
 
 #define QUIT_MESSAGE(nickname, username, hostname, message) (":" + nickname + "!" + username + "@" + hostname + " QUIT :" + message + "\r\n").c_str()
 #define PART_MESSAGE(nickname, username, hostname, channel, reason) (":" + nickname + "!" + username + "@" + hostname + " PART #" + channel + " :" + reason + "\r\n");
+
+// WHOIS
+
+#define RPL_WHOISUSER(server, requester, target_nick, username, hostname, realname) \
+    (":" + server + " 311 " + requester + " " + target_nick + " " + username + " " + hostname + " * :" + realname + "\r\n")
+
+#define RPL_WHOISSERVER(server, requester, target_nick, target_server, server_info) \
+    (":" + server + " 312 " + requester + " " + target_nick + " " + target_server + " :" + server_info + "\r\n")
+
+#define RPL_ENDOFWHOIS(server, requester, target_nick) \
+    (":" + server + " 318 " + requester + " " + target_nick + " :End of WHOIS list\r\n")
+
 
 // ################################################################################
 // #                                    VALID IRSSI                               #

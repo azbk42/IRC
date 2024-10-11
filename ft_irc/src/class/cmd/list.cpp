@@ -22,6 +22,7 @@ List::~List() {}
 
 // send(fd, RPL_LIST(server, channel, client_count, topic), strlen(RPL_LIST(server, channel, client_count, topic)), 0);
 // 				send(fd, RPL_LISTEND(server_name), strlen(RPL_LISTEND(server_name)), 0);
+
 void List::send_list()
 {
 	std::string client_name = _client->get_nickname();
