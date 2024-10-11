@@ -28,7 +28,6 @@ class Part{
 		Client *_client_actif;
 		std::vector<Channel*> &_channels_list; // revoir pourquoi ref
 
-		// std::vector<std::string> _split_by_comma(const std::string &input);
 		void _check_channel(std::string channel, std::string reason);
 
 

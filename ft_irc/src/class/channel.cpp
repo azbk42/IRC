@@ -15,6 +15,8 @@ bool Channel::get_pass() const {return _pass;};
 
 std::map<std::string, int> Channel::get_clients() const {return _client;};
 
+std::vector<std::string> Channel::get_operator() const {return _operator;};
+
 size_t Channel::get_nb_client() const {return _nb_client;};
 
 
@@ -109,7 +111,7 @@ void Channel::add_client(const std::string &name, const int fd_client, Client &c
     }
     send_welcome_message(name, fd_client);
     std::string join_message = ":" + name + "!" + client_actif.get_username() + "@" + client_actif.get_hostname() +\
-                                " JOIN :#" + get_name() + "\r\n";
+                                " JOIN :" + get_name() + "\r\n";
     send_message_to_all(join_message, fd_client);
 
 }

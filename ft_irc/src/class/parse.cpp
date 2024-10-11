@@ -41,6 +41,8 @@ bool Parse::parse_bot(int client_fd, Client &client_actif, Bot bot)
     
 }
 
+
+
 bool Parse::parse_whois(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     Whois who(clients_list, client_fd, client_actif);
@@ -61,6 +63,14 @@ bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client
 {
     Nick command(clients_list, client_fd, client_actif, channels);
     command.init_cmd_nick(_value, server);
+
+    return true;
+}
+
+bool Parse::parse_kick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+{
+    Kick command(clients_list, client_fd, client_actif, channels);
+    command.init_cmd_kick(_value);
 
     return true;
 }

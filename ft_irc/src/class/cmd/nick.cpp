@@ -35,7 +35,7 @@ bool Nick::check_all_errors(const std::string &new_nickname)
     // comparaison des deux nickname en uppercase
     for (int i = 0; i < _clients_list.size(); i++){
         nick_compare = _clients_list[i]->get_nickname();
-        if (nick_compare == uppercase_nickname){
+        if (to_uppercase(nick_compare) == uppercase_nickname){
             send(_fd, ERR_NICKNAMEINUSE(server_name, new_nickname), strlen(ERR_NICKNAMEINUSE(server_name, new_nickname)), 0);
             return false;
         }

@@ -17,6 +17,7 @@
 #include "part.hpp"
 #include "pass.hpp"
 #include "quit.hpp"
+#include "kick.hpp"
 // other
 #include "define.hpp"
 

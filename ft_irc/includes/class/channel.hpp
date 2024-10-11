@@ -30,10 +30,13 @@ class Channel
 
         bool authorization_check(const std::string &nickname);
 
+        std::vector<std::string> get_operator() const;
+        bool get_pass() const;
+
         const std::string get_name() const;
         std::string get_topic() const;
         std::string get_password() const;
-        bool get_pass() const;
+       
         std::map<std::string, int> get_clients() const;
 		size_t get_nb_client() const;
 

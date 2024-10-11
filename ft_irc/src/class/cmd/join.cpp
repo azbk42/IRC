@@ -111,7 +111,7 @@ bool Join::_process_channel(const std::string &chan_name)
         return false;
     }
 
-    std::string channel_name = chan_name.substr(1);
+    std::string channel_name = chan_name.substr(0);
     // ajout channel existant
     for (int i = 0; i < _channels_list.size(); i++){
         if (_channels_list[i]->get_name() == channel_name){
