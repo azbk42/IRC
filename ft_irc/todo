@@ -35,7 +35,6 @@ irssi -c 127.0.0.1 -p <port> -w <password> -n <nickname>
 irssi -c localhost -p 6667 -w pass -n azbk
 
 
-
 DCC transfert de fichier:
 
 pour changer le repo de reception: ( sinon il va automatiquement dans /home/emauduit)
