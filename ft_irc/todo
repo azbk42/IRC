@@ -1,16 +1,16 @@
 
 Commandes restantes:
     sever class:
-    - definir le mot de pass pour pouvoir se co au serveur
-    - parsing de PASS dans la class server
-    - je pense - parsing de QUIT dans la class server
-    - parsing de LIST dans le server pour savoir tous les diffrents noms de channels class server
+    - definir le mot de pass pour pouvoir se co au serveur - done
+    - parsing de PASS dans la class server - done
+    - je pense - parsing de QUIT dans la class server - need la fonction pour send to all chans
+    - parsing de LIST dans le server pour savoir tous les diffrents noms de channels class server - done sans param
 
     other class:
     - parsing de PART 
     - parsing de MODE
-    - parsing de KICK
-    - parsing de TOPIC
+    - parsing de KICK 
+    - parsing de TOPIC 
     - parsing de NAMES ( bon la commande fonctionne toute seule)
     - parsing de WHOIS
 
@@ -23,23 +23,9 @@ Commandes restantes:
        -l +l : Définit ou supprime la limite maximale d'utilisateurs pouvant rejoindre le canal.
 
 
-creation des channels quand on fait JOIN
+creation des channels quand on fait JOIN done
 
-gestion des mdp quand on veut join plusieurs channel:
-/join #canal1,#canal2 motdepasse1,motdepasse2
-
-/join #canal mdp = va envoyer #canal mdp
-/join #canal mdp #canal2 = va recevoir que #canal mdp
-/join #canal #canal4 #canal3 = ne va recevoir que #canal et #canal4
-            ( donc ici limiter a 2 canal max )
 On doit setup la commande WHOIS qui genere les erreurs quand on essaye de se co a plusieurs sur un channel
-
-
-variable signal en haut de server.cpp:
-    - A voir si on ne peut pas l'init dans le constructeur de server(): _signal(false)
-
-jai change le vector de client en "_clients_array" 
-pour plus de lisibilite quand on traitera que 1 client avec une variable "client"
 
 
 commande pour se connecter directement a irssi avec les infos que lon veut

@@ -1,11 +1,11 @@
 #include "client.hpp"
 #include <iomanip>
 
-// METHOD
-void Client::handle_cmd_user(std::string &user_infos)
-{
-    
-}
+// ################################################################################
+// #                                    TIME                                      #
+// ################################################################################
+
+
 
 
 // ################################################################################
@@ -14,11 +14,11 @@ void Client::handle_cmd_user(std::string &user_infos)
 
 void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
 {
-    // LES ERREURS ON ETE SETUP POUR LUI
+    // LES ERREURS ONT ETE SETUP POUR LUI
     std::string old_nick = get_nickname();
     int socket = get_socket_fd();
     set_nickname(new_nickname);
-    // quand un mec change de pseudo on informe tous les channels
+    
     
     //envoyer le message au client comme quoi on a bien changer de pseudo
     send(client_socket, NICK_CHANGE(old_nick, new_nickname), strlen(NICK_CHANGE(old_nick, new_nickname)), 0);
@@ -26,7 +26,6 @@ void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
 }
 bool Client::check_nb_chan()
 {
-    std::cout << "NB CHAN = " << _nb_chan << std::endl;
     if (_nb_chan >= 5)
         return false;
     else
@@ -41,30 +40,6 @@ void Client::minus_nb_channel()
 {
     if (_nb_chan > 0)
         _nb_chan -= 1;
-}
-
-// rejoindre un channel
-void Client::handle_cmd_join(const std::string &channel_name)
-{
-    
-}
-
-// leave un channel
-void Client::handle_cmd_part(const std::string &channel_name)
-{
-
-}
-
-// envoyer un mess prive
-void Client::handle_cmd_privmsg(const std::string &message, const std::string &target)
-{
-
-}
-
-// quitter le serveur avec un message
-void Client::handle_cmd_quit(const std::string &message)
-{
-
 }
 
 // ################################################################################
@@ -89,11 +64,19 @@ bool Client::get_status_connected() const {return _connected;};
 
 bool Client::get_user_setup() const {return _user_setup;};
 
+bool Client::get_checked_pwd() const {return _checked_pwd;};
+
+bool Client::GetFirstNick() const {return _first_nick;};
+
+time_t Client::get_connection_time() const {return _connection_time;};
+
 
 // ################################################################################
 // #                                    SET                                       #
 // ################################################################################
-// rajouter une gestion d'erreur sur le nickname
+
+void Client::SetFirstNick() { _first_nick = false;};
+
 void Client::set_nickname(const std::string &nickname)
 {
     _nickname = nickname;
@@ -135,36 +118,23 @@ void Client::set_user_setup()
     _user_setup = true;
 }
 
+void Client::set_checked_pwd(bool status)
+{
+	_checked_pwd = status;
+}
+
 // ################################################################################
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################
 
 Client::Client(int socket): _real_name("real_name"), _server_name("server"), _host_name("host"), _socket_fd(socket),\
-            _user_setup(false), _away(false), _connected(true), _username("username"), _nb_chan(0)
+            _user_setup(false), _away(false), _connected(true), _username("username"), _checked_pwd(false), _nb_chan(0),
+            _first_nick(true), _connection_time(time(0))
 {
-    //_arrival_time = std::chrono::system_clock::now();
-
-    // format pour imprimer le temps sous la forme:
-    // heure darrive: Tue Oct  1 14:26:09 2024
-    // std::time_t arrival_time_t = std::chrono::system_clock::to_time_t(_arrival_time);
-    // std::cout << "heure darrive: " << std::ctime(&arrival_time_t) << std::endl;
-}
-Client::Client()
-{
-
 
 }
 
 Client::~Client() 
 {
 
-    // code pour donner la difference entre le temps de connexion et le temps de deco
-    // std::cout << "Client numero: " << _socket_fd << " id dead" << std::endl;
-    // auto end_time = std::chrono::system_clock::now();
-    // std::chrono::duration<double> elapsed_seconds = end_time - _arrival_time;
-
-    // double elapsed_time = elapsed_seconds.count();
-
-    // std::cout << "Elapsed time: ";
-    // std::cout << std::fixed << std::setprecision(3) << elapsed_time << " s" << std::endl;
 }

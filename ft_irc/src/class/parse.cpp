@@ -12,88 +12,58 @@ std::string Parse::get_cmd() const
     return _command;
 }
 
+std::string Parse::get_value() const {
+	return _value;
+}
+
+
 // ################################################################################
 // #                                   PARSING                                    #
 // ################################################################################
 
-bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+bool Parse::parse_bot(int client_fd, Client &client_actif, Bot bot)
 {
-    std::string server_name = SERVER_NAME;
-    std::string nick = _value;
+    size_t space = _value.find(" ");
+    std::string name = _value.substr(0, space);
+    std::cout << MAGENTA << "name = " << name << std::endl; 
+    if (to_uppercase(name) == to_uppercase(BOT_NAME)){
+        size_t pos = _value.find(":");
 
-    if (_value.empty()){
-        send(client_fd, ERR_NONICKNAMEGIVEN(server_name), strlen(ERR_NONICKNAMEGIVEN(server_name)), 0);
-        _value.clear();
+        std::string command = _value.substr(pos + 1);
+        std::cout << MAGENTA << "command = " << command << std::endl;
+        bot.process_command(command, client_actif);
+    }
+    else{
         return false;
     }
 
-    if (_value.size() > 9 || !isalpha(_value[0])) {
-        // Envoi de l'erreur ERR_ERRONEUSNICKNAME
-        send(client_fd, ERR_ERRONEUSNICKNAME(server_name, nick), strlen(ERR_ERRONEUSNICKNAME(server_name, nick)), 0);
-        _value.clear();
-        return false;
-    }
+    return true;
+    
+}
 
-    // Handle invalid character
-    for (size_t i = 1; i < _value.size(); ++i) {
-        if (!isalnum(_value[i]) && _value.find_first_of("-[]\{}_|") == std::string::npos) {
-            send(client_fd, ERR_ERRONEUSNICKNAME(server_name, _value), strlen(ERR_ERRONEUSNICKNAME(server_name, _value)), 0);
-            return false;
-        }
-    }
-    // Handle identic nickname
-    for (int i = 0; i < clients_list.size(); i++){
-        if (clients_list[i]->get_nickname() == _value){
-            send(client_fd, ERR_NICKNAMEINUSE(server_name, nick), strlen(ERR_NICKNAMEINUSE(server_name, nick)), 0);
-            return false;
-        }
-    }
-
-    // Tout est ok, on regarde quel client correspond au fd et on le change
-    // Il faut maintenant avertir tous les clients des meme channels
-    for (int i = 0; i < clients_list.size(); i++){
-        if (clients_list[i]->get_socket_fd() == client_fd){
-            clients_list[i]->handle_cmd_nick(_value, client_fd);
-        }
-    }
+bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, Server* server)
+{
+    Nick command(clients_list, client_fd, client_actif, channels);
+    command.init_cmd_nick(_value, server);
 
     return true;
 }
 
 bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
-
     Join command(clients_list, client_fd, client_actif, channels, _value);
     command.init_cmd_join();
 
     return true;
 }
 
-// bool Parse::parse_pass(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+// bool Parse::parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 // {
-//     std::string server_name = SERVER_NAME;
-//     if (_value != PASSWORD){
-//         send(client_fd, ERR_PASSWDMISMATCH(server_name), strlen(ERR_PASSWDMISMATCH(server_name)), 0);
-//         close(client_fd);
-//         return false;
-//     }
+//     Quit command();
+// 	command.quit(client_fd, &client_actif, _value, _server);
+	
 //     return true;
 // }
-
-bool Parse::parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
-{
-    std::string full_quit_message;
-    if (_value.empty()){
-        std::string full_quit_message = client_actif.get_nickname() + "exited\r\n";
-    }
-    else{
-        std::string full_quit_message = ":" + client_actif.get_nickname() + " QUIT :" + _value + "\r\n";
-    }
-    send(client_fd, full_quit_message.c_str(), full_quit_message.size(), 0);
-
-    return true;
-}
-
 
 bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
@@ -133,6 +103,16 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
     // std::cout << "hostname: " << client_actif.get_hostname() << std::endl;
     // std::cout << "servername: " << client_actif.get_server_name() << std::endl;
     // std::cout << "realname: " << client_actif.get_real_name() << std::endl;
+    return true;
+}
+
+bool Parse::parse_part(std::vector<Client*> &clients_list, int client_fd, Client *client_actif, std::vector<Channel*> &channels)
+{
+	Part part(channels, client_fd, client_actif, _value);
+	// (clients_list, client_fd, client_actif, channels, _value)
+	part.init_cmd_part();
+
+
     return true;
 }
 

@@ -1,3 +1,5 @@
+# FT_IRC
+Ce projet est un serveur IRC en C++ pour la gestion de multiples clients.
 # ft_irc - 42 Project
 
 ## Table of Contents

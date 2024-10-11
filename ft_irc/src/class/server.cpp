@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/04 17:45:22 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/09 16:44:03 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,22 @@ bool Server::_signal = false;
 // #                       Constructor / Destructor                               #
 // ################################################################################
 
-Server::Server(int Port, std::string Password) : _port(Port), _serverFd(-1), _password(Password)
+Server::Server(int Port, std::string Password) : _port(Port), _serverFd(-1), _password(Password),
+												bot(BOT_NAME)
 {
 	std::cout << "Port: " << _port << std::endl;
 	std::cout << "Password: " << _password << std::endl;
 }
 
-Server::Server(const Server &rhs)
+Server::Server(const Server &rhs): bot(rhs.bot.get_name())
 {
 	_port = rhs._port;
 	_serverFd = rhs._serverFd;
+	_password = rhs._password;
 	_pollFds = rhs._pollFds;
 	_clients_array = rhs._clients_array;
+	_channels_array = rhs._channels_array;
+	_partial_message = rhs._partial_message;
 	return ;
 }
 
@@ -56,8 +60,19 @@ Server &Server::operator=(const Server &rhs)
 
 int Server::GetFd() const {return _serverFd;}
 
-int Server::GetPort() const {return _port;} 
+int Server::GetPort() const {return _port;}
 
+std::string Server::GetPassword() const {return _password;}
+
+// ################################################################################
+// #                                    SET                                       #
+// ################################################################################
+
+
+
+// ################################################################################
+// #                                  CLOSE FDS                                   #
+// ################################################################################
 void Server::CloseServerFd()
 {
 	for (size_t i = _pollFds.size() - 1; i > 0; i--) {
@@ -81,6 +96,7 @@ void Server::CloseServerFd()
 
 void Server::CloseClientSocket(int fd)
 {
+	std::cout << RED <<"Closing client socket" << std::endl;
 	if (close(fd) == -1)
 		std::cout << "Failed to close client socket" << std::endl;
 	for (size_t i = 0; i < _pollFds.size(); i++) {
@@ -90,8 +106,17 @@ void Server::CloseClientSocket(int fd)
 			_clients_array.erase(_clients_array.begin() + (i - 1));
 			break;
 		}
+		// enlever 1 utilisateurs aux chans etc?
+		// std::map<std::string, int> _client;
+        // std::vector<std::string> _operator;
+        // std::vector<std::string> _invite_name;
+		// lier a fonction part 
 	}
 }
+
+// ################################################################################
+// #                            COMMUNICATION CLIENT                              #
+// ################################################################################
 
 void Server::SendtoAll(int expFd, char *buffer, int bytes_recv)
 {
@@ -104,9 +129,6 @@ void Server::SendtoAll(int expFd, char *buffer, int bytes_recv)
 		}
 	}
 }
-// ################################################################################
-// #                            COMMUNICATION CLIENT                              #
-// ################################################################################
 
 void Server::AcceptClient()
 {
@@ -116,11 +138,16 @@ void Server::AcceptClient()
 	
 	int newFd = accept(_serverFd, (sockaddr *)&client_addr, &len);
 	if (newFd == -1)
-		std::cout << "Failed to accept client" <<std::endl; // faire un return 
-	
+	{
+		std::cout << "Failed to accept client" <<std::endl; 
+		return ;
+	}
 	if (fcntl(newFd, F_SETFL, O_NONBLOCK) == -1)
-		std::cout << "Failed to set non-blocking fd for client" <<std::endl; // faire un return car si ca error plus besoin de faire la suite
-
+	{
+		std::cout << "Failed to set non-blocking fd for client" <<std::endl;
+		close (newFd);
+		return ;
+	}
 	clientPoll.fd = newFd;
 	clientPoll.events = POLLIN;
 	clientPoll.revents = 0;
@@ -131,15 +158,19 @@ void Server::AcceptClient()
 	_clients_array.push_back(new_client);
 }
 
+std::string to_string(int value) {
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
+}
 
 void Server::process_message(int fd)
 {
 	size_t newline_pos;
 	while ((newline_pos = _partial_message[fd].find('\n')) != std::string::npos) {
-		// Extract the complete message up to the newline
+		
 		std::string complete_message = _partial_message[fd].substr(0, newline_pos + 1);
 
-		// Remove the processed message from the buffer
 		_partial_message[fd].erase(0, newline_pos + 1);
 
 		std::cout << YELLOW << "Client <" << fd << "> Data: " << WHITE << complete_message << std::endl;
@@ -153,21 +184,52 @@ void Server::process_message(int fd)
 			}
 		}
 		// Vérifier si un client a été trouvé
-		if (client_actif != NULL) {
-			// PARSER POUR NICK PRESQUE OK JE DOIS FAIRE EN SORTE
-			// d'envoyer à tous les clients du même chan
+		if (client_actif != NULL && client_actif->get_checked_pwd() == false) {
+			if (parser.get_cmd() == "PASS") {
+				Pass passwd(fd, parser.get_value(), client_actif, _password);
+				if (passwd.check_pass() == 1)
+				    CloseClientSocket(fd);
 
+			}
+			else if (parser.get_cmd() == "CAP"){
+				continue;
+			}
+			else {
+				send(fd, "Please enter password", 21, 0);
+				CloseClientSocket(fd);
+			}
+		}
+		else if (client_actif != NULL && client_actif->get_checked_pwd() == true) {
+		
+			if (parser.get_cmd() == "PRIVMSG"){
+				parser.parse_bot(fd, *client_actif, bot);
+				// si le parse_bot == false alors on va effectuer un privmsg classique.
+			}
 			if (parser.get_cmd() == "JOIN")
-			    parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
-			if (parser.get_cmd() == "QUIT")
-				parser.parse_quit(_clients_array, fd, *client_actif);
+				parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
+			if (parser.get_cmd() == "QUIT"){
+				Quit quit(fd, client_actif, parser.get_value(), _channels_array); // revoir quand on envoie une ref??
+				quit.send_quit_msg();
+				CloseClientSocket(fd);
+			}		
 			if (parser.get_cmd() == "PING")
 				parser.parse_ping(_clients_array, fd, *client_actif);
 			if (parser.get_cmd() == "NICK")
-				parser.parse_nick(_clients_array, fd, *client_actif);
+				parser.parse_nick(_clients_array, fd, *client_actif, _channels_array, this);
 			if (parser.get_cmd() == "USER")
-				parser.parse_user(_clients_array, fd, *client_actif); // Passer par référence
-		} else {
+				parser.parse_user(_clients_array, fd, *client_actif);
+			if (parser.get_cmd() == "LIST"){
+				// parser.parse_list(server, channel, client_count, topic);
+				List list(client_actif, _channels_array, fd);
+				list.send_list();
+			}
+			if (parser.get_cmd() == "PART"){
+				parser.parse_part(_clients_array, fd, client_actif, _channels_array);
+			}
+
+				
+		}
+		else {
 			std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
 		}
 	}
@@ -192,20 +254,13 @@ void Server::ReceiveData(int fd)
 		// DEBUT DE CODE ELOUAN
 		std::string message(buffer);
 		_partial_message[fd] += message;
-
 		process_message(fd);
-		// @Emauduit : inclure le parsing ici
-		// if(parse_pass() == false){ // @Emauduit: pour le tester sans toucher a ton code, j'ai utilise la condition suivante : std::string buf(buffer); if (buf == "bad_pass\n"){
-		// 	send(fd, "bad password\n", 14, 0);
-		// 	CloseClientSocket(fd);
-		// 	std::cout << RED << "Client <" << fd << "> Bad password" << WHITE << std::endl; // coupe la connexion cote server, 
-		// 	// mais il faut entrer qqch pour que le client comprenne qu'il est sorti - verifier si pareil sur irssi, sinon ajouter un envoi cote client
-		// }
+	}
 		
 		std::cout << YELLOW << "-----------------------------------------------------" << WHITE << std::endl;
 		//SendtoAll(fd, buffer, bytesRecv);
 	}
-}
+// }
 
 // ################################################################################
 // #                            COMMUNICATION CLIENT                              #
