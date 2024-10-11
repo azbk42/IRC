@@ -52,7 +52,6 @@ class Channel
         std::map<std::string, int> _client;
         std::vector<std::string> _operator;
         std::vector<std::string> _invite_name;
-
         std::string _password;
 
         bool _i;

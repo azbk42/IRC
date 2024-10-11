@@ -11,8 +11,8 @@ Commandes restantes:
     - parsing de MODE
     - parsing de KICK 
     - parsing de TOPIC 
-    - parsing de NAMES ( bon la commande fonctionne toute seule)
-    - parsing de WHOIS
+    - parsing de NAMES ( bon la commande fonctionne toute seule )
+    - parsing de WHOIS ( a voir si on fait )
 
     flag a gerer pour MODE:
         <nom du canal> on doit renvoyer les flag actif du canal. (renvoi toujours ca apres la creation du canal)

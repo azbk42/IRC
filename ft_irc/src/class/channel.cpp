@@ -18,7 +18,6 @@ std::map<std::string, int> Channel::get_clients() const {return _client;};
 size_t Channel::get_nb_client() const {return _nb_client;};
 
 
-
 void Channel::set_i(const std::string &i)
 {
     if (i == "+"){

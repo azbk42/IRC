@@ -206,6 +206,9 @@ void Server::process_message(int fd)
 				//parser.parse_bot(fd, *client_actif, bot);
 				// si le parse_bot == false alors on va effectuer un privmsg classique.
 			}
+			if (parser.get_cmd() == "WHOIS"){
+				parser.parse_whois(_clients_array, fd, *client_actif);
+			}
 			if (parser.get_cmd() == "JOIN")
 				parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
 			if (parser.get_cmd() == "QUIT"){
