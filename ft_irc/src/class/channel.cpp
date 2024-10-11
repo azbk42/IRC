@@ -115,18 +115,25 @@ void Channel::add_client(const std::string &name, const int fd_client, Client &c
 
 }
 
-void Channel::remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason)
+int Channel::remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason)
 {
-	_client.erase(name); // erase client from the channel's client list
-	
-	for (int i = 0; i < _operator.size(); i++){
-		if (_operator[i] == name){ // if operator, remove from operator list
-			_operator.erase(_operator.begin() + i);
-			break;
+    if (_nb_client > 1){
+		_client.erase(name); // erase client from the channel's client list
+		_nb_client -= 1; // prevoir csq si plus personne dans le chan ? chan supprime ?
+		for (int i = 0; i < _operator.size(); i++){
+			if (_operator[i] == name){ // if operator, remove from operator list
+				_operator.erase(_operator.begin() + i);
+				break;
+			}
 		}
-	} // prevoir une csq si seule operateur ? 
-    _nb_client -= 1; // prevoir csq si plus personne dans le chan ? chan supprime ?
-    client_actif.minus_nb_channel();
+		client_actif.minus_nb_channel();
+		return 0;
+	}
+	if (_nb_client == 1){
+    	client_actif.minus_nb_channel();
+		return 1;
+	}
+	return 0;
 }
 
 bool Channel::authorization_check(const std::string &nickname)

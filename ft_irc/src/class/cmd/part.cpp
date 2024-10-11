@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:55:49 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/10 16:30:47 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/11 12:46:54 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,6 @@ Part::~Part() {}
 // ################################################################################
 // #                                PRIVATE METHOD                                #
 // ################################################################################
-
-
-// std::vector<std::string> Part::_split_by_comma(const std::string &input)
-// {
-//     std::vector<std::string> result;
-//     std::stringstream ss(input);
-//     std::string item;
-//     while (std::getline(ss, item, ',')) {
-//         result.push_back(item);
-//     }
-//     return result;
-// }
 
 void Part::_check_channel(std::string channel, std::string reason){
 	if (channel[0] == '#')
@@ -47,7 +35,11 @@ void Part::_check_channel(std::string channel, std::string reason){
                 send(_fd, part_message.c_str(), part_message.length(), 0);
 
                 // Supprimer le client du chan
-                _channels_list[i]->remove_client(_client_actif->get_nickname(), _fd, *_client_actif, reason);
+                if (_channels_list[i]->remove_client(_client_actif->get_nickname(), _fd, *_client_actif, reason) == 1)
+				{
+					delete _channels_list[i];
+					_channels_list.erase(_channels_list.begin() + i);
+				}
 				return ;
 			}
 			else

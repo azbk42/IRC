@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:05:01 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/10 16:17:38 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/11 11:24:45 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define LIST_HPP
 
 #include "channel.hpp"
+#include "include.hpp"
 
 class List{
 	private:
@@ -28,7 +29,7 @@ class List{
 		
 		void send_list();
 		void send_channel(std::string client_name, std::string server_name, Channel *channel);
-		std::string int_to_string(int value);
+		void list_with_args(std::string client_name, std::string server_name);
 };
 
 #endif
