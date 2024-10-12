@@ -19,13 +19,21 @@ size_t Channel::get_nb_client() const {return _nb_client;};
 
 std::time_t Channel::get_creation_date() const {return _creation_time;};
 
+// std::vector<std::string> Channel::get_operators() const {return _operator;}
+bool Channel::get_i() const {return _i;}
 
-void Channel::set_i(const std::string &i)
+int Channel::get_limite() const {return _limite;}
+
+void Channel::set_limite(int x){
+    _limite = x;
+}
+
+void Channel::set_i(const char &i)
 {
-    if (i == "+"){
+    if (i == '+'){
         _i = true;
     }
-    else if (i == "-"){
+    else if (i == '-'){
         _i = false;
     }
 }
@@ -101,6 +109,28 @@ bool Channel::is_in_channel(const std::string &name)
         return false;
 }
 
+bool Channel::is_operator(const std::string &name)
+{
+    for (int i = 0; i < _operator.size(); i++){
+        if (_operator[i] == name)
+            return true;
+    }
+    return false;
+}
+
+void Channel::add_operator(const std::string &name)
+{
+    _operator.push_back(name);
+}
+
+void Channel::remove_operator(const std::string &name)
+{
+    for (int i = 0; i < _operator.size(); i++){
+        if (_operator[i] == name)
+            _operator.erase(_operator.begin() + i);
+    }
+}
+
 void Channel::add_client(const std::string &name, const int fd_client, Client &client_actif)
 {
 	this->_client[name] = fd_client;
@@ -166,14 +196,9 @@ void Channel::update_name_client(const std::string &old_nickname, const std::str
 
 Channel::Channel(const std::string &name): 
     _name_channel(name), _topic(""), _password(""), _pass(false), _nb_client(0),
-    _i(false)
+    _i(false), _limite(-1)
 {
 	_creation_time = time(NULL);
-	_flags["i"] = false;
-	_flags["t"] = false;
-	_flags["t"] = false;
-	_flags["k"] = false;
-	_flags["l"] = false;
 }
 
 Channel::~Channel()

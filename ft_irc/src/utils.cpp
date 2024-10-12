@@ -39,3 +39,14 @@ std::string int_to_string(int value) {
 	oss << value;
 	return oss.str();
 }
+
+int string_to_int(const std::string& str) {
+	int result;
+    std::stringstream ss(str);
+	ss >> result;
+    if (ss.fail()) {
+        std::cerr << "Erreur de conversion!" << std::endl;
+        return -1; 
+    }
+	return result;
+}

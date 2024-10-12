@@ -42,7 +42,7 @@ class Parse
 		bool parse_part(std::vector<Client*> &clients_list, int client_fd, Client *client_actif, std::vector<Channel*> &channels);
         // bot
         bool parse_bot(int client_fd, Client &client_actif, Bot bot);
-		bool parse_mode(std::vector<Client*> &clients_list, int client_fd, std::vector<Channel*> &channels);
+		bool parse_mode(std::vector<Client*> &clients_list, Client *client_actif, int client_fd, std::vector<Channel*> &channels);
 
     private:
     

@@ -40,6 +40,9 @@
 // ERROR WHOIS
 #define ERR_NOSUCHSERVER(server, sender, target_server) (":" + server + " 402 " + sender + " " + target_server + " :No such server\r\n")
 
+// ERROR MODE
+#define ERR_CHANOPRIVSNEEDED(server, channel)(":" + server + " 482 " + channel + " :You're not channel operator\r\n").c_str() // pourquoi on ajoute c_str pour certains et pas pour d'autres ?
+
 // ################################################################################
 // #                                    REPLIES IRSSI                               #
 // ################################################################################
@@ -50,7 +53,7 @@
 #define QUIT_MESSAGE(nickname, username, hostname, message) (":" + nickname + "!" + username + "@" + hostname + " QUIT :" + message + "\r\n").c_str()
 #define PART_MESSAGE(nickname, username, hostname, channel, reason) (":" + nickname + "!" + username + "@" + hostname + " PART #" + channel + " :" + reason + "\r\n");
 
-#define RPL_CHANNELMODEIS(server_name, channel) (":" + server_name + " 324 " + channel + "\r\n").c_str()
+#define RPL_CHANNELMODEIS(server_name, channel) (":" + server_name + " 324 " + channel + "#" + channel + "\r\n").c_str()
 #define RPL_CREATIONTIME(server, channel, creation_date_str) (":" + server_name + " 329 " + server + " " + channel + " " + creation_date_str + "\r\n").c_str()
 
 //   "<client> <channel> <modestring> <mode arguments>..."

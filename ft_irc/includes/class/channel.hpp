@@ -28,6 +28,7 @@ class Channel
 		void send_part_message(const std::string &name, const int fd_client);
         bool is_in_channel(const std::string &name);
         void update_name_client(const std::string &old_nickname, const std::string &new_nickname);
+        bool is_operator(const std::string &name);
 
         bool authorization_check(const std::string &nickname);
 
@@ -38,10 +39,17 @@ class Channel
         std::map<std::string, int> get_clients() const;
 		size_t get_nb_client() const;
 		std::time_t get_creation_date() const;
+        // std::vector<std::string> get_operators() const;
+        bool get_i() const;
+        int get_limite() const;
 
-        void set_i(const std::string &i);
+        void set_limite(int x);
+        // void set_i(const std::string &i);
+        void set_i(const char &i);
+
 		int remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason);
-
+        void add_operator(const std::string &name);
+        void remove_operator(const std::string &name);
 		
 
     private:
@@ -60,6 +68,7 @@ class Channel
 
 		std::map<std::string, bool> _flags;
         bool _i;
+        int _limite;
         // -i si le channel est en invite only +i, il faut creer un vector<string> avec les noms autorises
         // -k definir un mot de passe que le client va devoir fournir pour se connecter
         // -l definir ou supprimer la limite dutilisateur

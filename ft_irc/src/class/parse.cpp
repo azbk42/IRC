@@ -132,9 +132,9 @@ bool Parse::parse_part(std::vector<Client*> &clients_list, int client_fd, Client
     return true;
 }
 
-bool Parse::parse_mode(std::vector<Client*> &clients_list, int client_fd, std::vector<Channel*> &channels)
+bool Parse::parse_mode(std::vector<Client*> &clients_list, Client* client_actif, int client_fd, std::vector<Channel*> &channels)
 {
-	Mode mode(clients_list, channels, client_fd, _value);
+	Mode mode(clients_list, client_actif, channels, client_fd, _value);
 	mode.init_cmd_mode();
 
 	return true;

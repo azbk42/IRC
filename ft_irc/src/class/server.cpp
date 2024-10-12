@@ -231,7 +231,7 @@ void Server::process_message(int fd)
 				parser.parse_part(_clients_array, fd, client_actif, _channels_array);
 			}
 			if (parser.get_cmd() == "MODE"){
-				parser.parse_mode(_clients_array, fd, _channels_array);
+				parser.parse_mode(_clients_array, client_actif, fd, _channels_array);
 			}
 
 				
