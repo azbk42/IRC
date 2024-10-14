@@ -50,6 +50,14 @@
 // TOPIC
 #define ERR_NOSUCHCHANNEL_TOPIC(server, nickname, channel) (":" + server + " 403 " + nickname + " " + channel + " :No such channel\r\n")
 
+// INVITE
+#define ERR_NOSUCHNICK_INVITE(server, client, target) (":" + server + " 401 " + client + " " + target + " :No such nick/channel\r\n")
+#define ERR_NOTONCHANNEL_INVITE(server, client, channel) (":" + server + " 442 " + client + " " + channel + " :You're not on that channel\r\n")
+#define ERR_CHANOPRIVSNEEDED_INVITE(server, client, channel) \
+    (":" + server + " 482 " + client + " " + channel + " :You're not channel operator\r\n")
+#define ERR_USERONCHANNEL(server, client, target, channel) \
+    (":" + server + " 443 " + client + " " + target + " " + channel + " :is already on channel\r\n")
+
 
 // ################################################################################
 // #                                    REPLIES IRSSI                               #

@@ -28,6 +28,9 @@ class Channel
         bool is_in_channel(const std::string &name);
         void update_name_client(const std::string &old_nickname, const std::string &new_nickname);
 
+        void add_invite(const std::string &name);
+        void minus_invite(const std::string &name);
+
         bool authorization_check(const std::string &nickname);
 
         std::vector<std::string> get_operator() const;
@@ -39,6 +42,7 @@ class Channel
        
         std::map<std::string, int> get_clients() const;
 		size_t get_nb_client() const;
+        std::vector<std::string> get_invite_name() const;
 
         void set_i(const std::string &i);
         void set_topic(const std::string &value);

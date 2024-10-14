@@ -19,6 +19,7 @@
 #include "quit.hpp"
 #include "kick.hpp"
 #include "topic.hpp"
+#include "invite.hpp"
 // other
 #include "define.hpp"
 

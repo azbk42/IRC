@@ -19,6 +19,7 @@ class Msg;
 class Whois;
 class Kick;
 class Topic;
+class Invite;
 
 
 class Parse
@@ -46,6 +47,7 @@ class Parse
 		bool parse_part(std::vector<Client*> &clients_list, int client_fd, Client *client_actif, std::vector<Channel*> &channels);
         bool parse_kick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
         bool parse_topic(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
+        bool parse_invite(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
         // bot
         bool parse_bot(int client_fd, Client &client_actif, Bot bot);
     private:

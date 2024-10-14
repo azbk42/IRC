@@ -108,7 +108,6 @@ void Topic::init_topic(const std::string &value)
             chan->send_message_to_all(message, -1);
         }
     }
-
 }
 
 // ################################################################################

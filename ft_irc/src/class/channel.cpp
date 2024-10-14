@@ -19,6 +19,7 @@ std::vector<std::string> Channel::get_operator() const {return _operator;};
 
 size_t Channel::get_nb_client() const {return _nb_client;};
 
+std::vector<std::string> Channel::get_invite_name() const {return _invite_name;};
 
 void Channel::set_i(const std::string &i)
 {
@@ -37,6 +38,22 @@ void Channel::set_topic(const std::string &value)
 // ################################################################################
 // #                                                       #
 // ################################################################################
+
+void Channel::add_invite(const std::string &name)
+{
+    _invite_name.push_back(name);
+}
+
+void Channel::minus_invite(const std::string &name)
+{
+    for (std::vector<std::string>::iterator it = _invite_name.begin(); it != _invite_name.end(); ++it) {
+        if (to_uppercase(*it) == to_uppercase(name)) {
+            _invite_name.erase(it);
+            break;
+        }
+    }
+}
+
 void Channel::modif_topic(const std::string &topic)
 {
     _topic = topic;

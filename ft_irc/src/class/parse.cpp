@@ -41,6 +41,15 @@ bool Parse::parse_bot(int client_fd, Client &client_actif, Bot bot)
     
 }
 
+bool Parse::parse_invite(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+{
+
+    Invite inv(clients_list, client_fd, client_actif, channels);
+    inv.init_cmd_invite(_value);
+
+    return true;
+}
+
 bool Parse::parse_topic(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
     Topic top(clients_list, client_fd, client_actif, channels);

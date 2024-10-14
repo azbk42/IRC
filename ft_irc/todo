@@ -10,7 +10,7 @@ Commandes restantes:
     - parsing de PART 
     - parsing de MODE
     - parsing de KICK OK
-    - parsing de TOPIC 
+    - parsing de TOPIC OK
     - parsing de NAMES ( bon la commande fonctionne toute seule )
     - parsing de WHOIS ( a voir si on fait )
     - parsing de WHO qui demande linfo de tous les utilisateur dun canal
@@ -22,11 +22,6 @@ Commandes restantes:
        -k +k : Définit ou supprime une clé (mot de passe) pour accéder au canal.
        -o +o : Donne ou retire les privilèges d'opérateur de canal à un utilisateur.
        -l +l : Définit ou supprime la limite maximale d'utilisateurs pouvant rejoindre le canal.
-
-
-creation des channels quand on fait JOIN done
-
-On doit setup la commande WHOIS qui genere les erreurs quand on essaye de se co a plusieurs sur un channel
 
 
 commande pour se connecter directement a irssi avec les infos que lon veut
