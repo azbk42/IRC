@@ -51,9 +51,9 @@ bool Parse::parse_whois(std::vector<Client*> &clients_list, int client_fd, Clien
     return true;
 }
 
-bool Parse::parse_msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+bool Parse::parse_msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
-    Msg privmsg(clients_list, client_fd, client_actif);
+    Msg privmsg(clients_list, client_fd, client_actif, channels);
     privmsg.init_cmd_msg(_value);
         
     return true;

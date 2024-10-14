@@ -21,10 +21,7 @@ Channel* Kick::find_channel(const std::string &canal_name)
 {
     for (int i = 0; i < _channels_list.size(); i++){
         std::string name_touper = to_uppercase(_channels_list[i]->get_name());
-        std::cout << MAGENTA "name toupper = "<< name_touper << std::endl;
-        std::cout << MAGENTA "canal_name = "<< canal_name << std::endl;
         if ( name_touper == to_uppercase(canal_name)){
-            std::cout << "je rentre" << std::endl;
             return _channels_list[i];
         }
     }
@@ -44,6 +41,37 @@ bool Kick::check_if_target_is_in_chan(Channel &Chan, const std::string &target_n
     return false;
 }
 
+void Kick::kick_client_from_channel(Channel &Chan, const std::string &target_name, const std::string &message)
+{
+    Client *client_target = NULL;
+    int fd;
+
+    for (int i = 0; i < _clients_list.size(); i++){
+        std::string name_upper = to_uppercase(_clients_list[i]->get_nickname());
+        if (name_upper == to_uppercase(target_name)){
+            client_target = _clients_list[i];
+            break;
+        }
+    }
+    if (client_target != NULL){
+        fd = client_target->get_socket_fd();
+        Chan.remove_client(target_name, fd, *client_target, message);
+        std::string message_to_target = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " KICK " + 
+                                           Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
+
+        // Envoyer le message au client qui se fait kicker
+        send(fd, message_to_target.c_str(), message_to_target.size(), 0);
+
+        // je dois encore envoeyr a tous les autres une seule fois.
+        std::string message_to_all = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " KICK " + 
+                                        Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
+        Chan.send_message_to_all(message_to_all, fd);
+    }
+
+
+
+}
+
 void Kick::process_kick(const std::string &canal_name, const std::string &target_name, const std::string &message)
 {
     std::string server_name = SERVER_NAME;
@@ -51,6 +79,7 @@ void Kick::process_kick(const std::string &canal_name, const std::string &target
     Channel *Chan;
     Chan = find_channel(canal_name);
     if (Chan == NULL){
+        std::cerr << "client doesnt exist" << std::endl;
         std::string error_message = ERR_NOSUCHCHANNEL3(server_name, _client_actif->get_nickname(), canal_name);
         send(_fd, error_message.c_str(), error_message.length(), 0);
         return ;
@@ -67,6 +96,9 @@ void Kick::process_kick(const std::string &canal_name, const std::string &target
         send(_fd, error_message.c_str(), error_message.length(), 0);
         return;
     }
+
+    kick_client_from_channel(*Chan, target_name, message);
+
 
 }
 
