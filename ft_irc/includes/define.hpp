@@ -45,6 +45,7 @@
 #define ERR_NOSUCHCHANNEL3(server, sender, channel) (":" + server + " 403 " + sender + " " + channel + " :No such channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(server, sender, channel) (":" + server + " 482 " + sender + " " + channel + " :You're not channel operator\r\n")
 #define ERR_USERNOTINCHANNEL(server, sender, target, channel) (":" + server + " 441 " + sender + " " + target + " " + channel + " :They aren't on that channel\r\n")
+#define ERR_CANTKICKSELF(server, operator_nickname, channel) (":" + server + " 484 " + operator_nickname + " " + channel + " :Cannot kick yourself\r\n")
 
 
 // ################################################################################

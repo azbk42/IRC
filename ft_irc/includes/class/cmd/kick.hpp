@@ -17,10 +17,14 @@ class Kick
     private:
         
         void process_kick(const std::string &canal_name, const std::string &target_name, const std::string &message);
-        bool check_if_client_is_op(Channel &chan);
-        Channel* find_channel(const std::string &canal_name);
-        bool check_if_target_is_in_chan(Channel &Chan, const std::string &target_name);
         void kick_client_from_channel(Channel &Chan, const std::string &target_name, const std::string &message);
+
+        Channel* find_channel(const std::string &canal_name);
+
+        bool check_all_potential_error(const std::string &canal_name, const std::string &target_name);
+        bool check_if_client_is_op(Channel &chan);
+        bool check_if_target_is_in_chan(Channel &Chan, const std::string &target_name);
+        bool check_if_client_is_target(const std::string &target);
 
         std::vector<Client*> &_clients_list;
         std::vector<Channel*> &_channels_list;
