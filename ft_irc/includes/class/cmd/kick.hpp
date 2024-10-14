@@ -31,6 +31,4 @@ class Kick
         Client *_client_actif;
         int _fd;
 
-
-
 };

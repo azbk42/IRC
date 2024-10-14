@@ -206,6 +206,9 @@ void Server::process_message(int fd)
 				//parser.parse_bot(fd, *client_actif, bot);
 				// si le parse_bot == false alors on va effectuer un privmsg classique.
 			}
+			if (parser.get_cmd() == "TOPIC"){
+				parser.parse_topic(_clients_array, fd, *client_actif, _channels_array);
+			}
 			if (parser.get_cmd() == "KICK"){
 				parser.parse_kick(_clients_array, fd, *client_actif, _channels_array);
 			}

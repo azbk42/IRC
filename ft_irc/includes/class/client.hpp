@@ -83,8 +83,5 @@ class Client
         int _nb_chan;
 
         time_t _connection_time;
-
-        const std::vector<Channel*>& get_channels() const;
-        // je dois build un vector de channel pour savoir ou le client se trouve
 };
 

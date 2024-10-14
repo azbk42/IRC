@@ -47,6 +47,9 @@
 #define ERR_USERNOTINCHANNEL(server, sender, target, channel) (":" + server + " 441 " + sender + " " + target + " " + channel + " :They aren't on that channel\r\n")
 #define ERR_CANTKICKSELF(server, operator_nickname, channel) (":" + server + " 484 " + operator_nickname + " " + channel + " :Cannot kick yourself\r\n")
 
+// TOPIC
+#define ERR_NOSUCHCHANNEL_TOPIC(server, nickname, channel) (":" + server + " 403 " + nickname + " " + channel + " :No such channel\r\n")
+
 
 // ################################################################################
 // #                                    REPLIES IRSSI                               #

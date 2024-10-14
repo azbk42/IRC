@@ -41,6 +41,7 @@ class Channel
 		size_t get_nb_client() const;
 
         void set_i(const std::string &i);
+        void set_topic(const std::string &value);
 
 		int remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason);
 		
@@ -59,6 +60,7 @@ class Channel
         std::string _password;
 
         bool _i;
+        bool _t;
         // -i si le channel est en invite only +i, il faut creer un vector<string> avec les noms autorises
         // -k definir un mot de passe que le client va devoir fournir pour se connecter
         // -l definir ou supprimer la limite dutilisateur

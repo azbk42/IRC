@@ -18,6 +18,7 @@
 #include "pass.hpp"
 #include "quit.hpp"
 #include "kick.hpp"
+#include "topic.hpp"
 // other
 #include "define.hpp"
 
