@@ -41,11 +41,17 @@ class Channel
 		std::time_t get_creation_date() const;
         // std::vector<std::string> get_operators() const;
         bool get_i() const;
+		bool get_t() const;
+
         int get_limite() const;
+
 
         void set_limite(int x);
         // void set_i(const std::string &i);
         void set_i(const char &i);
+		void set_t(const char &t);
+		void set_pass(bool x);
+		void set_password(std::string str);
 
 		int remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason);
         void add_operator(const std::string &name);
@@ -69,6 +75,7 @@ class Channel
 		std::map<std::string, bool> _flags;
         bool _i;
         int _limite;
+		bool _t;
         // -i si le channel est en invite only +i, il faut creer un vector<string> avec les noms autorises
         // -k definir un mot de passe que le client va devoir fournir pour se connecter
         // -l definir ou supprimer la limite dutilisateur

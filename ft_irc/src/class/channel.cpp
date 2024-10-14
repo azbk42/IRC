@@ -22,6 +22,9 @@ std::time_t Channel::get_creation_date() const {return _creation_time;};
 // std::vector<std::string> Channel::get_operators() const {return _operator;}
 bool Channel::get_i() const {return _i;}
 
+bool Channel::get_t() const {return _t;}
+
+
 int Channel::get_limite() const {return _limite;}
 
 void Channel::set_limite(int x){
@@ -37,6 +40,25 @@ void Channel::set_i(const char &i)
         _i = false;
     }
 }
+
+void Channel::set_t(const char &t)
+{
+    if (t == '+'){
+        _t = true;
+    }
+    else if (t == '-'){
+        _t = false;
+    }
+}
+
+void Channel::set_pass(bool x) {
+    _pass = x;
+}
+
+void Channel::set_password(std::string str){
+    _password = str;
+}
+
 // ################################################################################
 // #                                                       #
 // ################################################################################

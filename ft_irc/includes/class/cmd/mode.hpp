@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:43:04 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/11 17:07:08 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/14 15:03:55 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ class Mode
 		Client *_client_actif;
 		std::vector<Client*> _clients;
 		std::vector<Channel*> _channels_array;
+		std::map<char, char> _signe;
+		std::map<char, int> _ordre;
 	
 	public:
 		Mode(std::vector<Client*> &clients_list, Client* client_actif, std::vector<Channel*> channels_array, int client_fd, std::string value);
@@ -30,11 +32,16 @@ class Mode
 
 		void init_cmd_mode();
 		void channel_mode(std::vector<std::string> values);
-		void user_mode(std::vector<std::string> values);
-		std::string format_creation_time(Channel *channel);
+		void parse_mode(std::vector<std::string> values);
+		void exec_mode(Channel* channel, std::vector<std::string> values);
+		void mode_info(Channel* channel, std::vector<std::string> values);
+
 		void i_mode(Channel *channel, char signe);
+		void t_mode(Channel *channel, char signe);
+		void l_mode(Channel *channel, char signe, std::string value);
+		void k_mode(Channel *channel, char signe, std::string value);
 		void o_mode(Channel *channel, char signe, std::string user);
-		void l_mode(Channel *channel, std::vector<std::string> values);
+
 
 		bool isfulldigit(std::string str);
 
