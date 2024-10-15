@@ -267,7 +267,6 @@ Parse::Parse(): _str("str")
     
 }
 
-
 Parse::~Parse()
 {
 

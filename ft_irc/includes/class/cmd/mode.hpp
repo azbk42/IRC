@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:43:04 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/14 15:03:55 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/15 13:17:18 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 #ifndef MODE_HPP
 # define MODE_HPP
+
+#include <sstream>
+
 
 class Mode
 {
@@ -33,8 +36,10 @@ class Mode
 		void init_cmd_mode();
 		void channel_mode(std::vector<std::string> values);
 		void parse_mode(std::vector<std::string> values);
+		size_t parse_args(std::string value);
 		void exec_mode(Channel* channel, std::vector<std::string> values);
 		void mode_info(Channel* channel, std::vector<std::string> values);
+		void mode_message(std::string mode, Channel* channel);
 
 		void i_mode(Channel *channel, char signe);
 		void t_mode(Channel *channel, char signe);
@@ -43,7 +48,7 @@ class Mode
 		void o_mode(Channel *channel, char signe, std::string user);
 
 
-		bool isfulldigit(std::string str);
+		long get_digit(std::string str);
 
 
 

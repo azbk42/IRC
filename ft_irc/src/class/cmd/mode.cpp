@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:42:51 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/14 16:14:56 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/15 14:09:09 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <cctype>
 #include <map>
 
-			// si 2e arg, mais pas en attente d;arg, (pas de koul) le traite comme un nouveau mode
+	// si 2e arg, mais pas en attente d;arg, (pas de koul) le traite comme un nouveau mode
 
 
 
@@ -31,93 +31,148 @@ Mode::~Mode() {}
 // #                                    METHOD                                    #
 // ################################################################################
 
+void Mode::mode_message(std::string mode, Channel *channel){
+	std::string server_name = SERVER_NAME;
+	std::string message = ":" + server_name + " 324 " + _client_actif->get_nickname() + " " + channel->get_name() + " " + mode + "\r\n";
+	// std::string message2 = " by " + _client_actif->get_nickname() + "\r\n";
+	// std::string message = ":" + server_name + " 324 " + _client_actif->get_nickname() + "#" + channel->get_name() + " " + channel->get_name() + " " + mode + " " + "by " + _client_actif->get_nickname() + "\r\n";
+	std::map<std::string, int> clients = channel->get_clients();
+	for (std::map<std::string, int>::iterator it = clients.begin(); it != clients.end(); ++it) {
+        send(it->second, message.c_str(), message.size(), 0);
+		// send(it->second, message2.c_str(), message.size(), 0);
+
+    }
+	// send(_client_fd, message.c_str(), message.size(), 0);
+	// send(_client_fd, message2.c_str(), message.size(), 0);
+}
+
 	//  i : Définir/supprimer le canal sur invitation uniquement
 void Mode::i_mode(Channel *channel, char signe){
-	if (channel->get_i() == true && signe == '-')
+	std::string mode;
+	if (signe == '-') {
 		channel->set_i('-');
-	if (channel->get_i() == false && signe == '+')
+		mode = "-i";
+		mode_message(mode, channel);
+	}
+	if (signe == '+'){
 		channel->set_i('+');
+		mode = "+i";
+		mode_message(mode, channel);
+	}
 }
 
 	// — t : Définir/supprimer les restrictions de la commande TOPIC pour les opérateurs de canaux
 void Mode::t_mode(Channel *channel, char signe){
-	if (channel->get_t() == true && signe == '-')
+	std::string mode;
+	if (signe == '-') {
 		channel->set_t('-');
-	if (channel->get_t() == false && signe == '+')
+		mode = "-t";
+		mode_message(mode, channel);
+	}
+	if (signe == '+') {
 		channel->set_t('+');
-	
+		mode = "+t";
+		mode_message(mode, channel);
+	}
 }
 
 	// — k : Définir/supprimer la clé du canal (mot de passe)
 void Mode::k_mode(Channel *channel, char signe, std::string value){
+	std::string mode;
 	if (channel->get_pass() == true && signe == '-') {
+		mode = "-k";
+		// mode = "-k" + channel->get_password();
 		channel->set_pass(false);
-		channel->set_password(NULL);
+		channel->set_password("");
+		mode_message(mode, channel);
 	}
 	if (signe == '+' && value.empty() == false){
 		channel->set_pass(true);
 		channel->set_password(value);
+		mode = "+k " + value;
+		mode_message(mode, channel);
 	}
 }
 
 // — l : Définir/supprimer la limite d’utilisateurs pour le canal
 void Mode::l_mode(Channel *channel, char signe, std::string value){
 	std::string server_name = SERVER_NAME;
-
+	std::string mode;
+	
 	if (signe == '-') { // dans ce cas on ignore totalement ce qui vient apres?
+		mode = "-l";
 		if (channel->get_limite() != -1) // et si y a une limite
 			channel->set_limite(-1);
+		mode_message(mode, channel);
 	}
-	if (signe == '+' && value.empty() == true) {\
+	if (signe == '+' && value.empty() == true) {
 		std::string str = ERR_NEEDMOREPARAMS2("MODE +l", server_name);
 		std::cout << str << std::endl;
 		send(_client_fd, str.c_str(), str.length(), 0);
 	}
 	if (signe == '+' && value.empty() == false) {
-		if (isfulldigit(value) == true){
-			int limite = string_to_int(value);
-			channel->set_limite(limite);									
-		}
+		long limite = get_digit(value);
+		if (limite < 0)
+			return ;
+		channel->set_limite(limite);									
+		mode = "+l " + int_to_string(limite);
+		mode_message(mode, channel);
 	}
 }
 
 // — o : Donner/retirer le privilège de l’opérateur de canal
 void Mode::o_mode(Channel *channel, char signe, std::string user){
-
 	std::string server_name = SERVER_NAME;
+	std::string mode;
+std::cout << "omode" << std::endl;
+
 	if (user.empty() == true)
 		return ;
 // verifier que lútilisateur existe ?
 	else if (channel->is_in_channel(user)) // -> check if user is in the channel
 	{
-		if (channel->is_operator(user) == true && signe == '-') // si il est ope mais quon veut le retirer
+		if (channel->is_operator(user) == true && signe == '-') { // si il est ope mais quon veut le retirer
+			std::cout << "remove" << std::endl;
 			channel->remove_operator(user);
-		if (channel->is_operator(user) == false && signe == '+')// si il est pas operateur, mais quón veut lui donner ce role
+			mode = "-o " + user;
+			mode_message(mode, channel);
+		}
+		if (channel->is_operator(user) == false && signe == '+') {// si il est pas operateur, mais quón veut lui donner ce role
+			std::cout << "add" << std::endl;
 			channel->add_operator(user);
-	} // ajouter un message de confirmation a tous ??
+			mode = "+o " + user;
+			mode_message(mode, channel);
+		}
+	}
 	else {
-		// yo: No such nick/channel
+		std::string str1 =  ERR_NOTONCHANNEL1(server_name, user, channel->get_name()); // yo :No such nick/channel
 		std::string str =  ERR_NOTONCHANNEL2(server_name, user, channel->get_name()); // yo #camtrooo They aren't on that channel
+		send(_client_fd, str1.c_str(), str1.length(), 0);
 		send(_client_fd, str.c_str(), str.length(), 0);
 	}
 }
 
-bool Mode::isfulldigit(std::string str){
-	for (size_t i = 0; i < str.length(); ++i) {
-        if (!isdigit(str[i])) {
-            return false; // Si un caractère n'est pas un chiffre, retourne faux
-        }
-	}
-	return true;
+long Mode::get_digit(std::string str){
+	long digit = -1;
+	if (str[0] == '+')
+		str.erase(0, 1);
+	char *end;
+	digit = std::strtol(str.c_str(), &end, 10);
+	if (digit == 0 && str[0] != '0')
+		return -1;
+	return digit;
 }
 
-
 void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
+	std::cout << "size signe=" << _signe.size() << std::endl;
+	std::cout << "size ordre=" << _ordre.size() << std::endl;
+
 	if (_signe.find('i') != _signe.end()){
 		i_mode(channel, _signe['i']);
 	}
-	if (_signe.find('t') != _signe.end())
+	if (_signe.find('t') != _signe.end()){
 		t_mode(channel, _signe['t']);
+	}
 	if (_signe.find('l')!= _signe.end()){
 		if (_signe['l'] == '+') {
 			int rang = 2 + _ordre['l'];
@@ -142,58 +197,77 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
 			k_mode(channel, _signe['k'], "");
 	}
 	if (_signe.find('o')!= _signe.end()) {
+		int rang = 2 + _ordre['o'];
 		if (_signe['o'] == '+'){
-			int rang = 2 + _ordre['o'];
 			if (values.size() > rang) {
 				o_mode(channel, _signe['o'], values[rang]);}
 			else {
 				o_mode(channel, _signe['o'], "");
 			}
 		}
-		else
-			o_mode(channel, _signe['o'], "");
+		else {
+			if (values.size() > rang) {
+				o_mode(channel, _signe['o'], values[rang]);}
+			else {
+				o_mode(channel, _signe['o'], "");
+			}
+		}
 	}
-	
 }
 
-void Mode::parse_mode(std::vector<std::string> values){
-	for (int i = 0; i < values[1].size(); i++){
-		if (values[1][i] == '+' || values[1][i] == '-') {
-			if ((i + 1)< values[1].size() && (values[1][i + 1] == 'i' || values[1][i + 1] == 'k' 
-				|| values[1][i + 1] == 'l' || values[1][i + 1] == 'o' || values[1][i + 1] == 't')){
-					if (_signe.find(values[1][i + 1]) == _signe.end()) { // n'existe pas encore
-						_signe[values[1][i + 1]] = values[1][i];
-						if ((values[1][i + 1] == 'k'  || values[1][i + 1] == 'l' || values[1][i + 1] == 'o')
-						&& _signe[values[1][i + 1]] == '+'){
+size_t Mode::parse_args(std::string value){
+	std::cout << "value = " << value << std::endl;
+	for (int i = 0; i < value.size(); i++){
+		if (value[i] == '+' || value[i] == '-') {
+			if ((i + 1)< value.size() && (value[i + 1] == 'i' || value[i + 1] == 'k' 
+				|| value[i + 1] == 'l' || value[i + 1] == 'o' || value[i + 1] == 't')){
+					if (_signe.find(value[i + 1]) == _signe.end()) { // n'existe pas encore
+						_signe[value[i + 1]] = value[i];
+						if (((value[i + 1] == 'k'  || value[i + 1] == 'l' || value[i + 1] == 'o')
+						&& _signe[value[i + 1]] == '+') || (value[i + 1] == 'o' && _signe[value[i + 1]] == '-')){
 							if (_ordre.empty()) {
-								_ordre[values[1][i + 1]] = 0;
+								_ordre[value[i + 1]] = 0;
 							}
 							else
-								_ordre[values[1][i + 1]] = _ordre.size();
+								_ordre[value[i + 1]] = _ordre.size();
 						}
 					}
 			}
 		}
-		else if (values[1][i] == 'i' || values[1][i] == 'k' 
-			|| values[1][i] == 'l' || values[1][i] == 'o' || values[1][i] == 't') {
-				if (_signe.find(values[1][i]) == _signe.end()) { // n'existe pas encore
-					_signe[values[1][i]] = '+';
-					if ((values[1][i] == 'k'  || values[1][i] == 'l' || values[1][i] == 'o')){
+		else if (value[i] == 'i' || value[i] == 'k' 
+			|| value[i] == 'l' || value[i] == 'o' || value[i] == 't') {
+				if (_signe.find(value[i]) == _signe.end()) { // n'existe pas encore
+					_signe[value[i]] = '+';
+					if ((value[i] == 'k'  || value[i] == 'l' || value[i] == 'o')){
 						if (_ordre.empty())
-							_ordre[values[1][i]] = 0;
+							_ordre[value[i]] = 0;
 						else
-							_ordre[values[1][i]] = _ordre.size();
+							_ordre[value[i]] = _ordre.size();
 					}
 				}
 		}
 		else {
+			std::cout << "value=" << value[i] << std::endl;
 			std::string str = "Unknown mode character ";
-			str += values[1][i];
+			str += value[i];
+			std::cout << "str=" << str << std::endl;
 			send(_client_fd, str.c_str(), str.length(), 0);
 		}
 	}
+	return (_ordre.size());
 }
 
+void Mode::parse_mode(std::vector<std::string> values){
+	int i = 1;
+	while (i < values.size()) {
+		size_t ordresize = parse_args(values[i]); // -> parse bloc par bloc, mais en sautant les arguments de chaque bloc
+		std::cout << "ordresize = " << ordresize << std::endl;
+		if (ordresize == 0)
+			i++;
+		else
+			i += ordresize + 1;
+	}
+}
 
 void Mode::mode_info(Channel* channel,std::vector<std::string> values){
 	std::string server_name = SERVER_NAME;
@@ -249,8 +323,9 @@ void Mode::channel_mode(std::vector<std::string> values){
 				}
 			}
 		}
-		else
+		else {
 			send(_client_fd, ERR_NOSUCHCHANNEL2(server_name, values[0]), strlen(ERR_NOSUCHCHANNEL2(server_name, values[0])), 0);
+		}
 	}
 }
 
