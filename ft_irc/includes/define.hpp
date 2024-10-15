@@ -40,7 +40,7 @@
 #define ERR_NOSUCHSERVER(server, sender, target_server) (":" + server + " 402 " + sender + " " + target_server + " :No such server\r\n")
 
 // ERROR MODE
-#define ERR_CHANOPRIVSNEEDED(server, channel)(":" + server + " 482 " + " " + channel + " " + "#" + channel +" :You're not channel operator\r\n")
+#define ERR_CHANOPRIVSNEEDED2(server, channel)(":" + server + " 482 " + " " + channel + " " + "#" + channel +" :You're not channel operator\r\n")
 #define ERR_NEEDMOREPARAMS2(command, server) (":" + server_name + " 461 " + server + " " + command + ":Not enough parameters \r\n")
 #define ERR_NOTONCHANNEL1(server, user, channel)(":" + server_name + " 442" + channel + " " + user + " " + user + ":" + " :No such nick/channel\r\n").c_str()
 #define ERR_NOTONCHANNEL2(server, user, channel)(":" + server_name + " 442" + channel + " " + user + " " + user + " " + "#" + channel + " :They aren't on that channel\r\n").c_str()
