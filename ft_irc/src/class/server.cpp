@@ -18,14 +18,13 @@ bool Server::_signal = false;
 // #                       Constructor / Destructor                               #
 // ################################################################################
 
-Server::Server(int Port, std::string Password) : _port(Port), _serverFd(-1), _password(Password),
-												bot(BOT_NAME)
+Server::Server(int Port, std::string Password) : _port(Port), _serverFd(-1), _password(Password)
 {
 	std::cout << "Port: " << _port << std::endl;
 	std::cout << "Password: " << _password << std::endl;
 }
 
-Server::Server(const Server &rhs): bot(rhs.bot.get_name())
+Server::Server(const Server &rhs)
 {
 	_port = rhs._port;
 	_serverFd = rhs._serverFd;

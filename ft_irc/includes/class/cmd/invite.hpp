@@ -23,10 +23,9 @@ class Invite
         bool check_if_already_in_channel(const std::string &chan_name, const std::string &client_nick);
         Channel* get_chan(const std::string &chan_name);
 
-
         std::vector<Client*> &_clients_list;
         std::vector<Channel*> &_channels_list;
         Client *_client_actif;
         int _fd;
-
+        
 };

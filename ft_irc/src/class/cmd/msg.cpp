@@ -72,6 +72,12 @@ bool Msg::init_cmd_msg(const std::string &value)
     std::string sender = _client_actif->get_nickname();
     std::string server_name = SERVER_NAME;
 
+    if (privmsg.size() >= 400){
+        std::string error_message = ERR_INPUTTOOLONG(server_name, sender);
+        send(_client_actif->get_socket_fd(), error_message.c_str(), error_message.size(), 0);
+        return false;
+    }
+
     if (target[0] == '#'){
         send_message_to_channel(target, privmsg, sender, server_name);
     }

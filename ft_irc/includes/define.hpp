@@ -47,6 +47,10 @@
 #define ERR_USERNOTINCHANNEL(server, sender, target, channel) (":" + server + " 441 " + sender + " " + target + " " + channel + " :They aren't on that channel\r\n")
 #define ERR_CANTKICKSELF(server, operator_nickname, channel) (":" + server + " 484 " + operator_nickname + " " + channel + " :Cannot kick yourself\r\n")
 
+// PRIVMSG
+#define ERR_INPUTTOOLONG(server, client) \
+    (":" + server + " 417 " + client + " :Your message is too long (maximum is 400 characters)\r\n")
+
 // TOPIC
 #define ERR_NOSUCHCHANNEL_TOPIC(server, nickname, channel) (":" + server + " 403 " + nickname + " " + channel + " :No such channel\r\n")
 
@@ -100,3 +104,4 @@
 #define CYAN "\e[1;36m"   // Couleur cyan vive
 #define MAGENTA "\e[1;35m" // Couleur magenta vive
 #define BLUE "\e[1;34m"    // Couleur bleue vive
+#define RESET "\e[0m"  // Réinitialise les couleurs et attributs

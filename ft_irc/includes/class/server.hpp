@@ -33,11 +33,9 @@
 #include "client.hpp"
 #include "parse.hpp"
 #include "include.hpp"
-#include "bot.hpp"
 #include "pass.hpp"
 #include "list.hpp"
 
-class Bot;
 
 class Server //-> class for server
 {
@@ -73,7 +71,6 @@ class Server //-> class for server
 		
 		/* ELOUAN */
 		void process_message(int fd); // -> check if message end with \n and process command
-		Bot bot;
 		/* ELOUAN */
 
 		static void Handler_sigint(int sig);

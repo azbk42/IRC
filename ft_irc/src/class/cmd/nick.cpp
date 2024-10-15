@@ -16,7 +16,7 @@ bool Nick::check_all_errors(const std::string &new_nickname)
     }
 
     // verif taille du pseudo
-    if (new_nickname.size() > 9 || !isalpha(new_nickname[0])) {
+    if (new_nickname.size() > 15 || !isalpha(new_nickname[0])) {
         send(_fd, ERR_ERRONEUSNICKNAME(server_name, new_nickname), strlen(ERR_ERRONEUSNICKNAME(server_name, new_nickname)), 0);
         return false;
     }
