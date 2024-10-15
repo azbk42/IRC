@@ -19,17 +19,49 @@ std::vector<std::string> Channel::get_operator() const {return _operator;};
 
 size_t Channel::get_nb_client() const {return _nb_client;};
 
+std::time_t Channel::get_creation_date() const {return _creation_time;};
+
+// std::vector<std::string> Channel::get_operators() const {return _operator;}
+bool Channel::get_i() const {return _i;}
+
+bool Channel::get_t() const {return _t;}
+
+
+int Channel::get_limite() const {return _limite;}
+
+void Channel::set_limite(int x){
+    _limite = x;
+}
 std::vector<std::string> Channel::get_invite_name() const {return _invite_name;};
 
-void Channel::set_i(const std::string &i)
+void Channel::set_i(const char &i)
 {
-    if (i == "+"){
+    if (i == '+'){
         _i = true;
     }
-    else if (i == "-"){
+    else if (i == '-'){
         _i = false;
     }
 }
+
+void Channel::set_t(const char &t)
+{
+    if (t == '+'){
+        _t = true;
+    }
+    else if (t == '-'){
+        _t = false;
+    }
+}
+
+void Channel::set_pass(bool x) {
+    _pass = x;
+}
+
+void Channel::set_password(std::string str){
+    _password = str;
+}
+
 
 void Channel::set_topic(const std::string &value)
 {
@@ -123,6 +155,28 @@ bool Channel::is_in_channel(const std::string &name)
         return false;
 }
 
+bool Channel::is_operator(const std::string &name)
+{
+    for (int i = 0; i < _operator.size(); i++){
+        if (_operator[i] == name)
+            return true;
+    }
+    return false;
+}
+
+void Channel::add_operator(const std::string &name)
+{
+    _operator.push_back(name);
+}
+
+void Channel::remove_operator(const std::string &name)
+{
+    for (int i = 0; i < _operator.size(); i++){
+        if (_operator[i] == name)
+            _operator.erase(_operator.begin() + i);
+    }
+}
+
 void Channel::add_client(const std::string &name, const int fd_client, Client &client_actif)
 {
 	this->_client[name] = fd_client;
@@ -188,9 +242,9 @@ void Channel::update_name_client(const std::string &old_nickname, const std::str
 
 Channel::Channel(const std::string &name): 
     _name_channel(name), _topic(""), _password(""), _pass(false), _nb_client(0),
-    _i(false)
+    _i(false), _limite(-1)
 {
-
+	_creation_time = time(NULL);
 }
 
 Channel::~Channel()

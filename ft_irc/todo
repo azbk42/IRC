@@ -10,6 +10,14 @@ Commandes restantes:
     - je pense - parsing de QUIT dans la class server - need la fonction pour send to all chans - done
     - parsing de LIST dans le server pour savoir tous les diffrents noms de channels class server - done a cleaner
 
+Camille
+    - send if fail
+    - comparaison de string - tout mettre en MAJ
+
+Elouan
+    ajouter dans join un check de _limite
+
+    
     other class:
     - parsing de PART 
     - parsing de MODE

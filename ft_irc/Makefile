@@ -21,7 +21,7 @@ BONUS_DIR = ./bonus
 # fichier in src/class
 SRC_CLASS = server.cpp client.cpp parse.cpp channel.cpp
 
-SRC_CMD = join.cpp pass.cpp nick.cpp quit.cpp list.cpp part.cpp msg.cpp whois.cpp kick.cpp topic.cpp invite.cpp
+SRC_CMD = join.cpp pass.cpp nick.cpp quit.cpp list.cpp part.cpp msg.cpp whois.cpp mode.cpp kick.cpp topic.cpp invite.cpp
 # fichier in src/
 SRC_FILES = handle_arg.cpp utils.cpp
 

@@ -12,6 +12,7 @@
 #include "client.hpp"
 #include "parse.hpp"
 #include "server.hpp"
+#include <ctime>
 
 class Channel
 {
@@ -27,6 +28,7 @@ class Channel
 		void send_part_message(const std::string &name, const int fd_client);
         bool is_in_channel(const std::string &name);
         void update_name_client(const std::string &old_nickname, const std::string &new_nickname);
+        bool is_operator(const std::string &name);
 
         void add_invite(const std::string &name);
         void minus_invite(const std::string &name);
@@ -42,12 +44,27 @@ class Channel
        
         std::map<std::string, int> get_clients() const;
 		size_t get_nb_client() const;
+		std::time_t get_creation_date() const;
+        // std::vector<std::string> get_operators() const;
+        bool get_i() const;
+		bool get_t() const;
+
+        int get_limite() const;
+
         std::vector<std::string> get_invite_name() const;
 
-        void set_i(const std::string &i);
+        void set_limite(int x);
+        // void set_i(const std::string &i);
+        void set_i(const char &i);
+		void set_t(const char &t);
+		void set_pass(bool x);
+		void set_password(std::string str);
+
         void set_topic(const std::string &value);
 
 		int remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason);
+        void add_operator(const std::string &name);
+        void remove_operator(const std::string &name);
 		
 
     private:
@@ -62,9 +79,12 @@ class Channel
         std::vector<std::string> _operator;
         std::vector<std::string> _invite_name;
         std::string _password;
+		time_t _creation_time;
 
+		std::map<std::string, bool> _flags;
         bool _i;
-        bool _t;
+        int _limite;
+		bool _t;
         // -i si le channel est en invite only +i, il faut creer un vector<string> avec les noms autorises
         // -k definir un mot de passe que le client va devoir fournir pour se connecter
         // -l definir ou supprimer la limite dutilisateur

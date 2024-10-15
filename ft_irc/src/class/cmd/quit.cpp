@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:02:05 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/10 15:58:59 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:22:10 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,8 @@ void Quit::send_quit_msg() {
 	std::string username = _client->get_username();
 	std::string hostname = _client->get_hostname();
 
-	std::cout << "reason: " << _reason << std::endl;
 	if (_reason[0] == ':')
 		_reason.erase(0, 1); // Supprimer le premier espace
-	std::cout << "reason: " << _reason << std::endl;
 
 	std::string quit_message = QUIT_MESSAGE(nickname, username, hostname, "Quit: " + _reason);
 

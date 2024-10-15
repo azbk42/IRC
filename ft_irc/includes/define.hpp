@@ -17,8 +17,7 @@
 #define ERR_ERRONEUSNICKNAME(server, nick) (server + " " + nick + " :Erroneous nickname\r\n").c_str()
 #define ERR_NONICKNAMEGIVEN(server) (server + " :No nickname given\r\n").c_str()
 // ERROR USER
-#define ERR_NEEDMOREPARAMS(command, server) (":" + server_name + " 461 " + server + " " + command + \
-                            " :Not enough parameters\r\n").c_str()
+#define ERR_NEEDMOREPARAMS(command, server) (":" + server_name + " 461 " + server + " " + command + " :Not enough parameters \r\n").c_str()
 #define ERR_ALREADYREGISTERED(server) (":" + server_name + " 462 " + server + " :You may not reregister\r\n").c_str()
 
 // ERROR PASS
@@ -39,6 +38,13 @@
 
 // ERROR WHOIS
 #define ERR_NOSUCHSERVER(server, sender, target_server) (":" + server + " 402 " + sender + " " + target_server + " :No such server\r\n")
+
+// ERROR MODE
+#define ERR_CHANOPRIVSNEEDED(server, channel)(":" + server + " 482 " + " " + channel + " " + "#" + channel +" :You're not channel operator\r\n")
+#define ERR_NEEDMOREPARAMS2(command, server) (":" + server_name + " 461 " + server + " " + command + ":Not enough parameters \r\n")
+#define ERR_NOTONCHANNEL1(server, user, channel)(":" + server_name + " 442" + channel + " " + user + " " + user + ":" + " :No such nick/channel\r\n").c_str()
+#define ERR_NOTONCHANNEL2(server, user, channel)(":" + server_name + " 442" + channel + " " + user + " " + user + " " + "#" + channel + " :They aren't on that channel\r\n").c_str()
+
 
 // KICK
 #define ERR_NOSUCHCHANNEL3(server, sender, channel) (":" + server + " 403 " + sender + " " + channel + " :No such channel\r\n")
@@ -71,6 +77,22 @@
 
 #define QUIT_MESSAGE(nickname, username, hostname, message) (":" + nickname + "!" + username + "@" + hostname + " QUIT :" + message + "\r\n").c_str()
 #define PART_MESSAGE(nickname, username, hostname, channel, reason) (":" + nickname + "!" + username + "@" + hostname + " PART #" + channel + " :" + reason + "\r\n");
+
+#define RPL_CHANNELMODEIS(server, username, channel, modes) (":" + server_name + " 324 " + username + "#" + channel + " " + modes + "\r\n").c_str()
+#define RPL_CREATIONTIME(server, channel, creation_date_str) (":" + server_name + " 329 " + server + " " + channel + " " + creation_date_str + "\r\n").c_str()
+
+//   "<client> <channel> <modestring> <mode arguments>..."
+
+// Sent to a client to inform them of the currently-set modes of a channel. 
+// <channel> is the name of the channel. 
+// <modestring> and <mode arguments> are a mode string and the mode arguments (delimited as separate parameters) as defined in the MODE message description.
+
+// RPL_CREATIONTIME (329)
+
+//   "<client> <channel> <creationtime>"
+
+// Sent to a client to inform them of the creation time of a channel. <channel> is the name of the channel. 
+// <creationtime> is a unix timestamp representing when the channel was created on the network.
 
 // WHOIS
 
