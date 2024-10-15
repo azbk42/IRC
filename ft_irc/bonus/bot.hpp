@@ -13,9 +13,9 @@
 
 #include "client.hpp"
 
-#define BOT_NAME "HelpMaster"
-#define RED "\e[1;31m" //-> for red color
-#define GREEN "\e[1;32m" //-> for green color
+#define BOT_NAME "Celestin"
+#define RED "\e[1;31m"
+#define GREEN "\e[1;32m"
 
 
 class Bot
@@ -43,13 +43,13 @@ class Bot
         void send_message(const std::string &message);
 
         // Ajout de la logique des commandes de la classe Bot
-        void handle_time();
+        //void handle_time();
         void handle_help();
         void handle_heads();
         void handle_tails();
 
         typedef void (Bot::*CommandHandler)();
-        CommandHandler commandHandlers[4];
+        CommandHandler commandHandlers[3];
         void initialize_command_handlers();
 
         bool process_command(const std::string &command);

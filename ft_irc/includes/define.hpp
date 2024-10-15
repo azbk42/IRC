@@ -5,7 +5,6 @@
 // #                              SERVER_CONFIGURATION                            #
 // ################################################################################
 #define SERVER_NAME "localhost"
-#define BOT_NAME "HelpMaster"
 
 #define CLIENT_NOT_FOUND -1
 #define CHANNEL_NOT_FOUND NULL
@@ -91,7 +90,6 @@
 
 // ACCEPT
 #define NICK_CHANGE(old_nick, new_nick) (":" + old_nick + " NICK " + new_nick + "\r\n").c_str()
-
 
 // ################################################################################
 // #                                    COLORS                                    #

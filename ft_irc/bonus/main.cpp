@@ -14,15 +14,15 @@
 int checkPort(const char *argv)
 {
 	for (int i = 0; argv[i]; i++){
-			if (!isdigit(argv[i])){
-				return -1;
-			}
-		}
-		int Port = atoi(argv);
-		if (Port < 1024 || Port > 49151){ 	// confirmer 49151, 65535 d'apres beej
-			std::cout << "Error: Port must be between 1024 and 49151" << std::endl;
-			return -1;
-		}
+        if (!isdigit(argv[i])){
+            return -1;
+        }
+    }
+    int Port = atoi(argv);
+    if (Port < 1024 || Port > 49151){ 	// confirmer 49151, 65535 d'apres beej
+        std::cout << "Error: Port must be between 1024 and 49151" << std::endl;
+        return -1;
+    }
 	return (Port);
 }
 
@@ -47,20 +47,20 @@ int main(int ac, char **av)
 		return 1;
 	}
 
-    Bot* Helpmaster = NULL;
+    Bot* Celestin = NULL;
     try {
         
-        Helpmaster = handle_arg(av[1], av[2]);
+        Celestin = handle_arg(av[1], av[2]);
 
-        Helpmaster->connect_to_server();
+        Celestin->connect_to_server();
 
-        Helpmaster->run();
+        Celestin->run();
         
     }
     catch (const std::exception &e) {
         std::cerr << RED << "Erreur : " << e.what() << RESET << std::endl;
-        // Libérer la mémoire si l'objet a été alloué
-        delete Helpmaster;
+
+        delete Celestin;
         return 1;
     }
     

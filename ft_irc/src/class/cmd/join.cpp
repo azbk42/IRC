@@ -114,7 +114,7 @@ bool Join::_process_channel(const std::string &chan_name)
     std::string channel_name = chan_name.substr(0);
     // ajout channel existant
     for (int i = 0; i < _channels_list.size(); i++){
-        if (_channels_list[i]->get_name() == channel_name){
+        if (to_uppercase(_channels_list[i]->get_name()) == to_uppercase(channel_name)){
             // verif si il est autorise
             if (_channels_list[i]->authorization_check(nickname) == false){
                 std::string error_message = ERR_INVITEONLYCHAN(nickname, channel_name);
@@ -137,7 +137,7 @@ bool Join::init_cmd_join()
     map_channel = _init_channel_map(_value);
 
     for (std::map<std::string, std::string>::const_iterator it = map_channel.begin(); it != map_channel.end(); ++it) {
-       //std::cout << "Channel: " << it->first << ", Password: " << (it->second.empty() ? "No password" : it->second) << std::endl;
+        //std::cout << "Channel: " << it->first << ", Password: " << (it->second.empty() ? "No password" : it->second) << std::endl;
    
         if (_check_invalid_char_join(it->first, _fd, *_client_actif) == false){
             continue;

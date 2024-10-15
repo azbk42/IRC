@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 // class
 #include "server.hpp"
 #include "parse.hpp"
