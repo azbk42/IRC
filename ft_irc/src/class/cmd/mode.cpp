@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:42:51 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/15 14:17:28 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/15 14:26:49 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,7 +314,8 @@ void Mode::channel_mode(std::vector<std::string> values){
 				mode_info(_channels_array[i], values);
 			else { // -> si plusieurs arguments, verifie que le client est operateur du chan
 				if (_channels_array[i]->is_operator(_client_actif->get_nickname()) == false){
-					std::string notope = ERR_CHANOPRIVSNEEDED2(server_name, _channels_array[i]->get_name());
+					// std::string notope = ERR_CHANOPRIVSNEEDED2(server_name, _channels_array[i]->get_name());
+					std::string notope = ERR_CHANOPRIVSNEEDED(server_name, _client_actif->get_nickname(),_channels_array[i]->get_name());
 					send(_client_fd, notope.c_str(), notope.length(), 0);
 				}
 				else { //-> si le client est bien operateur, on parse les arguments avant d'executer les modes

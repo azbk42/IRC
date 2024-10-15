@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:04:57 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/11 12:50:15 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/15 14:55:41 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void List::list_with_args(std::string client_name, std::string server_name){
 	// checker pour chq value
 	for (size_t j = 0; j < channels_listed.size(); j++){
 		if (channels_listed[j][0] == '#'){
-			channels_listed[j].erase(0, 1);
+		// 	channels_listed[j].erase(0, 1);
 			for (size_t i = 0; i < _channels_array.size(); i++){
 				if (_channels_array[i]->get_name() == channels_listed[j]){
 					send_channel(client_name, server_name, _channels_array[i]);
@@ -46,6 +46,7 @@ void List::list_with_args(std::string client_name, std::string server_name){
 		else {
 			std::string bad_arg = "Bad list syntax, type /quote list ? or /raw list ?\r\n";
 			send(_client_fd, bad_arg.c_str(), bad_arg.length(), 0);
+			break;
 		}
 	}
 	send(_client_fd, RPL_LISTEND(client_name), strlen(RPL_LISTEND(client_name)), 0);

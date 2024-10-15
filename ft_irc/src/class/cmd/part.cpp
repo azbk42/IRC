@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:55:49 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/11 12:46:54 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/15 14:38:52 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ Part::~Part() {}
 // ################################################################################
 
 void Part::_check_channel(std::string channel, std::string reason){
-	if (channel[0] == '#')
-		channel.erase(0, 1);// supprimer le #
+	// if (channel[0] == '#')
+	// 	channel.erase(0, 1);// supprimer le #
 	
 	std::string server_name = SERVER_NAME;
 	for (int i = 0 ; i < _channels_list.size(); i++){

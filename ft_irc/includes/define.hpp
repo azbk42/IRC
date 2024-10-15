@@ -76,7 +76,7 @@
 #define RPL_LISTEND(server) (":" + server_name + " 323 " + server + " :End of /LIST\r\n").c_str()
 
 #define QUIT_MESSAGE(nickname, username, hostname, message) (":" + nickname + "!" + username + "@" + hostname + " QUIT :" + message + "\r\n").c_str()
-#define PART_MESSAGE(nickname, username, hostname, channel, reason) (":" + nickname + "!" + username + "@" + hostname + " PART #" + channel + " :" + reason + "\r\n");
+#define PART_MESSAGE(nickname, username, hostname, channel, reason) (":" + nickname + "!" + username + "@" + hostname + " PART " + channel + " :" + reason + "\r\n");
 
 #define RPL_CHANNELMODEIS(server, username, channel, modes) (":" + server_name + " 324 " + username + "#" + channel + " " + modes + "\r\n").c_str()
 #define RPL_CREATIONTIME(server, channel, creation_date_str) (":" + server_name + " 329 " + server + " " + channel + " " + creation_date_str + "\r\n").c_str()
