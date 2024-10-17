@@ -6,23 +6,16 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:55:49 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/15 14:38:52 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:35:18 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "part.hpp"
 
-Part::Part(std::vector<Channel*> &channels, int client_fd, Client *client_actif, std::string value) : _channels_list(channels), _fd(client_fd), _client_actif(client_actif), _value(value){}
+Part::Part(std::vector<Channel*> &channels, int client_fd, Client &client_actif, std::string value) : _channels_list(channels), _fd(client_fd), _client_actif(&client_actif), _value(value){}
 Part::~Part() {}
 
-// ################################################################################
-// #                                PRIVATE METHOD                                #
-// ################################################################################
-
 void Part::_check_channel(std::string channel, std::string reason){
-	// if (channel[0] == '#')
-	// 	channel.erase(0, 1);// supprimer le #
-	
 	std::string server_name = SERVER_NAME;
 	for (int i = 0 ; i < _channels_list.size(); i++){
 		if (_channels_list[i]->get_name() == channel){ // verifier que le channel existe
@@ -46,25 +39,23 @@ void Part::_check_channel(std::string channel, std::string reason){
 				send(_fd, ERR_NOTONCHANNEL(server_name, channel), strlen(ERR_NOTONCHANNEL(server_name, channel)), 0);
 		}
 	} send(_fd, ERR_NOSUCHCHANNEL2(server_name, channel), strlen(ERR_NOSUCHCHANNEL2(server_name, channel)), 0);
-
 }
 
 void Part::init_cmd_part(){
-
-	size_t pos = _value.find(" :");
+	std::string server_name = SERVER_NAME;
 	std::string channels;
 	std::string reason;
+	size_t pos = _value.find(" :");
     if (pos != std::string::npos) {
-        channels = _value.substr(0, pos);           // Partie contenant les noms des canaux a quitter
-        reason = _value.substr(pos + 1);      // Partie contenant la raison
+        channels = _value.substr(0, pos);// Partie contenant les noms des canaux a quitter
+        reason = _value.substr(pos + 1);// Partie contenant la raison
 		if (reason.size() > 1)
 			reason.erase(0, 1);
     } else {
-        channels = _value;                          // Si aucun mot de passe n'est fourni
+        channels = _value;// Si aucune raison n'est fournie
     }
 	
 	std::vector<std::string> channels_part = split_by_comma(channels);
-	std::string server_name = SERVER_NAME;
 	
 	for (int i = 0; i < channels_part.size(); i++){
 		if ((channels_part.size() > 1) && (channels_part[i][0] != '#')){
@@ -75,6 +66,5 @@ void Part::init_cmd_part(){
 			_check_channel(channels_part[i], reason);
 		}
 	}
-
 }
 

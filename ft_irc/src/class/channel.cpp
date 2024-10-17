@@ -210,6 +210,7 @@ int Channel::remove_client(const std::string &name, const int fd_client, Client 
     	client_actif.minus_nb_channel();
 		return 1;
 	}
+	// pas supprime des invitations??
 	return 0;
 }
 

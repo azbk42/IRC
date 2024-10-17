@@ -127,23 +127,27 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
     return true;
 }
 
-bool Parse::parse_part(std::vector<Client*> &clients_list, int client_fd, Client *client_actif, std::vector<Channel*> &channels)
+void Parse::parse_list(int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+{
+	List list(client_actif, channels, client_fd, _value);
+	list.send_list();
+
+    return ;
+}
+void Parse::parse_part(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
 	Part part(channels, client_fd, client_actif, _value);
-	// (clients_list, client_fd, client_actif, channels, _value)
 	part.init_cmd_part();
 
-
-    return true;
+    return ;
 }
 
-bool Parse::parse_mode(std::vector<Client*> &clients_list, Client* client_actif, int client_fd, std::vector<Channel*> &channels)
+void Parse::parse_mode(std::vector<Client*> &clients_list, Client &client_actif, int client_fd, std::vector<Channel*> &channels)
 {
 	Mode mode(clients_list, client_actif, channels, client_fd, _value);
 	mode.init_cmd_mode();
 
-	return true;
-
+	return ;
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:02:00 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/08 18:24:09 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:49:28 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@ class Quit
 		int _client_fd;
 		Client* _client;
 		std::string _reason;
-		std::vector<Channel*> _channels;
+		std::vector<Channel*> &_channels;
 		
 	public:
-		Quit(int fd, Client* client, std::string reason, std::vector<Channel*> channels);
+		Quit(int fd, Client* client, std::string reason, std::vector<Channel*> &channels);
 		~Quit();
 
-		void send_quit_msg();		
+		void send_quit_msg();
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/11 15:44:14 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:30:12 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,9 @@ int Server::GetPort() const {return _port;}
 std::string Server::GetPassword() const {return _password;}
 
 // ################################################################################
-// #                                    SET                                       #
-// ################################################################################
-
-
-
-// ################################################################################
 // #                                  CLOSE FDS                                   #
 // ################################################################################
+
 void Server::CloseServerFd()
 {
 	for (size_t i = _pollFds.size() - 1; i > 0; i--) {
@@ -100,34 +95,17 @@ void Server::CloseClientSocket(int fd)
 		std::cout << "Failed to close client socket" << std::endl;
 	for (size_t i = 0; i < _pollFds.size(); i++) {
 		if (_pollFds[i].fd == fd){
-			_pollFds.erase(_pollFds.begin() + i);
+			_pollFds.erase(_pollFds.begin() + i); //-> erase the client's fd from pollFds
 			delete _clients_array[i - 1]; // ajout de cette fonction pour free le client alloue avec new
-			_clients_array.erase(_clients_array.begin() + (i - 1));
+			_clients_array.erase(_clients_array.begin() + (i - 1)); //->erase the client from _client_array
 			break;
 		}
-		// enlever 1 utilisateurs aux chans etc?
-		// std::map<std::string, int> _client;
-        // std::vector<std::string> _operator;
-        // std::vector<std::string> _invite_name;
-		// lier a fonction part 
 	}
 }
 
 // ################################################################################
 // #                            COMMUNICATION CLIENT                              #
 // ################################################################################
-
-void Server::SendtoAll(int expFd, char *buffer, int bytes_recv)
-{
-	for (size_t j = 0; j < _pollFds.size(); j++) {
-		int dest_fd = _pollFds[j].fd;
-		if (dest_fd != _serverFd && dest_fd != expFd) {
-			if (send(dest_fd, buffer, bytes_recv, 0) == -1) {
-				std::cout << "Failed to send data to " << dest_fd << std::endl;
-			}
-		}
-	}
-}
 
 void Server::AcceptClient()
 {
@@ -157,19 +135,12 @@ void Server::AcceptClient()
 	_clients_array.push_back(new_client);
 }
 
-std::string to_string(int value) {
-    std::ostringstream oss;
-    oss << value;
-    return oss.str();
-}
-
 void Server::process_message(int fd)
 {
 	size_t newline_pos;
 	while ((newline_pos = _partial_message[fd].find('\n')) != std::string::npos) {
 		
 		std::string complete_message = _partial_message[fd].substr(0, newline_pos + 1);
-
 		_partial_message[fd].erase(0, newline_pos + 1);
 
 		std::cout << YELLOW << "Client <" << fd << "> Data: " << WHITE << complete_message << std::endl;
@@ -188,7 +159,6 @@ void Server::process_message(int fd)
 				Pass passwd(fd, parser.get_value(), client_actif, _password);
 				if (passwd.check_pass() == 1)
 				    CloseClientSocket(fd);
-
 			}
 			else if (parser.get_cmd() == "CAP"){
 				continue;
@@ -199,7 +169,6 @@ void Server::process_message(int fd)
 			}
 		}
 		else if (client_actif != NULL && client_actif->get_checked_pwd() == true) {
-		
 			if (parser.get_cmd() == "PRIVMSG"){
 				parser.parse_msg(_clients_array, fd, *client_actif, _channels_array);
 				//parser.parse_bot(fd, *client_actif, bot);
@@ -230,19 +199,12 @@ void Server::process_message(int fd)
 				parser.parse_nick(_clients_array, fd, *client_actif, _channels_array, this);
 			if (parser.get_cmd() == "USER")
 				parser.parse_user(_clients_array, fd, *client_actif);
-			if (parser.get_cmd() == "LIST"){
-				// parser.parse_list(server, channel, client_count, topic);
-				List list(client_actif, _channels_array, fd, parser.get_value());
-				list.send_list();
-			}
-			if (parser.get_cmd() == "PART"){
-				parser.parse_part(_clients_array, fd, client_actif, _channels_array);
-			}
-			if (parser.get_cmd() == "MODE"){
-				parser.parse_mode(_clients_array, client_actif, fd, _channels_array);
-			}
-
-				
+			if (parser.get_cmd() == "LIST")
+				parser.parse_list(fd, *client_actif, _channels_array);
+			if (parser.get_cmd() == "PART")
+				parser.parse_part(_clients_array, fd, *client_actif, _channels_array);
+			if (parser.get_cmd() == "MODE")
+				parser.parse_mode(_clients_array, *client_actif, fd, _channels_array);
 		}
 		else {
 			std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
@@ -260,22 +222,27 @@ void Server::ReceiveData(int fd)
 		if (bytesRecv == -1)
 			std::cout << "Failed to receive data" << std::endl;
 		else if (bytesRecv == 0) {
+			Client* client_actif = NULL;
+			for (int i = 0; i < _clients_array.size(); i++) {
+				if (_clients_array[i]->get_socket_fd() == fd) {
+					client_actif = _clients_array[i]; 
+					break;
+				}
+			}
+			Quit quit(fd, client_actif, "Error", _channels_array);
+			quit.send_quit_msg();
 			CloseClientSocket(fd);
 			std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
 		}
 	}
 	else {
 		buffer[bytesRecv] = '\0';
-		// DEBUT DE CODE ELOUAN
 		std::string message(buffer);
 		_partial_message[fd] += message;
 		process_message(fd);
-	}
-		
-		std::cout << YELLOW << "-----------------------------------------------------" << WHITE << std::endl;
-		//SendtoAll(fd, buffer, bytesRecv);
-	}
-// }
+	}		
+	std::cout << YELLOW << "-----------------------------------------------------" << WHITE << std::endl;
+}
 
 // ################################################################################
 // #                            COMMUNICATION CLIENT                              #

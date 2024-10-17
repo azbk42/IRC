@@ -13,6 +13,7 @@ Commandes restantes:
 Camille
     - send if fail
     - comparaison de string - tout mettre en MAJ
+    au delq du premier join, pas de message de date de creation?
 
 Elouan
     ajouter dans join un check de _limite
@@ -62,3 +63,10 @@ reception:
 dcc en attente:
 
 /dcc list
+
+
+checks : 
+- quand qun entre ds chanel, message info mais pas changement des premieres lignes du chan
+- quand quit : message dans les chans, mais pas dans page d'accueil + MAJ nb users
+- remove_client ne supprime pas de invitation - revoir le fonctionnement
+ifndef ds tous les hpp

@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 16:12:03 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/10 16:31:04 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:34:53 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,17 @@
 #include "channel.hpp"
 #include "include.hpp"
 
-
-
 class Part{
 	private:
 		int _fd;
 		std::string _value;
 		Client *_client_actif;
-		std::vector<Channel*> &_channels_list; // revoir pourquoi ref
+		std::vector<Channel*> &_channels_list; // revoir pourquoi ref - peut etre vide ?
 
 		void _check_channel(std::string channel, std::string reason);
 
-
 	public:
-		Part(std::vector<Channel*> &channels, int client_fd, Client *client_actif, std::string value);
+		Part(std::vector<Channel*> &channels, int client_fd, Client &client_actif, std::string value);
 		~Part();
 
 		void init_cmd_part();
