@@ -219,7 +219,7 @@ bool Channel::authorization_check(const std::string &nickname)
     if (_i == true){
         
         for (int i = 0; i < _invite_name.size(); i++){
-            if (_invite_name[i] == nickname){
+            if (to_uppercase(_invite_name[i]) == to_uppercase(nickname)){
                 return true;
             }
         }

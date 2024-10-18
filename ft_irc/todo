@@ -18,9 +18,10 @@ Camille
     que irssi nous envoie ca en commande et nous on lui rep la date du chan.
 
 Elouan
-    ajouter dans join un check de _limite
+    supprimer le chan quand le dernier mec fait QUIT
     quand le dernier mec d'un chan fait /quit, il reste dans la base de donnee
     conditional jump quand on fait 'MODE #mdr' sans param supplementaire
+    refaire l'ordre des channels quand on va les creer ( ordre alphabetique)
     
     other class:
     - parsing de PART 

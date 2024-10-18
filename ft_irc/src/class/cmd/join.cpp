@@ -51,7 +51,6 @@ std::map<std::string, std::string> Join::_init_channel_map(std::string str)
 
 bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd, Client &client_actif)
 {
-
     if (chan_name.length() > 50){
          std::string error_message = ERR_CHANNELNAMETOOLONG(client_actif.get_nickname(), chan_name);
         send(client_fd, error_message.c_str(), error_message.size(), 0);
@@ -62,7 +61,7 @@ bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd,
     if (chan_name.length() > 0 && chan_name[0] != '#') {
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
         send(client_fd, error_message.c_str(), error_message.size(), 0);
-        std::cout << "NO DOLLS" << std::endl;
+        std::cout << "NO #" << std::endl;
         return false;
     }
     // check si apres le # il ny a rien
@@ -100,9 +99,43 @@ void Join::creation_channel(std::string channel_name, std::string nickname)
     _channels_list[len]->add_client(nickname, _fd, *_client_actif);
 }
 
-bool Join::_process_channel(const std::string &chan_name)
+bool Join::check_invit_channel(Channel* channel, const std::string& nickname, const std::string& channel_name)
+{
+    if (channel->get_i() == true){
+        if (channel->authorization_check(nickname) == false) {
+            std::string error_message = ERR_INVITEONLYCHAN(nickname, channel_name);
+            send(_fd, error_message.c_str(), error_message.size(), 0);
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Join::_check_channel_access(Channel* channel, const std::string& nickname, const std::string& channel_name, const std::string& password) 
+{
+    // Vérification du mot de passe du channel
+    if (channel->get_pass() == true){
+        if (channel->get_password() != password) {
+            std::string error_message = ":" + std::string(SERVER_NAME) + " 475 " + nickname + " " + channel_name + " :Cannot join channel (+k) - incorrect channel key\r\n";
+            send(_fd, error_message.c_str(), error_message.size(), 0);
+            return false;
+        }
+    }
+    if (check_invit_channel(channel, nickname, channel_name) == false){
+        return false;
+    }
+    
+    return true;
+}
+
+
+bool Join::_process_channel(const std::string &chan_name, const std::string &password)
 {
     std::string nickname = _client_actif->get_nickname();
+
+    // std::string error_message = ERR_NOSUCHCHANNEL(_client_actif->get_nickname(), chan_name);
+    // send(_client_actif->get_socket_fd(), error_message.c_str(), error_message.size(), 0);
+    // return false;
 
     if (_client_actif->check_nb_chan() == false){
         std::cout << RED << "ERROR TO MUCH CHAN" << WHITE << std::endl;
@@ -114,36 +147,42 @@ bool Join::_process_channel(const std::string &chan_name)
     std::string channel_name = chan_name.substr(0);
     // ajout channel existant
     for (int i = 0; i < _channels_list.size(); i++){
+
         if (to_uppercase(_channels_list[i]->get_name()) == to_uppercase(channel_name)){
-            // verif si il est autorise
-            if (_channels_list[i]->authorization_check(nickname) == false){
-                std::string error_message = ERR_INVITEONLYCHAN(nickname, channel_name);
-                send(_fd, error_message.c_str(), error_message.size(), 0);
+            if (_channels_list[i]->get_pass() == true){
+                std::cout << "pass = true" << std::endl;
+                if (!_check_channel_access(_channels_list[i], nickname, channel_name, password)){
+                    return false;
+                }
+            }
+            if (check_invit_channel(_channels_list[i], nickname, channel_name) == false){
+                std::cout << RED << "invit false" << WHITE << std::endl;
                 return false;
             }
+            std::cout << "add client " << std::endl;
             _channels_list[i]->add_client(nickname, _fd, *_client_actif);
             return true;
         }
     }
+    std::cout << "CREATE CHANNEL" << std::endl;
     // ajout channel non cree
     creation_channel(channel_name, nickname);
 
     return true;
-}
 
+}
 bool Join::init_cmd_join()
 {
+    return false;
     std::map<std::string, std::string> map_channel; 
     map_channel = _init_channel_map(_value);
 
     for (std::map<std::string, std::string>::const_iterator it = map_channel.begin(); it != map_channel.end(); ++it) {
-        //std::cout << "Channel: " << it->first << ", Password: " << (it->second.empty() ? "No password" : it->second) << std::endl;
-   
+        
         if (_check_invalid_char_join(it->first, _fd, *_client_actif) == false){
             continue;
         }
-
-        _process_channel(it->first);
+        _process_channel(it->first, it->second);
 
     }
     return true;

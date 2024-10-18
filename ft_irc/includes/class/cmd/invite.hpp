@@ -21,6 +21,11 @@ class Invite
         bool check_if_client_is_op_and_in_chan(const std::string &chan_name, const std::string &client_nick);
         bool check_if_already_in_invite(const std::string &chan_name, const std::string &client_nick);
         bool check_if_already_in_channel(const std::string &chan_name, const std::string &client_nick);
+        bool check_invite_conditions(const std::string &chan_name, const std::string &target, const std::string &client_nick, int fd);
+        void add_client_to_invite(const std::string &chan_name, const std::string &client_nick);
+        void send_invite_confirmation(const std::string &chan_name, const std::string &target, const std::string &client_nick);
+
+        int return_fd_target(const std::string &target);
         Channel* get_chan(const std::string &chan_name);
 
         std::vector<Client*> &_clients_list;
