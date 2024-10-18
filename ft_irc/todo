@@ -13,11 +13,14 @@ Commandes restantes:
 Camille
     - send if fail
     - comparaison de string - tout mettre en MAJ
-    au delq du premier join, pas de message de date de creation?
+    au delq du premier join, pas de message de date de creation? Je n'arrive pas a comprendre comment fonctionne irssi a ce niveau, mais sur la doc ce nest pas obligatoire
+    Ok jai trouve, cest quand on fait MODE #<nom du chan>
+    que irssi nous envoie ca en commande et nous on lui rep la date du chan.
 
 Elouan
     ajouter dans join un check de _limite
-
+    quand le dernier mec d'un chan fait /quit, il reste dans la base de donnee
+    conditional jump quand on fait 'MODE #mdr' sans param supplementaire
     
     other class:
     - parsing de PART 

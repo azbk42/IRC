@@ -47,6 +47,17 @@ void Msg::send_message_to_client(const std::string &target, const std::string &p
     }
 
 }
+
+bool Msg::verif_sender(const std::string &sender, Channel *chan)
+{
+    std::map<std::string, int> list = chan->get_clients();
+
+    if (list.find(sender) != list.end()) {
+        return true;  
+    }
+    return false;
+}
+
 void Msg::send_message_to_channel(const std::string &target, const std::string &privmsg, const std::string &sender, const std::string &server_name)
 {
     Channel *chan = NULL;
@@ -54,7 +65,12 @@ void Msg::send_message_to_channel(const std::string &target, const std::string &
     chan = find_channel_target(target);
     if (chan != CHANNEL_NOT_FOUND){
         int client_fd = _client_actif->get_socket_fd();
-
+        if (verif_sender(sender, chan) == false){
+            std::string error_message = ":" + server_name + " 404 " + sender + " " + target + " :Cannot send to channel\r\n";
+            send(client_fd, error_message.c_str(), error_message.length(), 0);
+            return;
+        }
+        
         std::string message = ":" + sender + "!" + _client_actif->get_username() + "@" + server_name + " PRIVMSG " + target + " :" + privmsg + "\r\n";
 
         chan->send_message_to_all(message, client_fd);

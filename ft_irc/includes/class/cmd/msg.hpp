@@ -15,6 +15,7 @@ class Msg
     private:
         int find_client_target(const std::string &target);
         Channel* find_channel_target(const std::string &target);
+        bool verif_sender(const std::string &sender, Channel *chan);
 
         void send_message_to_client(const std::string &target, const std::string &privmsg, const std::string &sender, const std::string &server_name);
         void send_message_to_channel(const std::string &target, const std::string &privmsg, const std::string &sender, const std::string &server_name);
