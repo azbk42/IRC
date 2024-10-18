@@ -18,31 +18,32 @@ int Whois::find_target(const std::string &target)
 
 void Whois::send_whois_message(const std::string &target)
 {
-    Client *client;
+    Client *client = NULL;
     for (int i = 0; i < _clients_list.size(); i++){
         if (to_uppercase(_clients_list[i]->get_nickname()) == to_uppercase(target)){
             client = _clients_list[i];
             break;
         }
     }
-    std::string nickname = client->get_nickname();
-    std::string server_name = SERVER_NAME;     
-    std::string username = client->get_username();    
-    std::string hostname = client->get_hostname(); 
-    std::string realname = client->get_real_name();  
-    std::string target_server = client->get_server_name(); 
-    std::string server_info = "FT_IRC 42 SCHOOL"; 
+    if (client != NULL){
+        std::string nickname = client->get_nickname();
+        std::string server_name = SERVER_NAME;     
+        std::string username = client->get_username();    
+        std::string hostname = client->get_hostname(); 
+        std::string realname = client->get_real_name();  
+        std::string target_server = client->get_server_name(); 
+        std::string server_info = "FT_IRC 42 SCHOOL"; 
 
-    // on doit envoye 3 message pour whois
-    std::string whois_user = RPL_WHOISUSER(server_name, nickname, target, username, hostname, realname);
-    send(_fd, whois_user.c_str(), whois_user.size(), 0);
+        // on doit envoye 3 message pour whois
+        std::string whois_user = RPL_WHOISUSER(server_name, nickname, target, username, hostname, realname);
+        send(_fd, whois_user.c_str(), whois_user.size(), 0);
 
-    std::string whois_server = RPL_WHOISSERVER(server_name, nickname, target, target_server, server_info);
-    send(_fd, whois_server.c_str(), whois_server.size(), 0);
+        std::string whois_server = RPL_WHOISSERVER(server_name, nickname, target, target_server, server_info);
+        send(_fd, whois_server.c_str(), whois_server.size(), 0);
 
-    std::string end_of_whois = RPL_ENDOFWHOIS(server_name, nickname, target);
-    send(_fd, end_of_whois.c_str(), end_of_whois.size(), 0);
-
+        std::string end_of_whois = RPL_ENDOFWHOIS(server_name, nickname, target);
+        send(_fd, end_of_whois.c_str(), end_of_whois.size(), 0);
+    }
 }
 
 bool Whois::process_two_arg(const std::string &value, const std::string &server_name, const std::string &sender)
