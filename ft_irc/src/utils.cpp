@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:28:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/11 15:38:39 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/18 15:56:01 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,15 @@ int string_to_int(const std::string& str) {
         return -1; 
     }
 	return result;
+}
+
+long get_digit(std::string str){
+	long digit = -1;
+	if (str[0] == '+')
+		str.erase(0, 1);
+	char *end;
+	digit = std::strtol(str.c_str(), &end, 10);
+	if (digit == 0 && str[0] != '0')
+		return -1;
+	return digit;
 }
