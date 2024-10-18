@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:42:51 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/17 18:48:15 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/18 12:28:33 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 // ################################################################################
 
 Mode::Mode(std::vector<Client*> &clients_list, Client &client_actif, std::vector<Channel*> &channels_array, int client_fd, std::string value) : 
-	_client_fd(client_fd), _clients(clients_list), _client_actif(&client_actif), _channels_array(channels_array), _value(value), _modes_info("+"), _modes_exec(""){}
+	_client_fd(client_fd), _clients(clients_list), _client_actif(&client_actif), _channels_array(channels_array), _value(value), _modes_info("+"){}
 
 Mode::~Mode() {}
 
@@ -39,24 +39,36 @@ Mode::~Mode() {}
 // }
 
 void Mode::fill_modes_exec(std::string mode, std::string signe, std::string value){
-	int pos = _modes_exec.find(signe);
-	if (signe == "+" && pos == -1) // si on a un + et qu'il n'y en a pas deja un ds _modes_exec
-		_modes_exec += signe;
-	if (signe == "+" && pos != -1){ // si on a un + et qu'il y en a deja un ds _modes_exec
-		if (_modes_exec.find("-") != std::string::npos && _modes_exec.find("-") > pos) //trouver un - plus proche
-		{
-			_modes_exec += signe;
+	std::cout << "mode = " << mode << std::endl;
+	std::cout << "signe = " << signe << std::endl;
+	std::cout << "value = " << value << std::endl;
+	if (_modes_exec.empty() == true){
+		_modes_exec.push_back(signe + mode);
+	}
+	else {
+		int pos = _modes_exec[0].find(signe);
+		if (signe == "+" && pos == -1) // si on a un + et qu'il n'y en a pas deja un ds _modes_exec[0]
+			_modes_exec[0] += signe;
+		if (signe == "+" && pos != -1){ // si on a un + et qu'il y en a deja un ds _modes_exec[0]
+			if (_modes_exec[0].find("-") != std::string::npos && _modes_exec[0].find("-") > pos) //trouver un - plus proche
+			{
+				_modes_exec[0] += signe;
+			}
 		}
+		if (signe == "-" && pos == -1)
+			_modes_exec[0] += signe;
+		if (signe == "-" &&  pos != -1) {// si on a un plus et qu'il y en a deja un ds _modes_exec[0]
+			if (_modes_exec[0].find("+") > pos) //trouver un - plus proche
+				_modes_exec[0] += signe;
+		}
+		_modes_exec[0] += mode;
 	}
-	if (signe == "-" && pos == -1)
-		_modes_exec += signe;
-	if (signe == "-" &&  pos != -1) {// si on a un plus et qu'il y en a deja un ds _modes_exec
-		if (_modes_exec.find("+") > pos) //trouver un - plus proche
-			_modes_exec += signe;
+	if (mode == "k" || mode == "o" || mode == "l"){
+		_modes_exec.push_back(value);
 	}
-	_modes_exec += mode;
-	if (mode == "k" || mode == "o" || mode == "l")
-		_modes_exec += value;
+	for (int i; i < _modes_exec.size(); i++){
+		std::cout << _modes_exec[i] << std::endl;
+	}
 }
 
 //  i : Définir/supprimer le canal sur invitation uniquement
@@ -164,17 +176,18 @@ long Mode::get_digit(std::string str){
 }
 
 void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
-	for(std::map<char, char>::iterator it = _signe.begin(); it != _signe.end(); ++it)
+	for(std::map<int, char>::iterator it = _ordre_exec.begin(); it != _ordre_exec.end(); ++it)
     {
-		if (it->first == 'i'){
+		std::cout << it->first << " = " << it->second << std::endl;
+		if (it->second == 'i'){
 			i_mode(channel, _signe['i']);
 		}
-		if (it->first == 't'){
+		if (it->second == 't'){
 			t_mode(channel, _signe['t']);
 		}
-		if (it->first == 'l'){
-			if (it->second == '+') {
-				int rang = 2 + _ordre['l'];
+		if (it->second == 'l'){
+			if (_signe['l'] == '+') {
+				int rang = 2 + _ordre_args['l'];
 				if (values.size() > rang)
 					l_mode(channel, _signe['l'], values[rang]);
 				else
@@ -183,9 +196,9 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
 			else
 				l_mode(channel, _signe['l'], "");
 		}
-		if (it->first == 'k'){
-			if (it->second == '+'){
-				int rang = 2 + _ordre['k'];
+		if (it->second == 'k'){
+			if (_signe['k'] == '+') {
+				int rang = 2 + _ordre_args['k'];
 				if (values.size() > rang) {
 					k_mode(channel, _signe['k'], values[rang]);}
 				else {
@@ -195,8 +208,8 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
 			else
 				k_mode(channel, _signe['k'], "");
 		}
-		if (it->first == 'o'){
-			int rang = 2 + _ordre['o'];
+		if (it->second == 'o'){
+			int rang = 2 + _ordre_args['o'];
 			if (_signe['o'] == '+'){
 				if (values.size() > rang) {
 					o_mode(channel, _signe['o'], values[rang]);}
@@ -214,8 +227,14 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
    		}
 	}
 	std::string server_name = SERVER_NAME;
-	std::cout << "send" << std::endl;
-	std::string chanmode = ":" + server_name + " 324 " + _client_actif->get_nickname() + "#" + channel->get_name() + " " + channel->get_name() + " " + _modes_exec + "\r\n";
+	std::string modes;
+	for (int i = 0; i < _modes_exec.size(); i++)
+	{
+		if (i != 0)
+			modes += " ";
+		modes += _modes_exec[i];
+	}
+	std::string chanmode = ":" + server_name + " 324 " + _client_actif->get_nickname() + "#" + channel->get_name() + " " + channel->get_name() + " " + modes + "\r\n";
 	send(_client_fd, chanmode.c_str(), chanmode.length(), 0);
 }
 
@@ -229,13 +248,14 @@ size_t Mode::parse_args(std::string value){
 					|| value[i + j] == 'l' || value[i + j] == 'o' || value[i + j] == 't')){ //-> if followed by one of the covered modes
 					if (_signe.find(value[i + j]) == _signe.end()) { //-> if this mode has not yet been parsed
 						_signe[value[i + j]] = value[i];
+						_ordre_exec[_ordre_exec.size()] = value[i + j];
 						if (((value[i + j] == 'k'  || value[i + j] == 'l' || value[i + j] == 'o')
 						&& _signe[value[i + j]] == '+') || (value[i + j] == 'o' && _signe[value[i + j]] == '-')){ //-> for those combinations, we expect a parameter to follow
-							if (_ordre.empty()) {
-								_ordre[value[i + j]] = 0;
+							if (_ordre_args.empty()) {
+								_ordre_args[value[i + j]] = 0;
 							}
 							else
-								_ordre[value[i + j]] = _ordre.size();
+								_ordre_args[value[i + j]] = _ordre_args.size();
 						}
 					}
 				}
@@ -245,11 +265,12 @@ size_t Mode::parse_args(std::string value){
 			|| value[i] == 'l' || value[i] == 'o' || value[i] == 't') {
 				if (_signe.find(value[i]) == _signe.end()) { //-> if this mode has not yet been parsed
 					_signe[value[i]] = '+';
+					_ordre_exec[_ordre_exec.size()] = value[i];
 					if ((value[i] == 'k'  || value[i] == 'l' || value[i] == 'o')){
-						if (_ordre.empty())
-							_ordre[value[i]] = 0;
+						if (_ordre_args.empty())
+							_ordre_args[value[i]] = 0;
 						else
-							_ordre[value[i]] = _ordre.size();
+							_ordre_args[value[i]] = _ordre_args.size();
 					}
 				}
 		}
@@ -259,7 +280,7 @@ size_t Mode::parse_args(std::string value){
 			send(_client_fd, str.c_str(), str.length(), 0);
 		}
 	}
-	return (_ordre.size());
+	return (_ordre_args.size());
 }
 
 void Mode::parse_mode(std::vector<std::string> values){

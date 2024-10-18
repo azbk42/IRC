@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:43:04 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/17 16:53:58 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/18 12:20:39 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # define MODE_HPP
 
 #include <sstream>
+#include <vector>
 
 
 class Mode
@@ -27,9 +28,11 @@ class Mode
 		std::vector<Client*> &_clients;
 		std::vector<Channel*> &_channels_array;
 		std::map<char, char> _signe;
-		std::map<char, int> _ordre;
+		std::map<char, int> _ordre_args;
+		std::map<int, char> _ordre_exec;
+
 		std::string _modes_info;
-		std::string _modes_exec;
+		std::vector<std::string> _modes_exec;
 
 		void channel_mode(std::vector<std::string> &values);
 		void mode_info(Channel* channel, std::vector<std::string> &values);
