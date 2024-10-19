@@ -186,8 +186,9 @@ void Server::process_message(int fd)
 			if (parser.get_cmd() == "WHOIS"){
 				parser.parse_whois(_clients_array, fd, *client_actif);
 			}
-			if (parser.get_cmd() == "JOIN")
+			if (parser.get_cmd() == "JOIN"){
 				parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
+			}
 			if (parser.get_cmd() == "QUIT"){
 				Quit quit(fd, client_actif, parser.get_value(), _channels_array); // revoir quand on envoie une ref??
 				quit.send_quit_msg();

@@ -33,8 +33,8 @@ class Join
         Client *_client_actif;
         int _fd;
 
-        std::map<std::string, std::string> _init_channel_map(std::string str);
-        // std::vector<std::string> _split_by_comma(const std::string &input);
+        std::map<std::string, std::string> _init_channel_map(std::string str,std::vector<std::string> &cannaux);
+        
         bool _check_invalid_char_join(const std::string &chan_name, int client_fd, Client &client_actif);
         bool _check_channel_access(Channel* channel, const std::string& nickname, const std::string& channel_name, const std::string& password);
         bool check_invit_channel(Channel* channel, const std::string& nickname, const std::string& channel_name);

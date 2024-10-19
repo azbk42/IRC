@@ -181,6 +181,7 @@ void Channel::add_client(const std::string &name, const int fd_client, Client &c
 {
 	this->_client[name] = fd_client;
     this->_nb_client += 1;
+    send_welcome_message(name, fd_client);
     std::string join_message = ":" + name + "!" + client_actif.get_username() + "@" + client_actif.get_hostname() +\
                                 " JOIN :" + get_name() + "\r\n";
     send_message_to_all(join_message, fd_client);
@@ -188,7 +189,6 @@ void Channel::add_client(const std::string &name, const int fd_client, Client &c
     if (_nb_client == 1){
         _operator.push_back(name);
     }
-    send_welcome_message(name, fd_client);
 }
 
 int Channel::remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason)

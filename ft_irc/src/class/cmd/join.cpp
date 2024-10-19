@@ -15,7 +15,7 @@
 //     return result;
 // }
 
-std::map<std::string, std::string> Join::_init_channel_map(std::string str)
+std::map<std::string, std::string> Join::_init_channel_map(std::string str, std::vector<std::string> &cannaux)
 {
     std::string names;
     std::string passwords;
@@ -39,6 +39,7 @@ std::map<std::string, std::string> Join::_init_channel_map(std::string str)
     
     // Remplir la map avec les canaux et les mots de passe
     for (size_t i = 0; i < channels_list.size(); ++i) {
+        cannaux.push_back(channels_list[i]);
         if (i < passwords_list.size()) {
             channels[channels_list[i]] = passwords_list[i];  // Assigner le mot de passe si disponible
         } else {
@@ -103,7 +104,8 @@ bool Join::check_invit_channel(Channel* channel, const std::string& nickname, co
 {
     if (channel->get_i() == true){
         if (channel->authorization_check(nickname) == false) {
-            std::string error_message = ERR_INVITEONLYCHAN(nickname, channel_name);
+            std::string error_message = ERR_INVITEONLYCHAN(std::string(SERVER_NAME), nickname ,channel_name);
+            std::cout << CYAN << "message error = " << error_message << std::endl;
             send(_fd, error_message.c_str(), error_message.size(), 0);
             return false;
         }
@@ -132,10 +134,6 @@ bool Join::_check_channel_access(Channel* channel, const std::string& nickname, 
 bool Join::_process_channel(const std::string &chan_name, const std::string &password)
 {
     std::string nickname = _client_actif->get_nickname();
-
-    // std::string error_message = ERR_NOSUCHCHANNEL(_client_actif->get_nickname(), chan_name);
-    // send(_client_actif->get_socket_fd(), error_message.c_str(), error_message.size(), 0);
-    // return false;
 
     if (_client_actif->check_nb_chan() == false){
         std::cout << RED << "ERROR TO MUCH CHAN" << WHITE << std::endl;
@@ -173,18 +171,17 @@ bool Join::_process_channel(const std::string &chan_name, const std::string &pas
 }
 bool Join::init_cmd_join()
 {
-    return false;
     std::map<std::string, std::string> map_channel; 
-    map_channel = _init_channel_map(_value);
-
-    for (std::map<std::string, std::string>::const_iterator it = map_channel.begin(); it != map_channel.end(); ++it) {
-        
-        if (_check_invalid_char_join(it->first, _fd, *_client_actif) == false){
+    std::vector<std::string> cannaux;
+    map_channel = _init_channel_map(_value, cannaux);
+    
+    for (int i = 0; i < cannaux.size(); i++) {
+        if (_check_invalid_char_join(cannaux[i], _fd, *_client_actif) == false){
             continue;
         }
-        _process_channel(it->first, it->second);
-
+        _process_channel(cannaux[i], map_channel[cannaux[i]]);
     }
+
     return true;
 
 }

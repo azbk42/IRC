@@ -78,14 +78,6 @@ bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client
     return true;
 }
 
-// bool Parse::parse_quit(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
-// {
-//     Quit command();
-// 	command.quit(client_fd, &client_actif, _value, _server);
-	
-//     return true;
-// }
-
 bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     std::string pong = "PONG :" + _value + "\r\n";

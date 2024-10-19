@@ -24,7 +24,7 @@
 #define ERR_PASSWDMISMATCH(server) (":" + server_name + " 464 " + server + " :Password incorrect\r\n").c_str()
 
 // ERROR JOIN
-#define ERR_INVITEONLYCHAN(server, channel) (server + " 473 " + channel + " :Cannot join channel (+i) - Invite only\r\n")
+#define ERR_INVITEONLYCHAN(server, client, channel) (":" + server + " 473 "+ client + " " + channel + " :Cannot join channel (+i)\r\n")
 #define ERR_NOSUCHCHANNEL(server, channel) (":" + server + " 403 " + channel + " :No such channel\r\n")
 #define ERR_CHANNELNAMETOOLONG(server, channel) (":" + server + " 403 " + channel + " :Channel name is too long (maximum is 50 characters)\r\n")
 #define ERR_TOOMANYCHANNELS(server, channel) (":" + server + " 405 " + channel + "r\n")
