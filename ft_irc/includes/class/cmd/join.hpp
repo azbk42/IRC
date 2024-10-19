@@ -37,7 +37,9 @@ class Join
         
         bool _check_invalid_char_join(const std::string &chan_name, int client_fd, Client &client_actif);
         bool _check_channel_access(Channel* channel, const std::string& nickname, const std::string& channel_name, const std::string& password);
+        bool check_limit_channel(Channel* channel, const std::string &nickname, const std::string &channel_name);
         bool check_invit_channel(Channel* channel, const std::string& nickname, const std::string& channel_name);
+        
         bool _process_channel(const std::string &chan_name, const std::string &password);
         void creation_channel(std::string channel_name, std::string nickname);
 };

@@ -30,7 +30,7 @@ SRC = $(addprefix $(CLASS_DIR)/, $(SRC_CLASS)) \
 	  $(addprefix $(CMD_DIR)/, $(SRC_CMD)) \
 		main.cpp
 
-# Bonus sources
+# bonus sources
 BONUS_SRC = $(BONUS_DIR)/main.cpp $(BONUS_DIR)/bot.cpp
 
 ################################################################################

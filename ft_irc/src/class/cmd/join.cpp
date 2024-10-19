@@ -110,13 +110,22 @@ bool Join::_check_channel_access(Channel* channel, const std::string& nickname, 
             return false;
         }
     }
-    if (check_invit_channel(channel, nickname, channel_name) == false){
-        return false;
-    }
     
     return true;
 }
 
+bool Join::check_limit_channel(Channel* channel, const std::string &nickname, const std::string &channel_name)
+{
+    int limit = channel->get_limite(); 
+    if (limit != -1){
+        if (channel->get_nb_client() >= limit){
+            std::string error_message = ERR_CHANNELISFULL(std::string(SERVER_NAME), nickname, channel_name);
+            send_message(_fd, error_message);
+            return false;
+        }
+    }
+    return true;
+}
 
 bool Join::_process_channel(const std::string &chan_name, const std::string &password)
 {
@@ -142,6 +151,11 @@ bool Join::_process_channel(const std::string &chan_name, const std::string &pas
             }
             if (check_invit_channel(_channels_list[i], nickname, channel_name) == false){
                 std::cout << RED << "invit false" << WHITE << std::endl;
+                return false;
+            }
+
+            if (check_limit_channel(_channels_list[i], nickname, channel_name) == false){
+                std::cout << RED << "limit false" << WHITE << std::endl;
                 return false;
             }
             std::cout << "add client " << std::endl;
