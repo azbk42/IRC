@@ -242,7 +242,7 @@ void Channel::update_name_client(const std::string &old_nickname, const std::str
 
 Channel::Channel(const std::string &name): 
     _name_channel(name), _topic(""), _password(""), _pass(false), _nb_client(0),
-    _i(false), _limite(-1)
+    _i(false), _limite(-1), _t(false)
 {
 	_creation_time = time(NULL);
 }

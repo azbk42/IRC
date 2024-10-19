@@ -72,7 +72,6 @@ class Channel
         // variable a false si pas de mdp ou true si yen a un
         bool _pass;
         size_t _nb_client;
-
         const std::string _name_channel;
         std::string _topic;
         std::map<std::string, int> _client;

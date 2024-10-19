@@ -30,4 +30,5 @@ std::vector<std::string> split_by_comma(const std::string &input);
 std::vector<std::string> split_by_space(const std::string &input);
 std::string int_to_string(int value);
 int string_to_int(const std::string& str);
+long get_digit(std::string str);
 

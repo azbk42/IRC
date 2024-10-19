@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:02:05 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/17 14:49:00 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/18 15:12:17 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,12 @@ void Quit::send_quit_msg() {
 	for (int i = 0; i < _channels.size(); i++){
         if (_channels[i]->is_in_channel(_client->get_nickname())){
             _channels[i]->send_message_to_all(quit_message, _client_fd); // Envoie à tous les autres clients du canal
-			_channels[i]->remove_client(_client->get_nickname(), _client_fd, *_client, _reason); // Supprime le client du canal		}
+			// _channels[i]->remove_client(_client->get_nickname(), _client_fd, *_client, _reason); // Supprime le client du canal		}
+			if (_channels[i]->remove_client(_client->get_nickname(), _client_fd, *_client, _reason) == 1)
+			{
+				delete _channels[i];
+				_channels.erase(_channels.begin() + i);
+			}
 	}
  	}
 }
