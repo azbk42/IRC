@@ -87,18 +87,26 @@ void Mode::o_mode(Channel *channel, char signe, std::string user){
 
 	if (user.empty() == true)
 		return ;
-// verifier que lútilisateur existe ?
+	// verifier que lútilisateur existe ?
 	else if (channel->is_in_channel(user)) // -> check if user is in the channel
 	{
 		if (channel->is_operator(user) == true && signe == '-') { // si il est ope mais quon veut le retirer
 			channel->remove_operator(user);
 			std::string sign(1, signe);
 			fill_modes_exec("o", sign, user);
+
+			std::string message_op = (":" + std::string("localhost") + " MODE " + channel->get_name() + " -o " + user + "\r\n");
+			send_message(_client_fd, message_op);
+			channel->send_message_to_all(message_op, _client_fd);
 		}
 		else if (channel->is_operator(user) == false && signe == '+') {// si il est pas operateur, mais quón veut lui donner ce role
 			channel->add_operator(user);
 			std::string sign(1, signe);
 			fill_modes_exec("o", sign, user);
+
+			std::string message_op = (":" + std::string("localhost") + " MODE " + channel->get_name() + " +o " + user + "\r\n");
+			send_message(_client_fd, message_op);
+			channel->send_message_to_all(message_op, _client_fd);
 		}
 	}
 	else {
