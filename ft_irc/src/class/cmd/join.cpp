@@ -137,8 +137,11 @@ bool Join::_process_channel(const std::string &chan_name, const std::string &pas
 
     if (_client_actif->check_nb_chan() == false){
         std::cout << RED << "ERROR TO MUCH CHAN" << WHITE << std::endl;
-        std::string error_message = ERR_TOOMANYCHANNELS(nickname, chan_name);
-        send(_fd, error_message.c_str(), error_message.size(), 0);
+        // std::string error_message = ERR_TOOMANYCHANNELS(nickname, chan_name);
+        // send(_fd, error_message.c_str(), error_message.size(), 0);
+        
+        std::string suppr_channel_message = ERR_TOOMANYCHANNELS(std::string(SERVER_NAME), nickname, chan_name);
+        send(_fd, suppr_channel_message.c_str(), suppr_channel_message.size(), 0);
         return false;
     }
 

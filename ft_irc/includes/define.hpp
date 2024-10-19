@@ -27,7 +27,7 @@
 #define ERR_INVITEONLYCHAN(server, client, channel) (":" + server + " 473 "+ client + " " + channel + " :Cannot join channel (+i)\r\n")
 #define ERR_NOSUCHCHANNEL(server, channel) (":" + server + " 403 " + channel + " :No such channel\r\n")
 #define ERR_CHANNELNAMETOOLONG(server, channel) (":" + server + " 403 " + channel + " :Channel name is too long (maximum is 50 characters)\r\n")
-#define ERR_TOOMANYCHANNELS(server, channel) (":" + server + " 405 " + channel + "r\n")
+#define ERR_TOOMANYCHANNELS(server, client, channel) (":" + server + " 405 " + client + " " + channel + " :You have joined too many channels\r\n")
 
 // ERROR PART
 #define ERR_NOTONCHANNEL(server, channel)(":" + server_name + " 442" + channel + " :You're not on that channel\r\n").c_str()
