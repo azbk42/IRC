@@ -34,7 +34,6 @@ void Whois::send_whois_message(const std::string &target)
         std::string target_server = client->get_server_name(); 
         std::string server_info = "FT_IRC 42 SCHOOL"; 
 
-        // on doit envoye 3 message pour whois
         std::string whois_user = RPL_WHOISUSER(server_name, nickname, target, username, hostname, realname);
         send(_fd, whois_user.c_str(), whois_user.size(), 0);
 

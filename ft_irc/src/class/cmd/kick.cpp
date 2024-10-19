@@ -74,17 +74,14 @@ void Kick::kick_client_from_channel(Channel &Chan, const std::string &target_nam
         std::string message_to_target = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " KICK " + 
                                            Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
 
-        // Envoyer le message au client qui se fait kicker
+        // send message kick client
         send(fd, message_to_target.c_str(), message_to_target.size(), 0);
 
-        // je dois encore envoeyr a tous les autres une seule fois.
+        // send message to all except client
         std::string message_to_all = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " KICK " + 
                                         Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
         Chan.send_message_to_all(message_to_all, fd);
     }
-
-
-
 }
 
 bool Kick::check_all_potential_error(const std::string &canal_name, const std::string &target_name)
@@ -93,7 +90,7 @@ bool Kick::check_all_potential_error(const std::string &canal_name, const std::s
     std::string server_name = SERVER_NAME;
 
     if (check_if_client_is_target(target_name) == false){
-        std::cerr << "Can't kick himself" << std::endl;
+        std::cerr << RED << "Can't kick himself" << std::endl;
         std::string error_message = ERR_CANTKICKSELF(server_name, target_name, canal_name);
         send(_fd, error_message.c_str(), error_message.size(), 0);
         return false;
@@ -101,19 +98,19 @@ bool Kick::check_all_potential_error(const std::string &canal_name, const std::s
     Channel *Chan;
     Chan = find_channel(canal_name);
     if (Chan == NULL){
-        std::cerr << "client doesnt exist" << std::endl;
+        std::cerr << RED << "client doesnt exist" << std::endl;
         std::string error_message = ERR_NOSUCHCHANNEL3(server_name, _client_actif->get_nickname(), canal_name);
         send(_fd, error_message.c_str(), error_message.length(), 0);
         return false;
     }
     if (check_if_client_is_op(*Chan) == false){
-        std::cout << "client not op" << std::endl;
+        std::cerr << RED << "client not op" << std::endl;
         std::string error_message = ERR_CHANOPRIVSNEEDED(server_name, _client_actif->get_nickname(), canal_name);
         send(_fd, error_message.c_str(), error_message.length(), 0);
         return false;
     }
     if (check_if_target_is_in_chan(*Chan, target_name) == false){
-        std::cout << "not in chan" << std::endl;
+        std::cerr << RED << "not in chan" << std::endl;
         std::string error_message = ERR_USERNOTINCHANNEL(server_name, _client_actif->get_nickname(), target_name, canal_name);
         send(_fd, error_message.c_str(), error_message.length(), 0);
         return false;
@@ -142,13 +139,7 @@ void Kick::init_cmd_kick(const std::string &value)
     pos = new_str.find(" ");
     std::string target_name = new_str.substr(0, pos);
     std::string message = new_str.substr(pos + 2);
-
-    std::cout << MAGENTA << "canal = " << canal_name << std::endl;
-    std::cout << MAGENTA << "target_name = " << target_name << std::endl;
-    std::cout << MAGENTA << "message = " << message << std::endl;
-    if (message[0] == '\0')
-        std::cout << MAGENTA << "message empty" << std::endl;
-
+    
     process_kick(canal_name, target_name, message);
 }
 

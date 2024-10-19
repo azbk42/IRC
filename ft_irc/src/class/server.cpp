@@ -171,8 +171,6 @@ void Server::process_message(int fd)
 		else if (client_actif != NULL && client_actif->get_checked_pwd() == true) {
 			if (parser.get_cmd() == "PRIVMSG"){
 				parser.parse_msg(_clients_array, fd, *client_actif, _channels_array);
-				//parser.parse_bot(fd, *client_actif, bot);
-				// si le parse_bot == false alors on va effectuer un privmsg classique.
 			}
 			if (parser.get_cmd() == "INVITE"){
 				parser.parse_invite(_clients_array, fd, *client_actif, _channels_array);

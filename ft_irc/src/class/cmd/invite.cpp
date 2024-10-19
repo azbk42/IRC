@@ -54,7 +54,6 @@ bool Invite::check_if_target_exist(const std::string &target)
 
 }
 
-
 bool Invite::check_if_client_is_op_and_in_chan(const std::string &chan_name, const std::string &client_nick)
 {
 
@@ -80,7 +79,6 @@ bool Invite::check_if_client_is_op_and_in_chan(const std::string &chan_name, con
         }
     }
     return false;
-
 }
 
 
@@ -111,7 +109,6 @@ bool Invite::check_if_already_in_channel(const std::string &chan_name, const std
         }
     }
     return true;;
-    
 }
 
 int Invite::return_fd_target(const std::string &target)
@@ -136,22 +133,19 @@ void Invite::add_client_to_invite(const std::string &chan_name, const std::strin
     if (chan != NULL){
         chan->add_invite(client_nick);
     }
-
 }
 
 void Invite::send_invite_confirmation(const std::string &chan_name, const std::string &target, const std::string &client_nick)
 {
-    // Ajouter le client à la liste d'invitation
+    // ajouter client invite list
     add_client_to_invite(chan_name, target);
 
-    // Envoyer le message de confirmation d'invitation au client qui invite (code 341)
     std::string invite_confirm_msg = ":" + std::string(SERVER_NAME) + " 341 " + client_nick + " " + target + " " + chan_name + "\r\n";
     send(_fd, invite_confirm_msg.c_str(), invite_confirm_msg.size(), 0);
 
-    // Obtenir le file descriptor du client invité
     int fd_target = return_fd_target(target);
 
-    // Envoyer le message d'invitation à la personne invitée
+    // send invite message
     std::string invite_msg = ":" + client_nick + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " INVITE " + target + " :" + chan_name + "\r\n";
     send(fd_target, invite_msg.c_str(), invite_msg.size(), 0);
 }
@@ -160,33 +154,28 @@ bool Invite::check_invite_conditions(const std::string &chan_name, const std::st
 {
     std::string server_name = SERVER_NAME;
 
-    // Vérification si le channel existe
     if (check_if_chan_exist(chan_name) == false) {
         std::string error_message = ERR_NOSUCHCHANNEL_TOPIC(server_name, client_nick, chan_name);
         send(fd, error_message.c_str(), error_message.size(), 0);
         return false;
     }
 
-    // Vérification si la cible (target) existe
     if (check_if_target_exist(target) == false) {
         std::string message = ERR_NOSUCHNICK_INVITE(server_name, client_nick, target);
         send(fd, message.c_str(), message.size(), 0);
         return false;
     }
 
-    // Vérification si le client est opérateur et dans le channel
     if (check_if_client_is_op_and_in_chan(chan_name, client_nick) == false) {
         std::cout << "OPP" << std::endl;
         return false;
     }
 
-    // Vérification si le client est déjà dans la liste d'invitation
     if (check_if_already_in_invite(chan_name, client_nick) == false) {
         std::cout << "ERROR INVITE" << std::endl;
         return false;
     }
 
-    // Vérification si la cible est déjà dans le channel
     if (check_if_already_in_channel(chan_name, target) == false) {
         std::string error_message = ERR_USERONCHANNEL(server_name, client_nick, target, chan_name);
         send(fd, error_message.c_str(), error_message.size(), 0);
@@ -199,7 +188,6 @@ bool Invite::check_invite_conditions(const std::string &chan_name, const std::st
 
 void Invite::init_cmd_invite(const std::string &value)
 {
-
     int pos = value.find(" ");
     std::string target = value.substr(0, pos);
     std::string chan_name = value.substr(pos + 1);
@@ -207,7 +195,7 @@ void Invite::init_cmd_invite(const std::string &value)
     std::string client_nick = _client_actif->get_nickname();
     int fd = _client_actif->get_socket_fd();
 
-    if (!check_invite_conditions(chan_name, target, client_nick, fd)) {
+    if (check_invite_conditions(chan_name, target, client_nick, fd) == false) {
         return;
     }
     
@@ -223,8 +211,6 @@ Invite::Invite(std::vector<Client*> &clients_list, int client_fd, Client &client
         _clients_list(clients_list), _channels_list(channels), _client_actif(&client_actif), _fd(client_fd)
 {
     
-
-
 }
 
 

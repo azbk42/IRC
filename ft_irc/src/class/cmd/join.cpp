@@ -4,32 +4,21 @@
 // #                                PRIVATE METHOD                                #
 // ################################################################################
 
-// std::vector<std::string> Join::_split_by_comma(const std::string &input) 
-// {
-//     std::vector<std::string> result;
-//     std::stringstream ss(input);
-//     std::string item;
-//     while (std::getline(ss, item, ',')) {
-//         result.push_back(item);
-//     }
-//     return result;
-// }
-
 std::map<std::string, std::string> Join::_init_channel_map(std::string str, std::vector<std::string> &cannaux)
 {
     std::string names;
     std::string passwords;
     std::map<std::string, std::string> channels;
-    // Séparer les noms des canaux et les mots de passe par un espace
+    
     size_t pos = str.find(" ");
     if (pos != std::string::npos) {
-        names = str.substr(0, pos);           // Partie contenant les noms des canaux
-        passwords = str.substr(pos + 1);      // Partie contenant les mots de passe
+        names = str.substr(0, pos);
+        passwords = str.substr(pos + 1);
     } else {
-        names = str;                          // Si aucun mot de passe n'est fourni
+        names = str;
     }
 
-    // Séparer les noms des canaux
+    // Separer les noms des canaux des password
     std::vector<std::string> channels_list = split_by_comma(names);
     std::vector<std::string> passwords_list = split_by_comma(passwords);
 
@@ -37,13 +26,12 @@ std::map<std::string, std::string> Join::_init_channel_map(std::string str, std:
         std::cout << "password empty" << std::endl;
     }
     
-    // Remplir la map avec les canaux et les mots de passe
     for (size_t i = 0; i < channels_list.size(); ++i) {
         cannaux.push_back(channels_list[i]);
         if (i < passwords_list.size()) {
-            channels[channels_list[i]] = passwords_list[i];  // Assigner le mot de passe si disponible
+            channels[channels_list[i]] = passwords_list[i];
         } else {
-            channels[channels_list[i]] = "";  // Aucun mot de passe fourni, chaîne vide
+            channels[channels_list[i]] = "";
         }
     }
     
@@ -115,7 +103,6 @@ bool Join::check_invit_channel(Channel* channel, const std::string& nickname, co
 
 bool Join::_check_channel_access(Channel* channel, const std::string& nickname, const std::string& channel_name, const std::string& password) 
 {
-    // Vérification du mot de passe du channel
     if (channel->get_pass() == true){
         if (channel->get_password() != password) {
             std::string error_message = ":" + std::string(SERVER_NAME) + " 475 " + nickname + " " + channel_name + " :Cannot join channel (+k) - incorrect channel key\r\n";
@@ -137,9 +124,6 @@ bool Join::_process_channel(const std::string &chan_name, const std::string &pas
 
     if (_client_actif->check_nb_chan() == false){
         std::cout << RED << "ERROR TO MUCH CHAN" << WHITE << std::endl;
-        // std::string error_message = ERR_TOOMANYCHANNELS(nickname, chan_name);
-        // send(_fd, error_message.c_str(), error_message.size(), 0);
-        
         std::string suppr_channel_message = ERR_TOOMANYCHANNELS(std::string(SERVER_NAME), nickname, chan_name);
         send(_fd, suppr_channel_message.c_str(), suppr_channel_message.size(), 0);
         return false;
@@ -186,7 +170,6 @@ bool Join::init_cmd_join()
     }
 
     return true;
-
 }
 
 

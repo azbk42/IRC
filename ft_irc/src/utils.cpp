@@ -61,3 +61,12 @@ long get_digit(std::string str){
 		return -1;
 	return digit;
 }
+
+void send_message(int fd, const std::string &message)
+{
+    if (send(fd, message.c_str(), message.size(), 0) == -1){
+        std::cerr << RED << "Send error" << std::endl;
+        std::cerr << RED << "Client fd = " << WHITE << fd << std::endl;
+        std::cerr << RED << "Message: " << WHITE << message << std::endl;
+    }
+}

@@ -7,7 +7,6 @@
 
 bool Nick::check_all_errors(const std::string &new_nickname)
 {
-    // penser a rajouter la verif si un utilisateur porte deja le nickname au debut de la connexion
     std::string server_name = SERVER_NAME;
 
     if (new_nickname.empty()){
@@ -31,8 +30,8 @@ bool Nick::check_all_errors(const std::string &new_nickname)
 
     std::string uppercase_nickname = to_uppercase(new_nickname);
     std::string nick_compare;
+
     // verif si le pseudo est déjà utilisé
-    // comparaison des deux nickname en uppercase
     for (int i = 0; i < _clients_list.size(); i++){
         nick_compare = _clients_list[i]->get_nickname();
         if (to_uppercase(nick_compare) == uppercase_nickname){
@@ -46,8 +45,6 @@ bool Nick::check_all_errors(const std::string &new_nickname)
 
 void Nick::send_message_to_all_one_time(const std::string &message, const int i, std::set<int> &clients_already_notified)
 {
-    // Parcourir tous les clients dans le canal i
-    // recuperation de la liste des clients present dans le chan avec leur fd
     std::map<std::string, int> map = _channels_list[i]->get_clients(); 
     
     std::map<std::string, int>::iterator it;
@@ -69,32 +66,25 @@ void Nick::send_message_to_all_one_time(const std::string &message, const int i,
 
 bool Nick::modification_actual_nickname(const std::string &new_nickname)
 {
-
-    // changement du pseudo
     std::string old_nickname = _client_actif->get_nickname();
 
     _client_actif->set_nickname(new_nickname);
     
-    // ici cest le message pour envoyer au client emeteur
+    // send emeteur client
     std::string confirmation_message = ":" + old_nickname + " NICK :" + new_nickname + "\n";
     send(_fd, confirmation_message.c_str(), confirmation_message.size(), 0);
 
-    // set cest pour avoir une liste ou il ne peut pas avoir de doublon
-    // donc je stock ici les fd qui ont deja recu un message pour ne pas leur envoyer deux fois
     std::set<int> clients_already_notified;
     clients_already_notified.insert(_fd);
 
     // send a tous les gens qui se trouve dans le meme chan
     for (int i = 0; i < _channels_list.size(); i++){
-        // pour savoir si le client emeteur est dans le channel
         if (_channels_list[i]->is_in_channel(old_nickname)){
             
             std::string message = NICK_CHANGE(old_nickname, new_nickname);
-            // envois le message a tous les clients du chan SAUF si ils ont deja recu un message avant 
-            //( qui va etre check avec clients_already_notified)
+
             send_message_to_all_one_time(message, i, clients_already_notified);
 
-            // je change le nom du client dans la <map> _client du channel
             _channels_list[i]->update_name_client(old_nickname, new_nickname);
         }
     }

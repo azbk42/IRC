@@ -75,8 +75,6 @@ void Msg::send_message_to_channel(const std::string &target, const std::string &
 
         chan->send_message_to_all(message, client_fd);
     }
-    
-
 }
 
 bool Msg::init_cmd_msg(const std::string &value)
@@ -101,11 +99,8 @@ bool Msg::init_cmd_msg(const std::string &value)
         send_message_to_client(target, privmsg, sender, server_name);
     }
    
-
     return true;
 }
-
-
 
 // ################################################################################
 // #                         constructor / destructor                             #

@@ -14,15 +14,12 @@
 
 void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
 {
-    // LES ERREURS ONT ETE SETUP POUR LUI
     std::string old_nick = get_nickname();
     int socket = get_socket_fd();
     set_nickname(new_nickname);
     
-    
-    //envoyer le message au client comme quoi on a bien changer de pseudo
-    send(client_socket, NICK_CHANGE(old_nick, new_nickname), strlen(NICK_CHANGE(old_nick, new_nickname)), 0);
 
+    send(client_socket, NICK_CHANGE(old_nick, new_nickname), strlen(NICK_CHANGE(old_nick, new_nickname)), 0);
 }
 bool Client::check_nb_chan()
 {
