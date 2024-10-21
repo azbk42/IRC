@@ -115,7 +115,7 @@ void Channel::send_welcome_message(const std::string &client, const int fd_clien
 
     // Envoyer le sujet du canal s'il y en a un
     if (!_topic.empty()) {
-        std::string topic_msg = ":" + std::string("localhost") + " 332 " + client + " " + _name_channel + " :" + _topic + "\r\n";
+        std::string topic_msg = ":" + std::string("localhost") + " 332 " + client + " " + _name_channel + " " + _topic + "\r\n";
         send_message(fd_client, topic_msg);
     }
 

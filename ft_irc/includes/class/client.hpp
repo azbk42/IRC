@@ -49,10 +49,7 @@ class Client
         bool check_nb_chan();
 
         time_t get_connection_time() const;
-        
 
-        // s'occuper de la commande USER
-        void handle_cmd_user(std::string &user_infos);
         // changer le pseudo
         void handle_cmd_nick(const std::string &new_nickname, int client_socket);
         // rejoindre un channel

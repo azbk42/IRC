@@ -97,7 +97,7 @@ void Topic::init_topic(const std::string &value)
         }
         else{
             message = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + 
-                        " TOPIC " + channel_name + " :" + new_topic + "\r\n";
+                        " TOPIC " + channel_name + " " + new_topic + "\r\n";
             chan->set_topic(new_topic);
             chan->send_message_to_all(message, -1);
         }

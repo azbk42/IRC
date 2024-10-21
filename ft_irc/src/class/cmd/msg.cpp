@@ -78,8 +78,12 @@ void Msg::send_message_to_channel(const std::string &target, const std::string &
 bool Msg::init_cmd_msg(const std::string &value)
 {
     size_t pos = value.find(" ");
+	std::cout << "pos = " << pos << std::endl;
+	std::cout << "ERROR" << std::endl;
     std::string target = value.substr(0, pos);
+	std::cout << "SALUT" << std::endl;
     std::string privmsg = value.substr(pos + 2);
+	std::cout << "LOOOL" << std::endl;
 
     std::string sender = _client_actif->get_nickname();
     std::string server_name = SERVER_NAME;

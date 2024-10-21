@@ -53,6 +53,4 @@ class Bot
         void initialize_command_handlers();
 
         bool process_command(const std::string &command);
-        std::string time_spent_on_server() const;
-
 };
