@@ -33,6 +33,8 @@
 #include "pass.hpp"
 #include "list.hpp"
 
+class Parse;
+
 class Server //-> class for server
 {
 	private:
@@ -45,10 +47,12 @@ class Server //-> class for server
 		std::vector<Client*> _clients_array; //-> vector of Clients connected
     	std::vector<Channel*> _channels_array; // vector of Channels created
 
+		void find_command(int fd, Client* client_actif, Parse &parser, const std::string &cmd);
 		void AcceptClient(); //-> accept new clients
 		void ReceiveData(int fd); //-> receive new data from clients
 		void CloseServerFd(); //-> close the server file descriptor
 		void process_message(int fd); // -> check if message end with \n and process command
+		void check_password(int fd, Client* client_actif, Parse &parser, const std::string &cmd);
 		
 	public:
 		Server(int Port, std::string PasSsword);

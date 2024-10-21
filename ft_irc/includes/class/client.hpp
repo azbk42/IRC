@@ -75,8 +75,6 @@ class Client
         bool _checked_pwd;
         int _nb_chan;
         int _socket_fd;
-		
-        
 
         time_t _connection_time;
 };

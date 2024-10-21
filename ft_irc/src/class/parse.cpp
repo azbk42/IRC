@@ -21,75 +21,60 @@ std::string Parse::get_value() const {
 // #                                   PARSING                                    #
 // ################################################################################
 
-bool Parse::parse_invite(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+void Parse::parse_invite(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
 
     Invite inv(clients_list, client_fd, client_actif, channels);
     inv.init_cmd_invite(_value);
-
-    return true;
 }
 
-bool Parse::parse_topic(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+void Parse::parse_topic(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
     Topic top(clients_list, client_fd, client_actif, channels);
     top.init_topic(_value);
-
-    return true;
 }
 
-bool Parse::parse_whois(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+void Parse::parse_whois(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     Whois who(clients_list, client_fd, client_actif);
     who.init_cmd_msg(_value);
-
-    return true;
 }
 
-bool Parse::parse_msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+void Parse::parse_msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
     Msg privmsg(clients_list, client_fd, client_actif, channels);
-    privmsg.init_cmd_msg(_value);
-        
-    return true;
+    privmsg.init_cmd_msg(_value);       
 }
 
-bool Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, Server* server)
+void Parse::parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, Server* server)
 {
     Nick command(clients_list, client_fd, client_actif, channels);
     command.init_cmd_nick(_value, server);
-
-    return true;
 }
 
-bool Parse::parse_kick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+void Parse::parse_kick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
     Kick command(clients_list, client_fd, client_actif, channels);
     command.init_cmd_kick(_value);
-
-    return true;
 }
 
-bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+void Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
     (void)(clients_list);
     Join command(client_fd, client_actif, channels, _value);
     command.init_cmd_join();
-
-    return true;
 }
 
-bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+void Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     (void)clients_list;
     (void)client_actif;
     std::string pong = "PONG :" + _value + "\r\n";
     send_message(client_fd, pong);
 
-    return true;
 }
 
-bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+void Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     (void)clients_list;
     std::string server_name = SERVER_NAME;
@@ -97,7 +82,7 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
     // Verif if USER is already done
     if (client_actif.get_user_setup() == true){
         send_message(client_fd, ERR_ALREADYREGISTERED(server_name));
-        return false;
+        return ;
     }
     // Verif nb_parameter
     if (std::count(_value.begin(), _value.end(), ' ') < 3){
@@ -115,7 +100,6 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
                               " - ft_irc 42 Paris\x03""\r\n";
 
     send_message(client_fd, welcome_message);
-    return true;
 }
 
 void Parse::parse_list(int client_fd, Client &client_actif, std::vector<Channel*> &channels)
@@ -134,14 +118,34 @@ void Parse::parse_part(std::vector<Client*> &clients_list, int client_fd, Client
     return ;
 }
 
-void Parse::parse_mode(std::vector<Client*> &clients_list, Client &client_actif, int client_fd, std::vector<Channel*> &channels)
+void Parse::parse_mode(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
 	Mode mode(clients_list, client_actif, channels, client_fd, _value);
 	mode.init_cmd_mode();
 
 	return ;
 }
+// ################################################################################
+// #                                    FIND                                      #
+// ################################################################################
 
+
+void Parse::find_cmd_type(const std::string &cmd, std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
+{
+    if (_command_map.find(cmd) != _command_map.end())
+    {
+        f func = _command_map[cmd];
+        (this->*func)(clients_list, client_fd, client_actif, channels); 
+    }
+    if (cmd == "LIST")
+		parse_list(client_fd, client_actif, channels);
+    if (cmd == "WHOIS")
+        parse_whois(clients_list, client_fd, client_actif);
+    if (cmd == "PING")
+        parse_ping(clients_list, client_fd, client_actif);
+    if (cmd == "USER")
+        parse_user(clients_list, client_fd, client_actif);
+}
 // ################################################################################
 // #                                SETUP CMD USER                                #
 // ################################################################################
@@ -197,6 +201,17 @@ void Parse::extract_user_info(const std::string& value, Client& client_actif)
     }
 }
 
+void Parse::init_command_map()
+{
+    _command_map["PRIVMSG"] = &Parse::parse_msg;
+    _command_map["INVITE"] = &Parse::parse_invite;
+    _command_map["TOPIC"] = &Parse::parse_topic;
+    _command_map["KICK"] = &Parse::parse_kick;
+    _command_map["JOIN"] = &Parse::parse_join;
+    _command_map["PART"] = &Parse::parse_part;
+    _command_map["MODE"] = &Parse::parse_mode;
+}
+
 // ################################################################################
 // #                       Constructor / Destructor                               #
 // ################################################################################
@@ -208,11 +223,7 @@ Parse::Parse(const std::string &str): _str(str)
     cleaned_str.erase(std::remove(cleaned_str.begin(), cleaned_str.end(), '\n'), cleaned_str.end());
 
     split_cmd_value(cleaned_str);
-}
-
-Parse::Parse(): _str("str")
-{
-    
+    init_command_map();
 }
 
 Parse::~Parse()

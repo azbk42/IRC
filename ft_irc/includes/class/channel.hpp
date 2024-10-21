@@ -85,13 +85,5 @@ class Channel
         bool _i;
         int _limite;
 		bool _t;
-        // -i si le channel est en invite only +i, il faut creer un vector<string> avec les noms autorises
-        // -k definir un mot de passe que le client va devoir fournir pour se connecter
-        // -l definir ou supprimer la limite dutilisateur
-        // -o donner ou retirer les droit d'operateur
-        // -t seul les operateur peuvent changer le topic
 
 };
-
-// Un channel est cree avec un nom, si cest le premier client, il devient OP
-// si _pass = true on va demander au client un mdp

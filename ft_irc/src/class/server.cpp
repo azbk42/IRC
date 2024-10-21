@@ -135,6 +135,38 @@ void Server::AcceptClient()
 	_clients_array.push_back(new_client);
 }
 
+// ################################################################################
+// #                                 PARSING                                      #
+// ################################################################################
+
+void Server::find_command(int fd, Client* client_actif, Parse &parser, const std::string &cmd)
+{
+    if (cmd == "QUIT") {
+        Quit quit(fd, client_actif, parser.get_value(), _channels_array);
+        quit.send_quit_msg();
+        CloseClientSocket(fd);
+    }
+    else if (cmd == "NICK") {
+        parser.parse_nick(_clients_array, fd, *client_actif, _channels_array, this);
+    }
+    else {
+        parser.find_cmd_type(cmd, _clients_array, fd, *client_actif, _channels_array);
+    }
+}
+
+void Server::check_password(int fd, Client* client_actif, Parse &parser, const std::string &cmd)
+{
+	if (cmd == "PASS") {
+		Pass passwd(fd, parser.get_value(), client_actif, _password);
+		if (passwd.check_pass() == 1)
+			CloseClientSocket(fd);
+	}
+	else {
+		send_message(fd, "Please enter password");
+		CloseClientSocket(fd);
+	}
+}
+
 void Server::process_message(int fd)
 {
 	size_t newline_pos;
@@ -153,57 +185,13 @@ void Server::process_message(int fd)
 				break;
 			}
 		}
+		std::string cmd = parser.get_cmd();
 		// Vérifier si un client a été trouvé
 		if (client_actif != NULL && client_actif->get_checked_pwd() == false) {
-			if (parser.get_cmd() == "PASS") {
-				Pass passwd(fd, parser.get_value(), client_actif, _password);
-				if (passwd.check_pass() == 1)
-				    CloseClientSocket(fd);
-			}
-			else if (parser.get_cmd() == "CAP"){
-				continue;
-			}
-			else {
-				send(fd, "Please enter password", 21, 0);
-				CloseClientSocket(fd);
-			}
+			check_password(fd, client_actif, parser, cmd);
 		}
 		else if (client_actif != NULL && client_actif->get_checked_pwd() == true) {
-			if (parser.get_cmd() == "PRIVMSG"){
-				parser.parse_msg(_clients_array, fd, *client_actif, _channels_array);
-			}
-			if (parser.get_cmd() == "INVITE"){
-				parser.parse_invite(_clients_array, fd, *client_actif, _channels_array);
-			}
-			if (parser.get_cmd() == "TOPIC"){
-				parser.parse_topic(_clients_array, fd, *client_actif, _channels_array);
-			}
-			if (parser.get_cmd() == "KICK"){
-				parser.parse_kick(_clients_array, fd, *client_actif, _channels_array);
-			}
-			if (parser.get_cmd() == "WHOIS"){
-				parser.parse_whois(_clients_array, fd, *client_actif);
-			}
-			if (parser.get_cmd() == "JOIN"){
-				parser.parse_join(_clients_array, fd, *client_actif, _channels_array);
-			}
-			if (parser.get_cmd() == "QUIT"){
-				Quit quit(fd, client_actif, parser.get_value(), _channels_array); // revoir quand on envoie une ref??
-				quit.send_quit_msg();
-				CloseClientSocket(fd);
-			}		
-			if (parser.get_cmd() == "PING")
-				parser.parse_ping(_clients_array, fd, *client_actif);
-			if (parser.get_cmd() == "NICK")
-				parser.parse_nick(_clients_array, fd, *client_actif, _channels_array, this);
-			if (parser.get_cmd() == "USER")
-				parser.parse_user(_clients_array, fd, *client_actif);
-			if (parser.get_cmd() == "LIST")
-				parser.parse_list(fd, *client_actif, _channels_array);
-			if (parser.get_cmd() == "PART")
-				parser.parse_part(_clients_array, fd, *client_actif, _channels_array);
-			if (parser.get_cmd() == "MODE")
-				parser.parse_mode(_clients_array, *client_actif, fd, _channels_array);
+            find_command(fd, client_actif, parser, cmd); // Appel à la nouvelle fonction
 		}
 		else {
 			std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
