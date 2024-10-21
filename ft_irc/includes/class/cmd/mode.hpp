@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:43:04 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/18 18:40:50 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/21 16:55:40 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,14 @@ class Mode
 
 		void exec_mode(Channel* channel, std::vector<std::string> values);
 		void mode_message(std::string mode, Channel* channel);
+		// void send_unknown_char(char value);
+		void print_modes(Channel* channel);
 
 		void i_mode(Channel *channel, char signe);
 		void t_mode(Channel *channel, char signe);
-		void l_mode(Channel *channel, char signe, std::string value);
-		void k_mode(Channel *channel, char signe, std::string value);
-		void o_mode(Channel *channel, char signe, std::string user);
+		void l_mode(Channel *channel, char signe, std::vector<std::string> values);
+		void k_mode(Channel *channel, char signe, std::vector<std::string> values);
+		void o_mode(Channel *channel, char signe, std::vector<std::string> values);
 		void fill_modes_exec(std::string mode, std::string signe, std::string value);
 
 	public:

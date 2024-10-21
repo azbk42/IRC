@@ -6,11 +6,18 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 16:28:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/18 15:56:01 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/21 17:25:47 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.hpp"
+
+std::string to_uppercase(const std::string &str) 
+{
+    std::string upper_str = str;
+    std::transform(upper_str.begin(), upper_str.end(), upper_str.begin(), ::toupper);
+    return upper_str;
+}
 
 std::vector<std::string> split_by_comma(const std::string &input)
 {

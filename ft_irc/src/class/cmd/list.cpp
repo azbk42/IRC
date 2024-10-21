@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:04:57 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/17 14:43:31 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/21 17:26:29 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,27 +18,26 @@
 // #                         Constructor / Destructor                             #
 // ################################################################################
 
-List::List(Client &client_actif, std::vector<Channel*> &channels_array, int client_fd, std::string value): _client_fd(client_fd), _channels_array(channels_array),_client(&client_actif) , _value(value){};
+List::List(Client &client_actif, std::vector<Channel*> &channels_array, int client_fd, std::string value): 
+_client_fd(client_fd), _channels_array(channels_array),_client(&client_actif) , _value(value){};
+
 List::~List() {}
 
 // ################################################################################
 // #                                   Methods                                    #
 // ################################################################################
 
-void List::list_with_args(std::string client_name, std::string server_name){
+void List::list_with_args(std::string client_name){
 	std::string msg_list = "Channel Users Name\r\n";
 	send_message(_client_fd, msg_list);
 
-	// separer selon coma
-	std::vector<std::string> channels_listed = split_by_comma(_value);
+	std::vector<std::string> channels_listed = split_by_comma(_value); //->separer la liste de channels selon coma
 
-	// checker pour chq value
-	for (size_t j = 0; j < channels_listed.size(); j++){
+	for (size_t j = 0; j < channels_listed.size(); j++){ //->checker pour chq channel liste si # et si le channel existe
 		if (channels_listed[j][0] == '#'){
 			for (size_t i = 0; i < _channels_array.size(); i++){
-				if (_channels_array[i]->get_name() == channels_listed[j]){
-					send_channel(client_name, server_name, _channels_array[i]);
-				}
+				if (to_uppercase(_channels_array[i]->get_name()) == to_uppercase(channels_listed[j]))
+					send_channel(client_name, _channels_array[i]);
 			}
 		}
 		else {
@@ -50,7 +49,7 @@ void List::list_with_args(std::string client_name, std::string server_name){
 	send_message(_client_fd, RPL_LISTEND(client_name));
 }
 
-void List::send_channel(std::string client_name, std::string server_name, Channel *channel) const{
+void List::send_channel(std::string client_name, Channel *channel) const{
 	std::string channel_name = channel->get_name();
 	channel_name.erase(0, 1);
 
@@ -60,19 +59,14 @@ void List::send_channel(std::string client_name, std::string server_name, Channe
 	send_message(_client_fd, RPL_LIST(client_name, channel_name, client_count, topic));
 }
 
-void List::send_list()
-{
-	std::string server_name = SERVER_NAME;
-	std::string client_name = _client->get_nickname();
-	
+void List::send_list(){
 	if (_value.empty()){
 		for (size_t i = 0; i < _channels_array.size(); i++){
-			send_channel(client_name, server_name, _channels_array[i]);				
+			send_channel(_client->get_nickname(), _channels_array[i]);				
 		}
-		send_message(_client_fd, RPL_LISTEND(client_name));
+		send_message(_client_fd, RPL_LISTEND(_client->get_nickname()));
 	}
-	else {
-		list_with_args(client_name, server_name);
-	}
+	else
+		list_with_args(_client->get_nickname());
 }
 

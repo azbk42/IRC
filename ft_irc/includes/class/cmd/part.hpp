@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 16:12:03 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/17 14:34:53 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/21 15:04:32 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class Part{
 		int _fd;
 		std::string _value;
 		Client *_client_actif;
-		std::vector<Channel*> &_channels_list; // revoir pourquoi ref - peut etre vide ?
+		std::vector<Channel*> &_channels_list;
 
 		void _check_channel(std::string channel, std::string reason);
 

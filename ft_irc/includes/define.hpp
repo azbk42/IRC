@@ -33,7 +33,6 @@
 
 // ERROR PART
 #define ERR_NOTONCHANNEL(server, channel)(":" + server_name + " 442" + channel + " :You're not on that channel\r\n").c_str()
-#define ERR_NOSUCHCHANNEL2(server, channel) (":" + server + " 403 " + channel + " :No such channel\r\n").c_str()
 
 // ERROR PRIVMSG
 #define ERR_NOSUCHNICK(server, sender, target) (":" + server + " 401 " + sender + " " + target + " :No such nick/channel\r\n")
@@ -42,10 +41,8 @@
 #define ERR_NOSUCHSERVER(server, sender, target_server) (":" + server + " 402 " + sender + " " + target_server + " :No such server\r\n")
 
 // ERROR MODE
-#define ERR_CHANOPRIVSNEEDED2(server, channel)(":" + server + " 482 " + " " + channel + " " + "#" + channel +" :You're not channel operator\r\n")
-#define ERR_NEEDMOREPARAMS2(command, server) (":" + server_name + " 461 " + server + " " + command + ":Not enough parameters \r\n")
-#define ERR_NOTONCHANNEL1(server, user, channel)(":" + server_name + " 442" + channel + " " + user + " " + user + ":" + " :No such nick/channel\r\n").c_str()
-#define ERR_NOTONCHANNEL2(server, user, channel)(":" + server_name + " 442" + channel + " " + user + " " + user + " " + "#" + channel + " :They aren't on that channel\r\n").c_str()
+#define ERR_NOTONCHANNEL1(server, user, channel)(":" + server + " 442" + channel + " " + user + " " + user + ":" + " :No such nick/channel\r\n").c_str()
+#define ERR_NOTONCHANNEL2(server, user, channel)(":" + server + " 442" + channel + " " + user + " " + user + " " + channel + " :They aren't on that channel\r\n").c_str()
 
 // KICK
 #define ERR_NOSUCHCHANNEL3(server, sender, channel) (":" + server + " 403 " + sender + " " + channel + " :No such channel\r\n")
@@ -73,17 +70,16 @@
 // #                                    REPLIES IRSSI                               #
 // ################################################################################
 
-#define RPL_LIST(server, channel, client_count, topic) (":" + server_name + " 322 " + server + " #" + channel + " " + client_count + " :" + topic + "\r\n").c_str()
-#define RPL_LISTEND(server) (":" + server_name + " 323 " + server + " :End of /LIST\r\n").c_str()
+#define RPL_LIST(server, channel, client_count, topic) (":" + server + " 322 " + server + " #" + channel + " " + client_count + " :" + topic + "\r\n").c_str()
+#define RPL_LISTEND(server) (":" + server + " 323 " + server + " :End of /LIST\r\n").c_str()
 
 #define QUIT_MESSAGE(nickname, username, hostname, message) (":" + nickname + "!" + username + "@" + hostname + " QUIT :" + message + "\r\n").c_str()
 #define PART_MESSAGE(nickname, username, hostname, channel, reason) (":" + nickname + "!" + username + "@" + hostname + " PART " + channel + " :" + reason + "\r\n");
 
-#define RPL_CHANNELMODEIS(server, username, channel, modes) (":" + server_name + " 324 " + username + "#" + channel + " " + modes + "\r\n").c_str()
-#define RPL_CREATIONTIME(server, channel, creation_date_str) (":" + server_name + " 329 " + server + " " + channel + " " + creation_date_str + "\r\n").c_str()
+#define RPL_CHANNELMODEIS(server, username, channel, modes) (":" + server + " 324 " + username + "#" + channel + " " + modes + "\r\n").c_str()
+#define RPL_CREATIONTIME(server, channel, creation_date_str) (":" + server + " 329 " + server + " " + channel + " " + creation_date_str + "\r\n").c_str()
 
 // WHOIS
-
 #define RPL_WHOISUSER(server, requester, target_nick, username, hostname, realname) \
     (":" + server + " 311 " + requester + " " + target_nick + " " + username + " " + hostname + " * :" + realname + "\r\n")
 
