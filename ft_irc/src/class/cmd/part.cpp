@@ -25,7 +25,7 @@ void Part::_check_channel(std::string channel, std::string reason){
 				_channels_list[i]->send_message_to_all(part_message, _fd);
 
                 // message de confirmation au client
-                send(_fd, part_message.c_str(), part_message.length(), 0);
+				send_message(_fd, part_message);
 
                 // Supprimer le client du chan
                 if (_channels_list[i]->remove_client(_client_actif->get_nickname(),*_client_actif) == 1)
@@ -36,9 +36,10 @@ void Part::_check_channel(std::string channel, std::string reason){
 				return ;
 			}
 			else
-				send(_fd, ERR_NOTONCHANNEL(server_name, channel), strlen(ERR_NOTONCHANNEL(server_name, channel)), 0);
+				send_message(_fd, ERR_NOTONCHANNEL(server_name, channel));
 		}
-	} send(_fd, ERR_NOSUCHCHANNEL2(server_name, channel), strlen(ERR_NOSUCHCHANNEL2(server_name, channel)), 0);
+	} 
+	send_message(_fd, ERR_NOSUCHCHANNEL2(server_name, channel));
 }
 
 void Part::init_cmd_part(){
@@ -59,7 +60,7 @@ void Part::init_cmd_part(){
 	
 	for (size_t i = 0; i < channels_part.size(); i++){
 		if ((channels_part.size() > 1) && (channels_part[i][0] != '#')){
-			send(_fd, ERR_NOSUCHCHANNEL2(server_name, channels_part[i]), strlen(ERR_NOSUCHCHANNEL2(server_name, channels_part[i])), 0);
+			send_message(_fd, ERR_NOSUCHCHANNEL2(server_name, channels_part[i]));
 			continue;
 		}
 		else {

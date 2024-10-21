@@ -37,11 +37,11 @@ void Msg::send_message_to_client(const std::string &target, const std::string &p
 
     if (target_fd == CLIENT_NOT_FOUND){
         std::string message = ERR_NOSUCHNICK(server_name, sender, target);
-        send(_fd, message.c_str(), message.size(), 0);
+        send_message(_fd, message);
     }
     else{
         std::string privmsg_message = ":" + sender + " PRIVMSG " + target + " :" + privmsg + "\r\n";
-        send(target_fd, privmsg_message.c_str(), privmsg_message.size(), 0);
+        send_message(target_fd, privmsg_message);
     }
 
 }
@@ -65,7 +65,7 @@ void Msg::send_message_to_channel(const std::string &target, const std::string &
         int client_fd = _client_actif->get_socket_fd();
         if (verif_sender(sender, chan) == false){
             std::string error_message = ":" + server_name + " 404 " + sender + " " + target + " :Cannot send to channel\r\n";
-            send(client_fd, error_message.c_str(), error_message.length(), 0);
+            send_message(client_fd, error_message);
             return;
         }
         
@@ -86,7 +86,7 @@ bool Msg::init_cmd_msg(const std::string &value)
 
     if (privmsg.size() >= 400){
         std::string error_message = ERR_INPUTTOOLONG(server_name, sender);
-        send(_client_actif->get_socket_fd(), error_message.c_str(), error_message.size(), 0);
+        send_message(_client_actif->get_socket_fd(), error_message);
         return false;
     }
 

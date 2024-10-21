@@ -41,22 +41,22 @@ std::map<std::string, std::string> Join::_init_channel_map(std::string str, std:
 bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd, Client &client_actif)
 {
     if (chan_name.length() > 50){
-         std::string error_message = ERR_CHANNELNAMETOOLONG(client_actif.get_nickname(), chan_name);
-        send(client_fd, error_message.c_str(), error_message.size(), 0);
+        std::string error_message = ERR_CHANNELNAMETOOLONG(client_actif.get_nickname(), chan_name);
+        send_message(client_fd, error_message);
         std::cout << "LEN TROP GRANDE" << std::endl;
         return false;
     }
     // check si ya un # au debut du nom
     if (chan_name.length() > 0 && chan_name[0] != '#') {
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
-        send(client_fd, error_message.c_str(), error_message.size(), 0);
+        send_message(client_fd, error_message);
         std::cout << "NO #" << std::endl;
         return false;
     }
     // check si apres le # il ny a rien
     if (chan_name.length() > 0 && chan_name[0] == '#' && chan_name[1] == '\0') {
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
-        send(client_fd, error_message.c_str(), error_message.size(), 0);
+        send_message(client_fd, error_message);
         std::cout << "BACK 0 FIND" << std::endl;
         return false;
     }
@@ -64,7 +64,7 @@ bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd,
     // checi si , ou : ou space
     if (chan_name.find(",") != std::string::npos || chan_name.find(":") != std::string::npos){
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
-        send(client_fd, error_message.c_str(), error_message.size(), 0);
+        send_message(client_fd, error_message);
         std::cout << "INVALID CHARACTER" << std::endl;
         return false;
     }
@@ -72,7 +72,7 @@ bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd,
     for (size_t i = 0; i < chan_name.size(); i++) {
         if (chan_name[i] < 32 || chan_name[i] > 127) {
             std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
-            send(client_fd, error_message.c_str(), error_message.size(), 0);
+            send_message(client_fd, error_message);
             std::cout << "NON-PRINTABLE CHARACTER DETECTED" << std::endl;
             return false;
         }
@@ -94,7 +94,7 @@ bool Join::check_invit_channel(Channel* channel, const std::string& nickname, co
         if (channel->authorization_check(nickname) == false) {
             std::string error_message = ERR_INVITEONLYCHAN(std::string(SERVER_NAME), nickname ,channel_name);
             std::cout << CYAN << "message error = " << error_message << std::endl;
-            send(_fd, error_message.c_str(), error_message.size(), 0);
+            send_message(_fd, error_message);
             return false;
         }
     }
@@ -106,7 +106,7 @@ bool Join::_check_channel_access(Channel* channel, const std::string& nickname, 
     if (channel->get_pass() == true){
         if (channel->get_password() != password) {
             std::string error_message = ":" + std::string(SERVER_NAME) + " 475 " + nickname + " " + channel_name + " :Cannot join channel (+k) - incorrect channel key\r\n";
-            send(_fd, error_message.c_str(), error_message.size(), 0);
+            send_message(_fd, error_message);
             return false;
         }
     }
@@ -134,7 +134,7 @@ bool Join::_process_channel(const std::string &chan_name, const std::string &pas
     if (_client_actif->check_nb_chan() == false){
         std::cout << RED << "ERROR TO MUCH CHAN" << WHITE << std::endl;
         std::string suppr_channel_message = ERR_TOOMANYCHANNELS(std::string(SERVER_NAME), nickname, chan_name);
-        send(_fd, suppr_channel_message.c_str(), suppr_channel_message.size(), 0);
+        send_message(_fd, suppr_channel_message);
         return false;
     }
 

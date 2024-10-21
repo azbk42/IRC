@@ -33,10 +33,6 @@ class Part{
 		~Part();
 
 		void init_cmd_part();
-
-
-
-
 		
 };
 

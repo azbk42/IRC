@@ -34,13 +34,13 @@ void Whois::send_whois_message(const std::string &target)
         std::string server_info = "FT_IRC 42 SCHOOL"; 
 
         std::string whois_user = RPL_WHOISUSER(server_name, nickname, target, username, hostname, realname);
-        send(_fd, whois_user.c_str(), whois_user.size(), 0);
+        send_message(_fd, whois_user);
 
         std::string whois_server = RPL_WHOISSERVER(server_name, nickname, target, target_server, server_info);
-        send(_fd, whois_server.c_str(), whois_server.size(), 0);
+        send_message(_fd, whois_server);
 
         std::string end_of_whois = RPL_ENDOFWHOIS(server_name, nickname, target);
-        send(_fd, end_of_whois.c_str(), end_of_whois.size(), 0);
+        send_message(_fd, end_of_whois);
     }
 }
 
@@ -50,7 +50,7 @@ bool Whois::process_two_arg(const std::string &value, const std::string &server_
     std::string server_target = value.substr(0, pos);
     if (server_target != server_name){
         std::string error_message = ERR_NOSUCHSERVER(server_name, sender, server_target);
-        send(_fd, error_message.c_str(), error_message.size(), 0);
+        send_message(_fd, error_message);
         return false;
     }
     std::string target = value.substr(pos + 1);

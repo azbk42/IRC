@@ -27,7 +27,7 @@ List::~List() {}
 
 void List::list_with_args(std::string client_name, std::string server_name){
 	std::string msg_list = "Channel Users Name\r\n";
-	send(_client_fd, msg_list.c_str(), msg_list.length(), 0);
+	send_message(_client_fd, msg_list);
 
 	// separer selon coma
 	std::vector<std::string> channels_listed = split_by_comma(_value);
@@ -43,11 +43,11 @@ void List::list_with_args(std::string client_name, std::string server_name){
 		}
 		else {
 			std::string bad_arg = "Bad list syntax, type /quote list ? or /raw list ?\r\n";
-			send(_client_fd, bad_arg.c_str(), bad_arg.length(), 0);
+			send_message(_client_fd, bad_arg);
 			break;
 		}
 	}
-	send(_client_fd, RPL_LISTEND(client_name), strlen(RPL_LISTEND(client_name)), 0);
+	send_message(_client_fd, RPL_LISTEND(client_name));
 }
 
 void List::send_channel(std::string client_name, std::string server_name, Channel *channel) const{
@@ -57,8 +57,7 @@ void List::send_channel(std::string client_name, std::string server_name, Channe
 	int client_nb = channel->get_nb_client();
 	std::string client_count = int_to_string(client_nb);
 	std::string topic = channel->get_topic();
-	send(_client_fd, RPL_LIST(client_name, channel_name, client_count, topic), 
-			strlen(RPL_LIST(client_name, channel_name, client_count, topic)), 0);
+	send_message(_client_fd, RPL_LIST(client_name, channel_name, client_count, topic));
 }
 
 void List::send_list()
@@ -70,7 +69,7 @@ void List::send_list()
 		for (size_t i = 0; i < _channels_array.size(); i++){
 			send_channel(client_name, server_name, _channels_array[i]);				
 		}
-		send(_client_fd, RPL_LISTEND(client_name), strlen(RPL_LISTEND(client_name)), 0);
+		send_message(_client_fd, RPL_LISTEND(client_name));
 	}
 	else {
 		list_with_args(client_name, server_name);

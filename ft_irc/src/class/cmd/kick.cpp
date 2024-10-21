@@ -20,8 +20,6 @@ bool Kick::check_if_client_is_op(Channel &chan)
 
 bool Kick::check_if_client_is_target(const std::string &target)
 {
-
-
     std::string upper_target = to_uppercase(target);
     std::string client_nick = to_uppercase(_client_actif->get_nickname());
 
@@ -71,12 +69,12 @@ void Kick::kick_client_from_channel(Channel &Chan, const std::string &target_nam
     if (client_target != NULL){
         fd = client_target->get_socket_fd();
         Chan.remove_client(target_name,*client_target);
-        std::string message_to_target = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " KICK " + 
-                                           Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
+        std::string message_to_target = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() \
+                                        + "@" + _client_actif->get_hostname() + " KICK " + \
+                                        Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
 
         // send message kick client
-        send(fd, message_to_target.c_str(), message_to_target.size(), 0);
-
+        send_message(fd, message_to_target);
         // send message to all except client
         std::string message_to_all = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " KICK " + 
                                         Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
@@ -92,7 +90,7 @@ bool Kick::check_all_potential_error(const std::string &canal_name, const std::s
     if (check_if_client_is_target(target_name) == false){
         std::cerr << RED << "Can't kick himself" << std::endl;
         std::string error_message = ERR_CANTKICKSELF(server_name, target_name, canal_name);
-        send(_fd, error_message.c_str(), error_message.size(), 0);
+        send_message(_fd, error_message);
         return false;
     }
     Channel *Chan;
@@ -100,19 +98,19 @@ bool Kick::check_all_potential_error(const std::string &canal_name, const std::s
     if (Chan == NULL){
         std::cerr << RED << "client doesnt exist" << std::endl;
         std::string error_message = ERR_NOSUCHCHANNEL3(server_name, _client_actif->get_nickname(), canal_name);
-        send(_fd, error_message.c_str(), error_message.length(), 0);
+        send_message(_fd, error_message);
         return false;
     }
     if (check_if_client_is_op(*Chan) == false){
         std::cerr << RED << "client not op" << std::endl;
         std::string error_message = ERR_CHANOPRIVSNEEDED(server_name, _client_actif->get_nickname(), canal_name);
-        send(_fd, error_message.c_str(), error_message.length(), 0);
+        send_message(_fd, error_message);
         return false;
     }
     if (check_if_target_is_in_chan(*Chan, target_name) == false){
         std::cerr << RED << "not in chan" << std::endl;
         std::string error_message = ERR_USERNOTINCHANNEL(server_name, _client_actif->get_nickname(), target_name, canal_name);
-        send(_fd, error_message.c_str(), error_message.length(), 0);
+        send_message(_fd, error_message);
         return false;
     }
     return true;

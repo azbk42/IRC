@@ -118,7 +118,7 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
 		modes += _modes_exec[i];
 	}
 	std::string chanmode = ":" + server_name + " 324 " + _client_actif->get_nickname() + "#" + channel->get_name() + " " + channel->get_name() + " " + modes + "\r\n";
-	send(_client_fd, chanmode.c_str(), chanmode.length(), 0);
+	send_message(_client_fd, chanmode);
 	channel->send_message_to_all(chanmode, _client_fd);
 }
 
@@ -175,14 +175,14 @@ void Mode::parse_mode(std::string value){
 				else {
 					std::string c(1, value[i]);
 					std::string str = ":" + server_name + " 472 " + " :is unknown mode char to me" + c + "\r\n";
-					send(_client_fd, str.c_str(), str.length(), 0);
+					send_message(_client_fd, str);
 				}
 			i++;}
 		}
 		else {
 			std::string c(1, value[i]);
 			std::string str = ":" + server_name + " 472 " + " :is unknown mode char to me" + c + "\r\n";
-			send(_client_fd, str.c_str(), str.length(), 0);
+			send_message(_client_fd, str);
 		}
 	}
 }
@@ -222,7 +222,7 @@ void Mode::channel_mode(std::vector<std::string> &values){
 	
 	if (_channels_array.size() == 0){ //-> if there is no channel
 		std::string str = ERR_NOSUCHCHANNEL2(server_name, values[0]);
-		send(_client_fd, str.c_str(), str.length(), 0);
+		send_message(_client_fd, str);
 		return ;
 	}
 	for (size_t i = 0; i < _channels_array.size(); i++) { 
@@ -234,7 +234,7 @@ void Mode::channel_mode(std::vector<std::string> &values){
 			else { // -> si plusieurs arguments, verifie que le client est operateur du chan
 				if (_channels_array[i]->is_operator(_client_actif->get_nickname()) == false){
 					std::string notope = ERR_CHANOPRIVSNEEDED(server_name, _client_actif->get_nickname(),_channels_array[i]->get_name());
-					send(_client_fd, notope.c_str(), notope.length(), 0);
+					send_message(_client_fd, notope);
 					return ;
 				}
 				else { //-> si le client est bien operateur, on parse les arguments avant d'executer les modes
@@ -246,7 +246,7 @@ void Mode::channel_mode(std::vector<std::string> &values){
 		}
 	}
 	std::string str = ERR_NOSUCHCHANNEL2(server_name, values[0]);
-	send(_client_fd, str.c_str(), str.length(), 0);		
+	send_message(_client_fd, str);
 }
 
 void Mode::init_cmd_mode(){

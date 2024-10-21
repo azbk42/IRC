@@ -84,7 +84,7 @@ bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client
     (void)clients_list;
     (void)client_actif;
     std::string pong = "PONG :" + _value + "\r\n";
-    send(client_fd, pong.c_str(), pong.length(), 0);
+    send_message(client_fd, pong);
 
     return true;
 }
@@ -96,12 +96,12 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
 
     // Verif if USER is already done
     if (client_actif.get_user_setup() == true){
-        send(client_fd, ERR_ALREADYREGISTERED(server_name), strlen(ERR_ALREADYREGISTERED(server_name)), 0);
+        send_message(client_fd, ERR_ALREADYREGISTERED(server_name));
         return false;
     }
     // Verif nb_parameter
     if (std::count(_value.begin(), _value.end(), ' ') < 3){
-        send(client_fd, ERR_NEEDMOREPARAMS("USER", server_name), strlen(ERR_NEEDMOREPARAMS("USER", server_name)), 0);
+        send_message(client_fd, ERR_NEEDMOREPARAMS("USER", server_name));
     }
 
 
@@ -114,12 +114,7 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
                               client_actif.get_username() + "@" + client_actif.get_hostname() + 
                               " - ft_irc 42 Paris\x03""\r\n";
 
-    send(client_fd, welcome_message.c_str(), welcome_message.size(), 0);
-
-    // std::cout << "username: " << client_actif.get_username() << std::endl;
-    // std::cout << "hostname: " << client_actif.get_hostname() << std::endl;
-    // std::cout << "servername: " << client_actif.get_server_name() << std::endl;
-    // std::cout << "realname: " << client_actif.get_real_name() << std::endl;
+    send_message(client_fd, welcome_message);
     return true;
 }
 

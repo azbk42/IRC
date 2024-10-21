@@ -16,7 +16,7 @@ void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
 {
     std::string old_nick = get_nickname();
     set_nickname(new_nickname);
-    send(client_socket, NICK_CHANGE(old_nick, new_nickname), strlen(NICK_CHANGE(old_nick, new_nickname)), 0);
+    send_message(client_socket, NICK_CHANGE(old_nick, new_nickname));
 }
 bool Client::check_nb_chan()
 {

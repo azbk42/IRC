@@ -98,7 +98,7 @@ void Channel::send_message_to_all(const std::string &message, const int fd_clien
     for (std::map<std::string, int>::iterator it = _client.begin(); it != _client.end(); ++it) {
         // on envoie le message a tout le monde sauf le client principal
         if (it->second != fd_client) {
-            send(it->second, message.c_str(), message.size(), 0);
+            send_message(it->second, message);
         }
     }
 }
@@ -111,12 +111,12 @@ void Channel::send_welcome_message(const std::string &client, const int fd_clien
 {
     // Message de bienvenue
     std::string welcome_msg = ":" + client + " JOIN :" + _name_channel + "\r\n";
-    send(fd_client, welcome_msg.c_str(), welcome_msg.length(), 0);
+    send_message(fd_client, welcome_msg);
 
     // Envoyer le sujet du canal s'il y en a un
     if (!_topic.empty()) {
         std::string topic_msg = ":" + std::string("localhost") + " 332 " + client + " " + _name_channel + " :" + _topic + "\r\n";
-        send(fd_client, topic_msg.c_str(), topic_msg.length(), 0);
+        send_message(fd_client, topic_msg);
     }
 
     // Construire la liste des utilisateurs avec les opérateurs marqués par '@'
@@ -129,18 +129,18 @@ void Channel::send_welcome_message(const std::string &client, const int fd_clien
         }
     }
     name_list_msg += "\r\n";
-    send(fd_client, name_list_msg.c_str(), name_list_msg.length(), 0);
+    send_message(fd_client, name_list_msg);
 
     // Indiquer la fin de la liste des utilisateurs
     std::string end_of_names_msg = ":" + std::string("localhost") + " 366 " + client + " " + _name_channel + " :End of /NAMES list\r\n";
-    send(fd_client, end_of_names_msg.c_str(), end_of_names_msg.length(), 0);
+    send_message(fd_client, end_of_names_msg);
 }
 
 void Channel::send_part_message(const std::string &client, const int fd_client)
 {
     // Message de bienvenue
     std::string part_msg = ":" + client + " PART :" + _name_channel + "\r\n";
-    send(fd_client, part_msg.c_str(), part_msg.length(), 0);
+    send_message(fd_client, part_msg);
 }
 
 // ################################################################################

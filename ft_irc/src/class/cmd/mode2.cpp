@@ -68,7 +68,7 @@ void Mode::l_mode(Channel *channel, char signe, std::string value){
 	}
 	else if (signe == '+' && value.empty() == true) {
 		std::string str = ERR_NEEDMOREPARAMS2("MODE +l", server_name);
-		send(_client_fd, str.c_str(), str.length(), 0);
+		send_message(_client_fd, str);
 		return ;
 	}
 	else if (signe == '+' && value.empty() == false) {

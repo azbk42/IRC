@@ -51,9 +51,6 @@ Channel* Topic::get_channel(const std::string &channel_name)
 
 bool Topic::is_in_topic_mode(Channel &chan)
 {
-    
-    // ici rajouter la verif si le chan est en +t !
-
     if (chan.get_t() == true){
         std::vector<std::string> operator_list = chan.get_operator();
         if (is_in_op_list(operator_list) == false){
@@ -91,7 +88,7 @@ void Topic::init_topic(const std::string &value)
     if (check_channel_name(channel_name) == false){
         std::cerr << RED << "Can't find channel for topic" << WHITE << std::endl;
         message = ERR_NOSUCHCHANNEL_TOPIC(server_name, client_name, channel_name);
-        send(client_fd, message.c_str(), message.size(), 0);
+        send_message(client_fd, message);
         return;
     }
     Channel *chan = get_channel(channel_name);
@@ -99,7 +96,7 @@ void Topic::init_topic(const std::string &value)
         if (is_in_topic_mode(*chan) == false){
             std::cerr << RED << "+t and you are not OP" << WHITE << std::endl;
             message = ERR_CHANOPRIVSNEEDED(server_name, client_name, channel_name);
-            send(client_fd, message.c_str(), message.size(), 0);
+            send_message(client_fd, message);
             return;
         }
         else{

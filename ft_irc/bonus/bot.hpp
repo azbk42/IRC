@@ -40,7 +40,7 @@ class Bot
         void authenticate();
         void join_channel();
         void handle_server_response();
-        void send_message(const std::string &message);
+        void send_message_error(int fd, const std::string &message);
 
         // Ajout de la logique des commandes de la classe Bot
         //void handle_time();

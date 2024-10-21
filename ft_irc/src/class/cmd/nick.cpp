@@ -10,20 +10,20 @@ bool Nick::check_all_errors(const std::string &new_nickname)
     std::string server_name = SERVER_NAME;
 
     if (new_nickname.empty()){
-        send(_fd, ERR_NONICKNAMEGIVEN(server_name), strlen(ERR_NONICKNAMEGIVEN(server_name)), 0);
+        send_message(_fd, ERR_NONICKNAMEGIVEN(server_name));
         return false;
     }
 
     // verif taille du pseudo
     if (new_nickname.size() > 15 || !isalpha(new_nickname[0])) {
-        send(_fd, ERR_ERRONEUSNICKNAME(server_name, new_nickname), strlen(ERR_ERRONEUSNICKNAME(server_name, new_nickname)), 0);
+        send_message(_fd, ERR_ERRONEUSNICKNAME(server_name, new_nickname));
         return false;
     }
 
     // verif char invalid
     for (size_t i = 1; i < new_nickname.size(); ++i) {
         if (!isalnum(new_nickname[i]) && new_nickname.find_first_of("-[]\\{}_|") == std::string::npos) {
-            send(_fd, ERR_ERRONEUSNICKNAME(server_name, new_nickname), strlen(ERR_ERRONEUSNICKNAME(server_name, new_nickname)), 0);
+            send_message(_fd, ERR_ERRONEUSNICKNAME(server_name, new_nickname));
             return false;
         }
     }
@@ -35,7 +35,7 @@ bool Nick::check_all_errors(const std::string &new_nickname)
     for (size_t i = 0; i < _clients_list.size(); i++){
         nick_compare = _clients_list[i]->get_nickname();
         if (to_uppercase(nick_compare) == uppercase_nickname){
-            send(_fd, ERR_NICKNAMEINUSE(server_name, new_nickname), strlen(ERR_NICKNAMEINUSE(server_name, new_nickname)), 0);
+            send_message(_fd, ERR_NICKNAMEINUSE(server_name, new_nickname));
             return false;
         }
     }
@@ -55,8 +55,7 @@ void Nick::send_message_to_all_one_time(const std::string &message, const int i,
         // verif si le client a deja ete notif
         if (clients_already_notified.find(client_fd) == clients_already_notified.end()) {
             
-            send(client_fd, message.c_str(), message.size(), 0);
-
+            send_message(client_fd, message);
             // add le client a la liste des clients qui ont deja recu le mess
             clients_already_notified.insert(client_fd);
         }
@@ -72,7 +71,7 @@ bool Nick::modification_actual_nickname(const std::string &new_nickname)
     
     // send emeteur client
     std::string confirmation_message = ":" + old_nickname + " NICK :" + new_nickname + "\n";
-    send(_fd, confirmation_message.c_str(), confirmation_message.size(), 0);
+    send_message(_fd, confirmation_message);
 
     std::set<int> clients_already_notified;
     clients_already_notified.insert(_fd);

@@ -141,13 +141,13 @@ void Invite::send_invite_confirmation(const std::string &chan_name, const std::s
     add_client_to_invite(chan_name, target);
 
     std::string invite_confirm_msg = ":" + std::string(SERVER_NAME) + " 341 " + client_nick + " " + target + " " + chan_name + "\r\n";
-    send(_fd, invite_confirm_msg.c_str(), invite_confirm_msg.size(), 0);
+    send_message(_fd, invite_confirm_msg);
 
     int fd_target = return_fd_target(target);
 
     // send invite message
     std::string invite_msg = ":" + client_nick + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " INVITE " + target + " :" + chan_name + "\r\n";
-    send(fd_target, invite_msg.c_str(), invite_msg.size(), 0);
+    send_message(fd_target, invite_msg);
 }
 
 bool Invite::check_invite_conditions(const std::string &chan_name, const std::string &target, const std::string &client_nick, int fd)
@@ -156,13 +156,13 @@ bool Invite::check_invite_conditions(const std::string &chan_name, const std::st
 
     if (check_if_chan_exist(chan_name) == false) {
         std::string error_message = ERR_NOSUCHCHANNEL_TOPIC(server_name, client_nick, chan_name);
-        send(fd, error_message.c_str(), error_message.size(), 0);
+        send_message(fd, error_message);
         return false;
     }
 
     if (check_if_target_exist(target) == false) {
         std::string message = ERR_NOSUCHNICK_INVITE(server_name, client_nick, target);
-        send(fd, message.c_str(), message.size(), 0);
+        send_message(fd, message);
         return false;
     }
 
@@ -178,7 +178,7 @@ bool Invite::check_invite_conditions(const std::string &chan_name, const std::st
 
     if (check_if_already_in_channel(chan_name, target) == false) {
         std::string error_message = ERR_USERONCHANNEL(server_name, client_nick, target, chan_name);
-        send(fd, error_message.c_str(), error_message.size(), 0);
+        send_message(fd, error_message);
         return false;
     }
 

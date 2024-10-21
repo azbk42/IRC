@@ -26,10 +26,14 @@ bool Bot::process_command(const std::string &command)
 // #                                    METHOD                                    #
 // ################################################################################
 
-void Bot::send_message(const std::string &message)
+void Bot::send_message_error(int fd, const std::string &message)
 {
     std::string full_message = "PRIVMSG #Bot :" + message + "\r\n";
-    send(_socket_fd, full_message.c_str(), full_message.length(), 0);
+    if (send(fd, full_message.c_str(), full_message.size(), 0) == -1){
+        std::cerr << RED << "Send error" << std::endl;
+        std::cerr << RED << "Client fd = " << WHITE << fd << std::endl;
+        std::cerr << RED << "Message: " << WHITE << message << std::endl;
+    }
 }
 
 void Bot::handle_server_response()
@@ -59,7 +63,6 @@ void Bot::join_channel()
     }
 
     std::cout << GREEN << " >> Connected to channel: " + _channel_name +"\n" << RESET << std::endl;
-
 }
 
 // ################################################################################
@@ -104,7 +107,7 @@ void Bot::handle_help()
 
     // Utilisation d'une boucle classique pour parcourir les éléments
     for (size_t i = 0; i < help_lines.size(); ++i) {
-        send_message(help_lines[i]);
+        send_message_error(_socket_fd,help_lines[i]);
     }
 }
 
@@ -114,7 +117,7 @@ void Bot::handle_heads()
     bool is_heads = (rand() % 2 == 0);
     std::string result = is_heads ? "Heads" : "Tails";
     std::string outcome = is_heads ? "You win!" : "You lose!";
-    send_message("Result: " + result + " - " + outcome);
+    send_message_error(_socket_fd,"Result: " + result + " - " + outcome);
 }
 
 void Bot::handle_tails() 
@@ -123,7 +126,7 @@ void Bot::handle_tails()
     bool is_heads = (rand() % 2 == 0);
     std::string result = is_heads ? "Heads" : "Tails";
     std::string outcome = is_heads ? "You lose!" : "You win!";
-    send_message("Result: " + result + " - " + outcome);
+    send_message_error(_socket_fd,"Result: " + result + " - " + outcome);
 }
 
 

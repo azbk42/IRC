@@ -7,17 +7,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "define.hpp"
-
-// real_name
-// username
-// server
-// socket_fd
-// liste des canaux
-//
+#include "include.hpp"
  
 class Channel;
-// class client qui va nous servir a savoir toute les informations propre a un client unique
-// ou il se trouve, son nom, son nick, si il est abs ou connecte
+
 class Client
 {
     public:
