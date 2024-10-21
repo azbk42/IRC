@@ -71,11 +71,11 @@ bool Invite::check_if_client_is_op_and_in_chan(const std::string &chan_name, con
                 }
             }
             std::string error_message = ERR_CHANOPRIVSNEEDED_INVITE(server_name, client_nick, chan_name);
-            send(_client_actif->get_socket_fd(), error_message.c_str(), error_message.size(), 0);
+            send_message(_client_actif->get_socket_fd(), error_message);
         }
         else{
             std::string message = ERR_NOTONCHANNEL_INVITE(server_name, client_nick, chan_name);
-            send(_client_actif->get_socket_fd(), message.c_str(), message.size(), 0);
+            send_message(_client_actif->get_socket_fd(), message);
         }
     }
     return false;
