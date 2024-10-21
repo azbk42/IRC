@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:42:51 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/18 18:40:18 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/21 13:10:48 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,42 +71,25 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
 				size_t rang = 2 + _ordre_args['l'];
 				if (values.size() > rang)
 					l_mode(channel, _signe['l'], values[rang]);
-				else
-					l_mode(channel, _signe['l'], "");
+				// else
+				// 	l_mode(channel, _signe['l'], "");
 			}
 			else
 				l_mode(channel, _signe['l'], "");
 		}
 		if (it->second == 'k'){
-			if (_signe['k'] == '+') {
 				size_t rang = 2 + _ordre_args['k'];
 				if (values.size() > rang)
 					k_mode(channel, _signe['k'], values[rang]);
-				else
-					k_mode(channel, _signe['k'], "");
-			}
-			else{
-				size_t rang = 2 + _ordre_args['k'];
-				if (values.size() > rang)
-					k_mode(channel, _signe['k'], values[rang]);
-				else
-					k_mode(channel, _signe['k'], "");
-			}
+				// else
+				// 	k_mode(channel, _signe['k'], "");
 		}
 		if (it->second == 'o'){
 			size_t rang = 2 + _ordre_args['o'];
-			if (_signe['o'] == '+'){
 				if (values.size() > rang)
 					o_mode(channel, _signe['o'], values[rang]);
 				else
 					o_mode(channel, _signe['o'], "");
-			}
-			else {
-				if (values.size() > rang)
-					o_mode(channel, _signe['o'], values[rang]);
-				else
-					o_mode(channel, _signe['o'], "");
-			}		
    		}
 	}
 	std::string server_name = SERVER_NAME;
@@ -216,7 +199,7 @@ void Mode::mode_info(Channel* channel,std::vector<std::string> &values){
 	std::string creationtime = RPL_CREATIONTIME(server_name, values[0], int_to_string(creation_time));
 	send(_client_fd, creationtime.c_str(), creationtime.length(), 0);
 }
-			
+
 void Mode::channel_mode(std::vector<std::string> &values){
 	std::string server_name = SERVER_NAME;
 	

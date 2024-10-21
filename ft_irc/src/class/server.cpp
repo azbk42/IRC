@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/17 14:30:12 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/21 13:08:18 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,14 @@ std::string Server::GetPassword() const {return _password;}
 
 void Server::CloseServerFd()
 {
-	for (size_t i = _pollFds.size() - 1; i > 0; i--) {
-		if (close(_pollFds[i].fd) == -1)
-			std::cerr << "Failed to close client socket" << std::endl; // throw?
-		_pollFds.erase(_pollFds.begin() + i);
-		delete _clients_array[i - 1]; // ajout de cette fonction pour free le client alloue avec new
-		_clients_array.erase(_clients_array.begin() + (i - 1));
+	if (_pollFds.size() > 0){
+		for (size_t i = _pollFds.size() - 1; i > 0; i--) {
+			if (close(_pollFds[i].fd) == -1)
+				std::cerr << "Failed to close client socket" << std::endl; // throw?
+			_pollFds.erase(_pollFds.begin() + i);
+			delete _clients_array[i - 1]; // ajout de cette fonction pour free le client alloue avec new
+			_clients_array.erase(_clients_array.begin() + (i - 1));
+		}
 	}
 	for (size_t i = 0; i < _channels_array.size(); i++){
 		delete _channels_array[i];

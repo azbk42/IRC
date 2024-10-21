@@ -47,7 +47,6 @@
 #define ERR_NOTONCHANNEL1(server, user, channel)(":" + server_name + " 442" + channel + " " + user + " " + user + ":" + " :No such nick/channel\r\n").c_str()
 #define ERR_NOTONCHANNEL2(server, user, channel)(":" + server_name + " 442" + channel + " " + user + " " + user + " " + "#" + channel + " :They aren't on that channel\r\n").c_str()
 
-
 // KICK
 #define ERR_NOSUCHCHANNEL3(server, sender, channel) (":" + server + " 403 " + sender + " " + channel + " :No such channel\r\n")
 #define ERR_CHANOPRIVSNEEDED(server, sender, channel) (":" + server + " 482 " + sender + " " + channel + " :You're not channel operator\r\n")

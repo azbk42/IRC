@@ -11,14 +11,12 @@ Commandes restantes:
     - parsing de LIST dans le server pour savoir tous les diffrents noms de channels class server - done a cleaner
 
 Camille
-    - send if fail
     - comparaison de string - tout mettre en MAJ
     - au delq du premier join, pas de message de date de creation? Je n'arrive pas a comprendre comment fonctionne irssi a ce niveau, mais sur la doc ce nest pas obligatoire
     Ok jai trouve, cest quand on fait MODE #<nom du chan>
     que irssi nous envoie ca en commande et nous on lui rep la date du chan.
 
 Elouan
-    supprimer le chan quand le dernier mec fait QUIT
     quand le dernier mec d'un chan fait /quit, il reste dans la base de donnee
     conditional jump quand on fait 'MODE #mdr' sans param supplementaire
     refaire l'ordre des channels quand on va les creer ( ordre alphabetique)
@@ -70,13 +68,11 @@ dcc en attente:
 
 
 checks : 
-- quand qun entre ds chanel, message info mais pas changement des premieres lignes du chan
-  pas de message : Irssi: Join to #test was synced in 0 secs
-- remove_client ne supprime pas de invitation - revoir le fonctionnement
 - ifndef pas ds tous les hpp
 - TOPIC : 
   - supprimer les ":" dans le message "azbk changed the topic of #test to: :retest" et "Topic for #test: :retest" qd join
-  - pas de ligne "Topic set by melika [tkob@f2f-12b7-2a9b-bd1c-e0b5.life.is-a.beauty] [Sun Jun 11 05:35:13 2023]" qd join
-  - mode "+t" n'empeche pas de changer le topic 
 - MODE : 
   - gerer l'envoi automatique de /mode #chan b
+
+  maj sur part #CHAN
+  sur list 
