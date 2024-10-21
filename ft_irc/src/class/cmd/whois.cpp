@@ -6,8 +6,7 @@
 
 int Whois::find_target(const std::string &target)
 {
-    int fd;
-    for (int i = 0; i < _clients_list.size(); i++){
+    for (size_t i = 0; i < _clients_list.size(); i++){
         std::string name = to_uppercase(_clients_list[i]->get_nickname());
         if (name == to_uppercase(target)){
             return _clients_list[i]->get_socket_fd();
@@ -19,7 +18,7 @@ int Whois::find_target(const std::string &target)
 void Whois::send_whois_message(const std::string &target)
 {
     Client *client = NULL;
-    for (int i = 0; i < _clients_list.size(); i++){
+    for (size_t i = 0; i < _clients_list.size(); i++){
         if (to_uppercase(_clients_list[i]->get_nickname()) == to_uppercase(target)){
             client = _clients_list[i];
             break;
@@ -66,18 +65,11 @@ bool Whois::process_two_arg(const std::string &value, const std::string &server_
     return true;
 }
 
-bool Whois::process_one_arg(const std::string &value, const std::string &server_name, const std::string &sender)
+bool Whois::process_one_arg(const std::string &value)
 {
     std::string target = value;
-    // std::cout << "target = " << target << std::endl;
-    // if (find_target(target) == CLIENT_NOT_FOUND){
-    //     std::string message = ":" + server_name + " 401 " + sender + " " + " :No such nick/channel\r\n";
-    //     send(_fd, message.c_str(), message.size(), 0);
-    //     return false;
-    // }
-    // else{
-        send_whois_message(target);
-    //}
+
+    send_whois_message(target);
     return true;
 }
 
@@ -90,7 +82,7 @@ bool Whois::init_cmd_msg(const std::string &value)
         process_two_arg(value, server_name, sender);
     }
     else{
-        process_one_arg(value, server_name, sender);
+        process_one_arg(value);
     }
     return true;
     

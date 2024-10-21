@@ -9,7 +9,7 @@ bool Kick::check_if_client_is_op(Channel &chan)
 {
     std::string name = _client_actif->get_nickname();
     std::vector<std::string> op = chan.get_operator();
-    for (int i = 0; i < op.size(); i++){
+    for (size_t i = 0; i < op.size(); i++){
         std::string ope = to_uppercase(op[i]);
         if (ope == to_uppercase(name)){
             return true;
@@ -33,7 +33,7 @@ bool Kick::check_if_client_is_target(const std::string &target)
 
 Channel* Kick::find_channel(const std::string &canal_name)
 {
-    for (int i = 0; i < _channels_list.size(); i++){
+    for (size_t i = 0; i < _channels_list.size(); i++){
         std::string name_touper = to_uppercase(_channels_list[i]->get_name());
         if ( name_touper == to_uppercase(canal_name)){
             return _channels_list[i];
@@ -61,7 +61,7 @@ void Kick::kick_client_from_channel(Channel &Chan, const std::string &target_nam
     Client *client_target = NULL;
     int fd;
 
-    for (int i = 0; i < _clients_list.size(); i++){
+    for (size_t i = 0; i < _clients_list.size(); i++){
         std::string name_upper = to_uppercase(_clients_list[i]->get_nickname());
         if (name_upper == to_uppercase(target_name)){
             client_target = _clients_list[i];
@@ -70,7 +70,7 @@ void Kick::kick_client_from_channel(Channel &Chan, const std::string &target_nam
     }
     if (client_target != NULL){
         fd = client_target->get_socket_fd();
-        Chan.remove_client(target_name, fd, *client_target, message);
+        Chan.remove_client(target_name,*client_target);
         std::string message_to_target = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " KICK " + 
                                            Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
 

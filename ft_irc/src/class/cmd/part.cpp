@@ -12,12 +12,12 @@
 
 #include "part.hpp"
 
-Part::Part(std::vector<Channel*> &channels, int client_fd, Client &client_actif, std::string value) : _channels_list(channels), _fd(client_fd), _client_actif(&client_actif), _value(value){}
+Part::Part(std::vector<Channel*> &channels, int client_fd, Client &client_actif, std::string value) : _fd(client_fd),_value(value),_client_actif(&client_actif) ,_channels_list(channels){}
 Part::~Part() {}
 
 void Part::_check_channel(std::string channel, std::string reason){
 	std::string server_name = SERVER_NAME;
-	for (int i = 0 ; i < _channels_list.size(); i++){
+	for (size_t i = 0 ; i < _channels_list.size(); i++){
 		if (_channels_list[i]->get_name() == channel){ // verifier que le channel existe
 			if (_channels_list[i]->is_in_channel(_client_actif->get_nickname()) == true){ // verifier que le client est dans le channel
 				// message de départ à tous les membres du chan
@@ -28,7 +28,7 @@ void Part::_check_channel(std::string channel, std::string reason){
                 send(_fd, part_message.c_str(), part_message.length(), 0);
 
                 // Supprimer le client du chan
-                if (_channels_list[i]->remove_client(_client_actif->get_nickname(), _fd, *_client_actif, reason) == 1)
+                if (_channels_list[i]->remove_client(_client_actif->get_nickname(),*_client_actif) == 1)
 				{
 					delete _channels_list[i];
 					_channels_list.erase(_channels_list.begin() + i);
@@ -57,7 +57,7 @@ void Part::init_cmd_part(){
 	
 	std::vector<std::string> channels_part = split_by_comma(channels);
 	
-	for (int i = 0; i < channels_part.size(); i++){
+	for (size_t i = 0; i < channels_part.size(); i++){
 		if ((channels_part.size() > 1) && (channels_part[i][0] != '#')){
 			send(_fd, ERR_NOSUCHCHANNEL2(server_name, channels_part[i]), strlen(ERR_NOSUCHCHANNEL2(server_name, channels_part[i])), 0);
 			continue;

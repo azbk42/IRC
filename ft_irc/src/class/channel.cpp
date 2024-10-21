@@ -96,7 +96,7 @@ void Channel::modif_topic(const std::string &topic)
 void Channel::send_message_to_all(const std::string &message, const int fd_client)
 {
     for (std::map<std::string, int>::iterator it = _client.begin(); it != _client.end(); ++it) {
-        // On n'envoie pas le message au client qui a changé son pseudo
+        // on envoie le message a tout le monde sauf le client principal
         if (it->second != fd_client) {
             send(it->second, message.c_str(), message.size(), 0);
         }
@@ -157,7 +157,7 @@ bool Channel::is_in_channel(const std::string &name)
 
 bool Channel::is_operator(const std::string &name)
 {
-    for (int i = 0; i < _operator.size(); i++){
+    for (size_t i = 0; i < _operator.size(); i++){
         if (_operator[i] == name)
             return true;
     }
@@ -171,7 +171,7 @@ void Channel::add_operator(const std::string &name)
 
 void Channel::remove_operator(const std::string &name)
 {
-    for (int i = 0; i < _operator.size(); i++){
+    for (size_t i = 0; i < _operator.size(); i++){
         if (_operator[i] == name)
             _operator.erase(_operator.begin() + i);
     }
@@ -191,12 +191,13 @@ void Channel::add_client(const std::string &name, const int fd_client, Client &c
     send_welcome_message(name, fd_client);
 }
 
-int Channel::remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason)
+int Channel::remove_client(const std::string &name, Client &client_actif)
 {
+    
     if (_nb_client > 1){
 		_client.erase(name); // erase client from the channel's client list
 		_nb_client -= 1; // prevoir csq si plus personne dans le chan ? chan supprime ?
-		for (int i = 0; i < _operator.size(); i++){
+		for (size_t i = 0; i < _operator.size(); i++){
 			if (_operator[i] == name){ // if operator, remove from operator list
 				_operator.erase(_operator.begin() + i);
 				break;
@@ -218,7 +219,7 @@ bool Channel::authorization_check(const std::string &nickname)
     // si cest en invite only on check si il est dans la liste des noms
     if (_i == true){
         
-        for (int i = 0; i < _invite_name.size(); i++){
+        for (size_t i = 0; i < _invite_name.size(); i++){
             if (to_uppercase(_invite_name[i]) == to_uppercase(nickname)){
                 return true;
             }
@@ -240,9 +241,9 @@ void Channel::update_name_client(const std::string &old_nickname, const std::str
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################
 
-Channel::Channel(const std::string &name): 
-    _name_channel(name), _topic(""), _password(""), _pass(false), _nb_client(0),
-    _i(false), _limite(-1), _t(false)
+Channel::Channel(const std::string &name):  _pass(false), _nb_client(0),\
+                _name_channel(name), _topic(""), _password(""),\
+                _i(false), _limite(-1), _t(false)
 {
 	_creation_time = time(NULL);
 }

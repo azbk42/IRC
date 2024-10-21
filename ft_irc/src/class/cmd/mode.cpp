@@ -19,7 +19,7 @@
 // ################################################################################
 
 Mode::Mode(std::vector<Client*> &clients_list, Client &client_actif, std::vector<Channel*> &channels_array, int client_fd, std::string value) : 
-	_client_fd(client_fd), _clients(clients_list), _client_actif(&client_actif), _channels_array(channels_array), _value(value), _modes_info("+") {}
+	_client_fd(client_fd), _value(value),_client_actif(&client_actif),_clients(clients_list), _channels_array(channels_array), _modes_info("+") {}
 
 Mode::~Mode() {}
 
@@ -27,26 +27,35 @@ Mode::~Mode() {}
 // #                                    METHOD                                    #
 // ################################################################################
 
-void Mode::fill_modes_exec(std::string mode, std::string signe, std::string value){
-	if (_modes_exec.empty() == true){
-		_modes_exec.push_back(signe + mode);
-	}
-	else {
-		int pos = _modes_exec[0].find(signe);
-		if (signe == "+" && pos == -1) // si on a un + et qu'il n'y en a pas deja un ds _modes_exec[0]
-			_modes_exec[0] += signe;
-		if (signe == "+" && pos != -1) // si on a un + et qu'il y en a deja un ds _modes_exec[0]
-			if (_modes_exec[0].find("-") != std::string::npos && _modes_exec[0].find("-") > pos) //trouver un - plus proche
-				_modes_exec[0] += signe;
-		if (signe == "-" && pos == -1)
-			_modes_exec[0] += signe;
-		if (signe == "-" &&  pos != -1) // si on a un plus et qu'il y en a deja un ds _modes_exec[0]
-			if (_modes_exec[0].find("+") > pos) //trouver un - plus proche
-				_modes_exec[0] += signe;
-		_modes_exec[0] += mode;
-	}
-	if (mode == "k" || mode == "o" || mode == "l")
-		_modes_exec.push_back(value);
+void Mode::fill_modes_exec(std::string mode, std::string signe, std::string value)
+{
+    if (_modes_exec.empty()) {
+        _modes_exec.push_back(signe + mode);
+    } else {
+        unsigned long pos = static_cast<unsigned long>(_modes_exec[0].find(signe));
+        if (signe == "+" && pos == std::string::npos) {
+            _modes_exec[0] += signe;
+        }
+        if (signe == "+" && pos != std::string::npos) {
+            unsigned long plus_pos = static_cast<unsigned long>(_modes_exec[0].find("-"));
+            if (plus_pos != std::string::npos && plus_pos > pos) {
+                _modes_exec[0] += signe;
+            }
+        }
+        if (signe == "-" && pos == std::string::npos) {
+            _modes_exec[0] += signe;
+        }
+        if (signe == "-" && pos != std::string::npos) {
+            unsigned long neg_pos = static_cast<unsigned long>(_modes_exec[0].find("+"));
+            if (neg_pos != std::string::npos && neg_pos > pos) {
+                _modes_exec[0] += signe;
+            }
+        }
+        _modes_exec[0] += mode;
+    }
+    if (mode == "k" || mode == "o" || mode == "l") {
+        _modes_exec.push_back(value);
+    }
 }
 
 void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
@@ -59,7 +68,7 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
 			t_mode(channel, _signe['t']);
 		if (it->second == 'l'){
 			if (_signe['l'] == '+') {
-				int rang = 2 + _ordre_args['l'];
+				size_t rang = 2 + _ordre_args['l'];
 				if (values.size() > rang)
 					l_mode(channel, _signe['l'], values[rang]);
 				else
@@ -70,14 +79,14 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
 		}
 		if (it->second == 'k'){
 			if (_signe['k'] == '+') {
-				int rang = 2 + _ordre_args['k'];
+				size_t rang = 2 + _ordre_args['k'];
 				if (values.size() > rang)
 					k_mode(channel, _signe['k'], values[rang]);
 				else
 					k_mode(channel, _signe['k'], "");
 			}
 			else{
-				int rang = 2 + _ordre_args['k'];
+				size_t rang = 2 + _ordre_args['k'];
 				if (values.size() > rang)
 					k_mode(channel, _signe['k'], values[rang]);
 				else
@@ -85,7 +94,7 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
 			}
 		}
 		if (it->second == 'o'){
-			int rang = 2 + _ordre_args['o'];
+			size_t rang = 2 + _ordre_args['o'];
 			if (_signe['o'] == '+'){
 				if (values.size() > rang)
 					o_mode(channel, _signe['o'], values[rang]);
@@ -102,7 +111,7 @@ void Mode::exec_mode(Channel* channel, std::vector<std::string> values){
 	}
 	std::string server_name = SERVER_NAME;
 	std::string modes;
-	for (int i = 0; i < _modes_exec.size(); i++)
+	for (size_t i = 0; i < _modes_exec.size(); i++)
 	{
 		if (i != 0)
 			modes += " ";
@@ -135,7 +144,7 @@ bool is_arg_mode(char c, char signe){
 
 void Mode::parse_mode(std::string value){
 	std::string server_name = SERVER_NAME;
-	for (int i = 0; i < value.size(); i++){
+	for (size_t i = 0; i < value.size(); i++){
 		char signe;
 		if (is_covered_mode(value[i]) == true || is_sign(value[i]) == true) { 
 			if (is_sign(value[i]) == true){ //-> if there is a sign, all that follows is of that sign
@@ -216,7 +225,7 @@ void Mode::channel_mode(std::vector<std::string> &values){
 		send(_client_fd, str.c_str(), str.length(), 0);
 		return ;
 	}
-	for (int i = 0; i < _channels_array.size(); i++) { 
+	for (size_t i = 0; i < _channels_array.size(); i++) { 
 		if (_channels_array[i]->get_name() == values[0]){ // -> check if the channel exists
 			if (values.size() == 1) {// ->if there is no other value than name of chan -> Channel #samurai created Mon Sep 30 14:17:56 2024
 				mode_info(_channels_array[i], values);
@@ -243,7 +252,7 @@ void Mode::channel_mode(std::vector<std::string> &values){
 void Mode::init_cmd_mode(){
 	std::vector<std::string> values = split_by_space(_value); //-> split value by " " to get a vector of strings
 	
-	for (int i = 0; i < _clients.size(); i++){ 
+	for (size_t i = 0; i < _clients.size(); i++){ 
 		if (_clients[i]->get_nickname() == values[0]){ // -> check if the first value is a user
 			return ; // user modes are not covered in the subject
 		}

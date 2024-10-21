@@ -22,12 +22,11 @@ class Parse;
 class Join
 {
     public:
-        Join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, std::string value);
+        Join(int client_fd, Client &client_actif, std::vector<Channel*> &channels, std::string value);
         ~Join();
         bool init_cmd_join();
 
     private:
-        std::vector<Client*> &_clients_list;
         std::vector<Channel*> &_channels_list;
         std::string _value;
         Client *_client_actif;

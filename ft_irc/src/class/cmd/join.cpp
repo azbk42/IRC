@@ -118,7 +118,7 @@ bool Join::check_limit_channel(Channel* channel, const std::string &nickname, co
 {
     int limit = channel->get_limite(); 
     if (limit != -1){
-        if (channel->get_nb_client() >= limit){
+        if (channel->get_nb_client() >= (size_t)limit){
             std::string error_message = ERR_CHANNELISFULL(std::string(SERVER_NAME), nickname, channel_name);
             send_message(_fd, error_message);
             return false;
@@ -140,7 +140,7 @@ bool Join::_process_channel(const std::string &chan_name, const std::string &pas
 
     std::string channel_name = chan_name.substr(0);
     // ajout channel existant
-    for (int i = 0; i < _channels_list.size(); i++){
+    for (size_t i = 0; i < _channels_list.size(); i++){
 
         if (to_uppercase(_channels_list[i]->get_name()) == to_uppercase(channel_name)){
             if (_channels_list[i]->get_pass() == true){
@@ -176,7 +176,7 @@ bool Join::init_cmd_join()
     std::vector<std::string> cannaux;
     map_channel = _init_channel_map(_value, cannaux);
     
-    for (int i = 0; i < cannaux.size(); i++) {
+    for (size_t i = 0; i < cannaux.size(); i++) {
         if (_check_invalid_char_join(cannaux[i], _fd, *_client_actif) == false){
             continue;
         }
@@ -191,10 +191,8 @@ bool Join::init_cmd_join()
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################
 
-Join::Join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, std::string value):
-        _clients_list(clients_list), _channels_list(channels), _client_actif(&client_actif), _fd(client_fd),
-        _value(value)
-
+Join::Join(int client_fd, Client &client_actif, std::vector<Channel*> &channels, std::string value):
+        _channels_list(channels),_value(value) ,_client_actif(&client_actif),_fd(client_fd)
 {
        
 }

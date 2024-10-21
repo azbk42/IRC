@@ -15,10 +15,7 @@
 void Client::handle_cmd_nick(const std::string &new_nickname, int client_socket)
 {
     std::string old_nick = get_nickname();
-    int socket = get_socket_fd();
     set_nickname(new_nickname);
-    
-
     send(client_socket, NICK_CHANGE(old_nick, new_nickname), strlen(NICK_CHANGE(old_nick, new_nickname)), 0);
 }
 bool Client::check_nb_chan()
@@ -124,9 +121,10 @@ void Client::set_checked_pwd(bool status)
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################
 
-Client::Client(int socket): _real_name("real_name"), _server_name("server"), _host_name("host"), _socket_fd(socket),\
-            _user_setup(false), _away(false), _connected(true), _username("username"), _checked_pwd(false), _nb_chan(0),
-            _first_nick(true), _connection_time(time(0))
+Client::Client(int socket): _user_setup(false), _away(false), _connected(true), _first_nick(true),\
+            _real_name("real_name"), _server_name("server"), _host_name("host"), \
+            _username("username"), _checked_pwd(false), _nb_chan(0),
+            _socket_fd(socket), _connection_time(time(0))
 {
 
 }

@@ -8,8 +8,7 @@
 
 Channel* Msg::find_channel_target(const std::string &target)
 {
-    int fd;
-    for (int i = 0; i < _channels_list.size(); i++){
+    for (size_t i = 0; i < _channels_list.size(); i++){
         std::string name = to_uppercase(_channels_list[i]->get_name());
         if (name == to_uppercase(target)){
             return _channels_list[i];
@@ -20,8 +19,7 @@ Channel* Msg::find_channel_target(const std::string &target)
 
 int Msg::find_client_target(const std::string &target)
 {
-    int fd;
-    for (int i = 0; i < _clients_list.size(); i++){
+    for (size_t i = 0; i < _clients_list.size(); i++){
         std::string name = to_uppercase(_clients_list[i]->get_nickname());
         if (name == to_uppercase(target)){
             return _clients_list[i]->get_socket_fd();
@@ -107,7 +105,7 @@ bool Msg::init_cmd_msg(const std::string &value)
 // ################################################################################
 
 Msg::Msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels_list):
-        _clients_list(clients_list), _client_actif(&client_actif), _fd(client_fd), _channels_list(channels_list)
+        _clients_list(clients_list), _channels_list(channels_list), _client_actif(&client_actif),_fd(client_fd)
 {
 
 }

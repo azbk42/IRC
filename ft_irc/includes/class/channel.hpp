@@ -62,7 +62,7 @@ class Channel
 
         void set_topic(const std::string &value);
 
-		int remove_client(const std::string &name, const int fd_client, Client &client_actif, std::string reason);
+		int remove_client(const std::string &name, Client &client_actif);
         void add_operator(const std::string &name);
         void remove_operator(const std::string &name);
 		
@@ -72,6 +72,7 @@ class Channel
         // variable a false si pas de mdp ou true si yen a un
         bool _pass;
         size_t _nb_client;
+
         const std::string _name_channel;
         std::string _topic;
         std::map<std::string, int> _client;

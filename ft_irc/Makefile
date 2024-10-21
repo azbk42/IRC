@@ -5,7 +5,7 @@
 NAME = ircserv
 BONUS_NAME = ircbot
 CC = c++
-CFLAGS = -g3 -std=c++98 -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/class/cmd -I$(INCLUDE_DIR)/class
+CFLAGS = -g3 -Werror -Wall -Wextra -std=c++98 -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/class/cmd -I$(INCLUDE_DIR)/class
 MAKEFLAGS += --no-print-directory
 
 ################################################################################

@@ -22,11 +22,11 @@ void Quit::send_quit_msg() {
 
 	std::string quit_message = QUIT_MESSAGE(_client->get_nickname(), _client->get_username(), _client->get_hostname(), "Quit: " + _reason);
 
-	for (int i = 0; i < _channels.size(); i++){
+	for (size_t i = 0; i < _channels.size(); i++){
         if (_channels[i]->is_in_channel(_client->get_nickname())){
             _channels[i]->send_message_to_all(quit_message, _client_fd); // Envoie à tous les autres clients du canal
 			// _channels[i]->remove_client(_client->get_nickname(), _client_fd, *_client, _reason); // Supprime le client du canal		}
-			if (_channels[i]->remove_client(_client->get_nickname(), _client_fd, *_client, _reason) == 1)
+			if (_channels[i]->remove_client(_client->get_nickname(),*_client) == 1)
 			{
 				delete _channels[i];
 				_channels.erase(_channels.begin() + i);

@@ -18,7 +18,7 @@
 // #                         Constructor / Destructor                             #
 // ################################################################################
 
-List::List(Client &client_actif, std::vector<Channel*> &channels_array, int client_fd, std::string value): _client(&client_actif), _channels_array(channels_array), _client_fd(client_fd), _value(value){};
+List::List(Client &client_actif, std::vector<Channel*> &channels_array, int client_fd, std::string value): _client_fd(client_fd), _channels_array(channels_array),_client(&client_actif) , _value(value){};
 List::~List() {}
 
 // ################################################################################

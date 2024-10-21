@@ -74,13 +74,16 @@ class Client
         bool _first_nick;
         
         std::string _real_name;
-        std::string _nickname;
-        std::string _username;
         std::string _server_name;
         std::string _host_name;
-        int _socket_fd;
-		bool _checked_pwd;
+        std::string _nickname;
+        std::string _username;
+        
+        bool _checked_pwd;
         int _nb_chan;
+        int _socket_fd;
+		
+        
 
         time_t _connection_time;
 };

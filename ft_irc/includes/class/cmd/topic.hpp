@@ -26,5 +26,4 @@ class Topic
         std::vector<Channel*> &_channels_list;
         Client *_client_actif;
         int _fd;
-
 };

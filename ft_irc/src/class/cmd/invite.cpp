@@ -11,7 +11,7 @@ Channel* Invite::get_chan(const std::string &chan_name)
     std::string name_upper = to_uppercase(chan_name);
     std::string chan_name_upp;
 
-    for (int i = 0; i < _channels_list.size(); i++){
+    for (size_t i = 0; i < _channels_list.size(); i++){
         chan_name_upp = to_uppercase(_channels_list[i]->get_name());
         if (chan_name_upp == name_upper){
             chan = _channels_list[i];
@@ -30,7 +30,7 @@ bool Invite::check_if_chan_exist(const std::string &chan_name)
     std::string name_upper = to_uppercase(chan_name);
     std::string chan_name_upp;
 
-    for (int i = 0; i < _channels_list.size(); i++){
+    for (size_t i = 0; i < _channels_list.size(); i++){
         chan_name_upp = to_uppercase(_channels_list[i]->get_name());
         if (chan_name_upp == name_upper){
             return true;
@@ -44,7 +44,7 @@ bool Invite::check_if_target_exist(const std::string &target)
     std::string name_target = to_uppercase(target);
     std::string compare;
 
-    for (int i = 0; i < _clients_list.size(); i++){
+    for (size_t i = 0; i < _clients_list.size(); i++){
         compare = to_uppercase(_clients_list[i]->get_nickname());
         if (compare == name_target){
             return true;
@@ -64,7 +64,7 @@ bool Invite::check_if_client_is_op_and_in_chan(const std::string &chan_name, con
         std::vector<std::string> ope = chan->get_operator();
         std::string client_nick_up = to_uppercase(client_nick);
         if (chan->is_in_channel(client_nick)){
-            for (int i = 0; i < ope.size(); i++){
+            for (size_t i = 0; i < ope.size(); i++){
                 std::string ope_up = to_uppercase(ope[i]);
                 if (ope_up == client_nick_up){
                     return true;
@@ -89,7 +89,7 @@ bool Invite::check_if_already_in_invite(const std::string &chan_name, const std:
     if (chan){
         std::string nick_upper = to_uppercase(client_nick);
         std::vector<std::string> invite_array = chan->get_invite_name();
-        for (int i = 0; i < invite_array.size(); i++){
+        for (size_t i = 0; i < invite_array.size(); i++){
             std::string name_upper = invite_array[i];
             if (nick_upper == name_upper){
                 return false;
@@ -116,7 +116,7 @@ int Invite::return_fd_target(const std::string &target)
     std::string name_target = to_uppercase(target);
     std::string compare;
 
-    for (int i = 0; i < _clients_list.size(); i++){
+    for (size_t i = 0; i < _clients_list.size(); i++){
         compare = to_uppercase(_clients_list[i]->get_nickname());
         if (compare == name_target){
             return _clients_list[i]->get_socket_fd();

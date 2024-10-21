@@ -14,7 +14,7 @@
 #include "server.hpp"
 #include <iostream>
 
-Pass::Pass(int fd, std::string value, Client *client, std::string server_pwd) : _fd(fd), _enteredPwd(value), _client(client), _serverPwd(server_pwd){}
+Pass::Pass(int fd, std::string value, Client *client, std::string server_pwd) : _fd(fd), _enteredPwd(value), _serverPwd(server_pwd), _client(client){}
 Pass::~Pass(){}
 
 int Pass::check_pass(){

@@ -32,7 +32,7 @@ bool Nick::check_all_errors(const std::string &new_nickname)
     std::string nick_compare;
 
     // verif si le pseudo est déjà utilisé
-    for (int i = 0; i < _clients_list.size(); i++){
+    for (size_t i = 0; i < _clients_list.size(); i++){
         nick_compare = _clients_list[i]->get_nickname();
         if (to_uppercase(nick_compare) == uppercase_nickname){
             send(_fd, ERR_NICKNAMEINUSE(server_name, new_nickname), strlen(ERR_NICKNAMEINUSE(server_name, new_nickname)), 0);
@@ -78,7 +78,7 @@ bool Nick::modification_actual_nickname(const std::string &new_nickname)
     clients_already_notified.insert(_fd);
 
     // send a tous les gens qui se trouve dans le meme chan
-    for (int i = 0; i < _channels_list.size(); i++){
+    for (size_t i = 0; i < _channels_list.size(); i++){
         if (_channels_list[i]->is_in_channel(old_nickname)){
             
             std::string message = NICK_CHANGE(old_nickname, new_nickname);

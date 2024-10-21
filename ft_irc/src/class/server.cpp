@@ -147,7 +147,7 @@ void Server::process_message(int fd)
 
 		Parse parser(complete_message);
 		Client* client_actif = NULL;
-		for (int i = 0; i < _clients_array.size(); i++) {
+		for (size_t i = 0; i < _clients_array.size(); i++) {
 			if (_clients_array[i]->get_socket_fd() == fd) {
 				client_actif = _clients_array[i]; 
 				break;
@@ -222,7 +222,7 @@ void Server::ReceiveData(int fd)
 			std::cout << "Failed to receive data" << std::endl;
 		else if (bytesRecv == 0) {
 			Client* client_actif = NULL;
-			for (int i = 0; i < _clients_array.size(); i++) {
+			for (size_t i = 0; i < _clients_array.size(); i++) {
 				if (_clients_array[i]->get_socket_fd() == fd) {
 					client_actif = _clients_array[i]; 
 					break;

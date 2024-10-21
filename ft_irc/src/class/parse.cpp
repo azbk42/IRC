@@ -72,7 +72,8 @@ bool Parse::parse_kick(std::vector<Client*> &clients_list, int client_fd, Client
 
 bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
-    Join command(clients_list, client_fd, client_actif, channels, _value);
+    (void)(clients_list);
+    Join command(client_fd, client_actif, channels, _value);
     command.init_cmd_join();
 
     return true;
@@ -80,6 +81,8 @@ bool Parse::parse_join(std::vector<Client*> &clients_list, int client_fd, Client
 
 bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
+    (void)clients_list;
+    (void)client_actif;
     std::string pong = "PONG :" + _value + "\r\n";
     send(client_fd, pong.c_str(), pong.length(), 0);
 
@@ -88,6 +91,7 @@ bool Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client
 
 bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
+    (void)clients_list;
     std::string server_name = SERVER_NAME;
 
     // Verif if USER is already done
@@ -128,7 +132,8 @@ void Parse::parse_list(int client_fd, Client &client_actif, std::vector<Channel*
 }
 void Parse::parse_part(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels)
 {
-	Part part(channels, client_fd, client_actif, _value);
+	(void)clients_list;
+    Part part(channels, client_fd, client_actif, _value);
 	part.init_cmd_part();
 
     return ;

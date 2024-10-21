@@ -39,7 +39,6 @@ class Server //-> class for server
 		static bool _signal; //-> signal for sigint
 		int _port; //-> server port
 		int _serverFd; //-> server socket file descriptor
-		bool _first_nick;
 		std::string _password; //-> server password
 		std::vector<pollfd> _pollFds; //-> vector of structures pollfd
 		std::map<int, std::string> _partial_message;
