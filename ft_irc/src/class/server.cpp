@@ -161,6 +161,8 @@ void Server::check_password(int fd, Client* client_actif, Parse &parser, const s
 		if (passwd.check_pass() == 1)
 			CloseClientSocket(fd);
 	}
+	else if (cmd == "CAP")
+		return;
 	else {
 		send_message(fd, "Please enter password");
 		CloseClientSocket(fd);
