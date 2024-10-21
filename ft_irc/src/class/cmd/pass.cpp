@@ -20,11 +20,9 @@ Pass::~Pass(){}
 int Pass::check_pass(){
 	std::string server_name = SERVER_NAME;
 	if (_enteredPwd != _serverPwd){
-        std::cout << RED << "Password incorrect" << std::endl;
 		send_message(_fd, ERR_PASSWDMISMATCH(server_name));
 		return 1;
     }
-	std::cout << GREEN << "Password correct" << std::endl;
 	_client->set_checked_pwd(true);
 	return 0;
 }

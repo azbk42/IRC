@@ -22,10 +22,6 @@ std::map<std::string, std::string> Join::_init_channel_map(std::string str, std:
     std::vector<std::string> channels_list = split_by_comma(names);
     std::vector<std::string> passwords_list = split_by_comma(passwords);
 
-    if (passwords_list.empty()){
-        std::cout << "password empty" << std::endl;
-    }
-    
     for (size_t i = 0; i < channels_list.size(); ++i) {
         cannaux.push_back(channels_list[i]);
         if (i < passwords_list.size()) {
@@ -43,21 +39,18 @@ bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd,
     if (chan_name.length() > 50){
         std::string error_message = ERR_CHANNELNAMETOOLONG(client_actif.get_nickname(), chan_name);
         send_message(client_fd, error_message);
-        std::cout << "LEN TROP GRANDE" << std::endl;
         return false;
     }
     // check si ya un # au debut du nom
     if (chan_name.length() > 0 && chan_name[0] != '#') {
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
         send_message(client_fd, error_message);
-        std::cout << "NO #" << std::endl;
         return false;
     }
     // check si apres le # il ny a rien
     if (chan_name.length() > 0 && chan_name[0] == '#' && chan_name[1] == '\0') {
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
         send_message(client_fd, error_message);
-        std::cout << "BACK 0 FIND" << std::endl;
         return false;
     }
 
@@ -65,7 +58,6 @@ bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd,
     if (chan_name.find(",") != std::string::npos || chan_name.find(":") != std::string::npos){
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
         send_message(client_fd, error_message);
-        std::cout << "INVALID CHARACTER" << std::endl;
         return false;
     }
     // char non printable
@@ -73,7 +65,6 @@ bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd,
         if (chan_name[i] < 32 || chan_name[i] > 127) {
             std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
             send_message(client_fd, error_message);
-            std::cout << "NON-PRINTABLE CHARACTER DETECTED" << std::endl;
             return false;
         }
     }
@@ -93,7 +84,6 @@ bool Join::check_invit_channel(Channel* channel, const std::string& nickname, co
     if (channel->get_i() == true){
         if (channel->authorization_check(nickname) == false) {
             std::string error_message = ERR_INVITEONLYCHAN(std::string(SERVER_NAME), nickname ,channel_name);
-            std::cout << CYAN << "message error = " << error_message << std::endl;
             send_message(_fd, error_message);
             return false;
         }
@@ -130,21 +120,17 @@ bool Join::check_limit_channel(Channel* channel, const std::string &nickname, co
 void Join::channel_already_exist(Channel* channel, const std::string &nickname, const std::string &channel_name, const std::string &password)
 {
     if (channel->get_pass() == true){
-        std::cout << "pass = true" << std::endl;
         if (!_check_channel_access(channel, nickname, channel_name, password)){
             return ;
         }
     }
     if (check_invit_channel(channel, nickname, channel_name) == false){
-        std::cout << RED << "invit false" << WHITE << std::endl;
         return ;
     }
 
     if (check_limit_channel(channel, nickname, channel_name) == false){
-        std::cout << RED << "limit false" << WHITE << std::endl;
         return ;
     }
-    std::cout << "add client " << std::endl;
     channel->add_client(nickname, _fd, *_client_actif);
 }
 
@@ -153,7 +139,6 @@ void Join::_process_channel(const std::string &chan_name, const std::string &pas
     std::string nickname = _client_actif->get_nickname();
 
     if (_client_actif->check_nb_chan() == false){
-        std::cout << RED << "ERROR TO MUCH CHAN" << WHITE << std::endl;
         std::string suppr_channel_message = ERR_TOOMANYCHANNELS(std::string(SERVER_NAME), nickname, chan_name);
         send_message(_fd, suppr_channel_message);
         return ;
@@ -168,7 +153,6 @@ void Join::_process_channel(const std::string &chan_name, const std::string &pas
             return;
         }
     }
-    std::cout << "CREATE CHANNEL" << std::endl;
     // ajout channel non cree
     creation_channel(channel_name, nickname);
 }

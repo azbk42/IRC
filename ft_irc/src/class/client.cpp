@@ -74,8 +74,6 @@ void Client::SetFirstNick() { _first_nick = false;};
 void Client::set_nickname(const std::string &nickname)
 {
     _nickname = nickname;
-
-    std::cout << MAGENTA << "Nouveau Nick: " << WHITE << _nickname << std::endl;
 }
 
 void Client::set_username(const std::string &username)

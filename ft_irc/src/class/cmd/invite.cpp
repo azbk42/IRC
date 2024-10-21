@@ -167,12 +167,10 @@ bool Invite::check_invite_conditions(const std::string &chan_name, const std::st
     }
 
     if (check_if_client_is_op_and_in_chan(chan_name, client_nick) == false) {
-        std::cout << "OPP" << std::endl;
         return false;
     }
 
     if (check_if_already_in_invite(chan_name, client_nick) == false) {
-        std::cout << "ERROR INVITE" << std::endl;
         return false;
     }
 

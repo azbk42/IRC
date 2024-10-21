@@ -15,8 +15,6 @@ bool Topic::check_channel_name(const std::string &name)
             return true;
         }
     }
-
-    std::cerr << RED << "Chan name dosen't exist" << WHITE << std::endl; 
     return false;
 
 }
@@ -86,7 +84,6 @@ void Topic::init_topic(const std::string &value)
     int client_fd = _client_actif->get_socket_fd();
 
     if (check_channel_name(channel_name) == false){
-        std::cerr << RED << "Can't find channel for topic" << WHITE << std::endl;
         message = ERR_NOSUCHCHANNEL_TOPIC(server_name, client_name, channel_name);
         send_message(client_fd, message);
         return;
@@ -94,13 +91,11 @@ void Topic::init_topic(const std::string &value)
     Channel *chan = get_channel(channel_name);
     if (chan != NULL){
         if (is_in_topic_mode(*chan) == false){
-            std::cerr << RED << "+t and you are not OP" << WHITE << std::endl;
             message = ERR_CHANOPRIVSNEEDED(server_name, client_name, channel_name);
             send_message(client_fd, message);
             return;
         }
         else{
-            std::cout << MAGENTA << "topic" << WHITE << std::endl;
             message = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + 
                         " TOPIC " + channel_name + " :" + new_topic + "\r\n";
             chan->set_topic(new_topic);

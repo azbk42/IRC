@@ -88,7 +88,6 @@ bool Kick::check_all_potential_error(const std::string &canal_name, const std::s
     std::string server_name = SERVER_NAME;
 
     if (check_if_client_is_target(target_name) == false){
-        std::cerr << RED << "Can't kick himself" << std::endl;
         std::string error_message = ERR_CANTKICKSELF(server_name, target_name, canal_name);
         send_message(_fd, error_message);
         return false;
@@ -96,19 +95,16 @@ bool Kick::check_all_potential_error(const std::string &canal_name, const std::s
     Channel *Chan;
     Chan = find_channel(canal_name);
     if (Chan == NULL){
-        std::cerr << RED << "client doesnt exist" << std::endl;
         std::string error_message = ERR_NOSUCHCHANNEL3(server_name, _client_actif->get_nickname(), canal_name);
         send_message(_fd, error_message);
         return false;
     }
     if (check_if_client_is_op(*Chan) == false){
-        std::cerr << RED << "client not op" << std::endl;
         std::string error_message = ERR_CHANOPRIVSNEEDED(server_name, _client_actif->get_nickname(), canal_name);
         send_message(_fd, error_message);
         return false;
     }
     if (check_if_target_is_in_chan(*Chan, target_name) == false){
-        std::cerr << RED << "not in chan" << std::endl;
         std::string error_message = ERR_USERNOTINCHANNEL(server_name, _client_actif->get_nickname(), target_name, canal_name);
         send_message(_fd, error_message);
         return false;

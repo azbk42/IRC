@@ -95,8 +95,6 @@ bool Nick::init_cmd_nick(const std::string &new_nickname, Server *server)
 {
     if (check_all_errors(new_nickname) == false || \
         modification_actual_nickname(new_nickname) == false){
-        std::cerr << RED << "Error in nickname creation" << WHITE << std::endl;
-
         if (_client_actif->GetFirstNick() == true)
             server->CloseClientSocket(_fd);
         return false;
