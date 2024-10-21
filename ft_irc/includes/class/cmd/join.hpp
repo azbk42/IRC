@@ -39,6 +39,7 @@ class Join
         bool check_limit_channel(Channel* channel, const std::string &nickname, const std::string &channel_name);
         bool check_invit_channel(Channel* channel, const std::string& nickname, const std::string& channel_name);
         
-        bool _process_channel(const std::string &chan_name, const std::string &password);
+        void _process_channel(const std::string &chan_name, const std::string &password);
+        void channel_already_exist(Channel* channel, const std::string &nickname, const std::string &channel_name, const std::string &password);
         void creation_channel(std::string channel_name, std::string nickname);
 };

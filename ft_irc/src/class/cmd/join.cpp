@@ -127,7 +127,28 @@ bool Join::check_limit_channel(Channel* channel, const std::string &nickname, co
     return true;
 }
 
-bool Join::_process_channel(const std::string &chan_name, const std::string &password)
+void Join::channel_already_exist(Channel* channel, const std::string &nickname, const std::string &channel_name, const std::string &password)
+{
+    if (channel->get_pass() == true){
+        std::cout << "pass = true" << std::endl;
+        if (!_check_channel_access(channel, nickname, channel_name, password)){
+            return ;
+        }
+    }
+    if (check_invit_channel(channel, nickname, channel_name) == false){
+        std::cout << RED << "invit false" << WHITE << std::endl;
+        return ;
+    }
+
+    if (check_limit_channel(channel, nickname, channel_name) == false){
+        std::cout << RED << "limit false" << WHITE << std::endl;
+        return ;
+    }
+    std::cout << "add client " << std::endl;
+    channel->add_client(nickname, _fd, *_client_actif);
+}
+
+void Join::_process_channel(const std::string &chan_name, const std::string &password)
 {
     std::string nickname = _client_actif->get_nickname();
 
@@ -135,7 +156,7 @@ bool Join::_process_channel(const std::string &chan_name, const std::string &pas
         std::cout << RED << "ERROR TO MUCH CHAN" << WHITE << std::endl;
         std::string suppr_channel_message = ERR_TOOMANYCHANNELS(std::string(SERVER_NAME), nickname, chan_name);
         send_message(_fd, suppr_channel_message);
-        return false;
+        return ;
     }
 
     std::string channel_name = chan_name.substr(0);
@@ -143,32 +164,13 @@ bool Join::_process_channel(const std::string &chan_name, const std::string &pas
     for (size_t i = 0; i < _channels_list.size(); i++){
 
         if (to_uppercase(_channels_list[i]->get_name()) == to_uppercase(channel_name)){
-            if (_channels_list[i]->get_pass() == true){
-                std::cout << "pass = true" << std::endl;
-                if (!_check_channel_access(_channels_list[i], nickname, channel_name, password)){
-                    return false;
-                }
-            }
-            if (check_invit_channel(_channels_list[i], nickname, channel_name) == false){
-                std::cout << RED << "invit false" << WHITE << std::endl;
-                return false;
-            }
-
-            if (check_limit_channel(_channels_list[i], nickname, channel_name) == false){
-                std::cout << RED << "limit false" << WHITE << std::endl;
-                return false;
-            }
-            std::cout << "add client " << std::endl;
-            _channels_list[i]->add_client(nickname, _fd, *_client_actif);
-            return true;
+            channel_already_exist(_channels_list[i], nickname, chan_name, password);
+            return;
         }
     }
     std::cout << "CREATE CHANNEL" << std::endl;
     // ajout channel non cree
     creation_channel(channel_name, nickname);
-
-    return true;
-
 }
 bool Join::init_cmd_join()
 {
