@@ -6,6 +6,8 @@
 #include <sstream>
 #include <cstdlib>
 #include <vector>
+#include <errno.h>
+#include <fcntl.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -27,9 +29,11 @@ class Bot
 
         void connect_to_server();
         void run();
+        static void Handler_sigint(int sig);
         
     private:
 
+        static bool _signal;
         int _socket_fd;
         const std::string _server_ip;
         const int _port;
@@ -39,7 +43,6 @@ class Bot
 
         void authenticate();
         void join_channel();
-        void handle_server_response();
         void send_message_error(int fd, const std::string &message);
 
         void handle_help();
@@ -51,4 +54,5 @@ class Bot
         void initialize_command_handlers();
 
         bool process_command(const std::string &command);
+        
 };

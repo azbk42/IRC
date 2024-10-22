@@ -41,21 +41,18 @@ Bot *handle_arg(const char *port, const char *password)
 
 int main(int ac, char **av)
 {
-
-    if (ac != 3){
-		std::cout << "Usage: ./bot <port> <password>" << std::endl;
-		return 1;
-	}
+    if (ac != 3) {
+        std::cout << "Usage: ./bot <port> <password>" << std::endl;
+        return 1;
+    }
 
     Bot* Celestin = NULL;
     try {
-        
         Celestin = handle_arg(av[1], av[2]);
 
+        signal(SIGINT, Bot::Handler_sigint);
         Celestin->connect_to_server();
-
         Celestin->run();
-        
     }
     catch (const std::exception &e) {
         std::cerr << RED << "Erreur : " << e.what() << RESET << std::endl;
@@ -64,5 +61,6 @@ int main(int ac, char **av)
         return 1;
     }
     
-    return (0);
+    delete Celestin;
+    return 0;
 }

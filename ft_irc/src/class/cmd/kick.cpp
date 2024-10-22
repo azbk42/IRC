@@ -126,7 +126,7 @@ void Kick::process_kick(const std::string &canal_name, const std::string &target
 
 void Kick::init_cmd_kick(const std::string &value)
 {
-    int pos = value.find(" ");
+    size_t pos = value.find(" ");
     if (pos != std::string::npos){
         std::string canal_name = value.substr(0, pos);
         std::string new_str = value.substr(pos +1);

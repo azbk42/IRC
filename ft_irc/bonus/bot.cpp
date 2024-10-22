@@ -1,5 +1,12 @@
 #include "bot.hpp"
 
+bool Bot::_signal = false;
+
+void Bot::Handler_sigint(int sig)
+{
+	(void)sig;
+    Bot::_signal = true;
+}
 
 // ################################################################################
 // #                                     GET                                      #
@@ -36,23 +43,7 @@ void Bot::send_message_error(int fd, const std::string &message)
     }
 }
 
-void Bot::handle_server_response()
-{
 
-    char buffer[1024];
-
-    int bytes = recv(_socket_fd, buffer, sizeof(buffer), 0);
-    if (bytes > 0){
-        buffer[bytes] = '\0';
-        std::string message = buffer;
-        std::cout << "message recv: " << message << std::endl;
-    
-        if (process_command(message)){
-            std::cout << "Command: " << message << std::endl;
-        }
-    }
-
-}
 
 void Bot::join_channel()
 {
@@ -151,13 +142,29 @@ void Bot::authenticate()
 void Bot::run() 
 {
     authenticate();
-
-   
     join_channel();
 
-    while (true){
-        handle_server_response();
+    int flags = fcntl(_socket_fd, F_GETFL, 0);
+    fcntl(_socket_fd, F_SETFL, flags | O_NONBLOCK);
+
+    while (!Bot::_signal) {
+        char buffer[1024];
+        int bytes = recv(_socket_fd, buffer, sizeof(buffer), 0);
+
+        if (bytes > 0) {
+            buffer[bytes] = '\0';
+            std::string message = buffer;
+            std::cout << "Message received: " << message << std::endl;
+
+            process_command(message);
+               
+        } 
+        else if (bytes == -1 && errno != EWOULDBLOCK) {
+            std::cerr << "Error receiving data\n";
+            break;
+        }
     }
+    std::cout << "Bot shutting down...\n";
 }
 
 // ################################################################################
@@ -181,3 +188,5 @@ Bot::Bot(int port,const std::string &password):
 }
 
 Bot::~Bot() {};
+
+
