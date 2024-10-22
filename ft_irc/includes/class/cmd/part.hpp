@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 16:12:03 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/21 15:04:32 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 17:48:55 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 
 class Part{
 	private:
-	
 		int _fd;
 		std::string _value;
 		Client *_client_actif;

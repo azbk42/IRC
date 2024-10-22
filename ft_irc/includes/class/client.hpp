@@ -8,6 +8,7 @@
 #include <string.h>
 #include "define.hpp"
 #include "include.hpp"
+#include <iomanip>
  
 class Channel;
 
@@ -30,8 +31,6 @@ class Client
         bool get_status_connected() const;
         bool get_user_setup() const;
 		bool get_checked_pwd() const;
-        
-
 
         void set_nickname(const std::string &nickname);
         void set_username(const std::string &username);

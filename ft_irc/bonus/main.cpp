@@ -1,14 +1,3 @@
-#include <iostream>
-#include <string>
-#include <ctime>
-#include <sstream>
-#include <cstdlib>
-#include <vector>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <cstring>
-
 #include "bot.hpp"
 
 int checkPort(const char *argv)

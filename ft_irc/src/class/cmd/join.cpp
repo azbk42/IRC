@@ -53,7 +53,6 @@ bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd,
         return false;
     }
 
-
     if (chan_name.find(",") != std::string::npos || chan_name.find(":") != std::string::npos){
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
         send_message(client_fd, error_message);

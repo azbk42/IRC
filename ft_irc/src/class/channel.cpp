@@ -1,7 +1,6 @@
 #include "channel.hpp"
 #include "define.hpp"
 
-
 // ################################################################################
 // #                                   GET                                        #
 // ################################################################################
@@ -62,7 +61,6 @@ void Channel::set_password(std::string str){
     _password = str;
 }
 
-
 void Channel::set_topic(const std::string &value)
 {
     _topic = value;
@@ -115,7 +113,7 @@ void Channel::send_welcome_message(const std::string &client, const int fd_clien
 
     // Envoyer le sujet du canal s'il y en a un
     if (!_topic.empty()) {
-        std::string topic_msg = ":" + std::string("localhost") + " 332 " + client + " " + _name_channel + " " + _topic + "\r\n";
+        std::string topic_msg = ":" + std::string("localhost") + " 332 " + client + " " + _name_channel + " :" + _topic + "\r\n";
         send_message(fd_client, topic_msg);
     }
 
@@ -196,7 +194,7 @@ int Channel::remove_client(const std::string &name, Client &client_actif)
     
     if (_nb_client > 1){
 		_client.erase(name); // erase client from the channel's client list
-		_nb_client -= 1; // prevoir csq si plus personne dans le chan ? chan supprime ?
+		_nb_client -= 1;
 		for (size_t i = 0; i < _operator.size(); i++){
 			if (_operator[i] == name){ // if operator, remove from operator list
 				_operator.erase(_operator.begin() + i);

@@ -1,6 +1,5 @@
 #pragma once
 
-
 // ################################################################################
 // #                              SERVER_CONFIGURATION                            #
 // ################################################################################
@@ -29,7 +28,6 @@
 #define ERR_CHANNELNAMETOOLONG(server, channel) (":" + server + " 403 " + channel + " :Channel name is too long (maximum is 50 characters)\r\n")
 #define ERR_TOOMANYCHANNELS(server, client, channel) (":" + server + " 405 " + client + " " + channel + " :You have joined too many channels\r\n")
 #define ERR_CHANNELISFULL(server,client,channel) (":" + server + " 471 " + client + " " + channel + " :Cannot join channel (channel is full)\r\n")
-
 
 // ERROR PART
 #define ERR_NOTONCHANNEL(server, channel)(":" + server_name + " 442" + channel + " :You're not on that channel\r\n").c_str()
@@ -75,7 +73,7 @@
 #define RPL_LIST(server, channel, client_count, topic) (":" + server + " 322 " + server + " #" + channel + " " + client_count + " :" + topic + "\r\n").c_str()
 #define RPL_LISTEND(server) (":" + server + " 323 " + server + " :End of /LIST\r\n").c_str()
 
-#define QUIT_MESSAGE(nickname, username, hostname, message) (":" + nickname + "!" + username + "@" + hostname + " QUIT :" + message + "\r\n").c_str()
+#define QUIT_MESSAGE(nickname, username, hostname, message) (":" + nickname + "!" + username + "@" + hostname + " QUIT " + message + "\r\n").c_str()
 #define PART_MESSAGE(nickname, username, hostname, channel, reason) (":" + nickname + "!" + username + "@" + hostname + " PART " + channel + " :" + reason + "\r\n");
 
 #define RPL_CHANNELMODEIS(server, username, channel, modes) (":" + server + " 324 " + username + "#" + channel + " " + modes + "\r\n").c_str()

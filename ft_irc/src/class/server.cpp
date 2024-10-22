@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/21 13:31:57 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:34:31 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void Server::CloseServerFd()
 	if (_pollFds.size() > 0){
 		for (size_t i = _pollFds.size() - 1; i > 0; i--) {
 			if (close(_pollFds[i].fd) == -1)
-				std::cerr << "Failed to close client socket" << std::endl; // throw?
+				std::cerr << "Failed to close client socket" << std::endl;
 			_pollFds.erase(_pollFds.begin() + i);
 			delete _clients_array[i - 1]; // ajout de cette fonction pour free le client alloue avec new
 			_clients_array.erase(_clients_array.begin() + (i - 1));
@@ -84,7 +84,7 @@ void Server::CloseServerFd()
 
 	if (_serverFd != -1){
 		if (close(_serverFd) == -1)
-			std::cerr << "Failed to close server socket" << std::endl; // throw?
+			std::cerr << "Failed to close server socket" << std::endl;
 		else
 			std::cout << RED << "Server <" << _serverFd << "> Disconnected" << WHITE << std::endl;
 	}
@@ -256,7 +256,6 @@ void Server::Polling()
 	{
 		if (poll(_pollFds.data(), _pollFds.size(), -1) == -1 && Server::_signal == false)
 			throw(std::runtime_error("Failed to poll"));
-		// ou if((poll(&_pollFds[0],_pollFds.size(),-1) == -1) ?
 		for (size_t i = 0; i < _pollFds.size(); i++){ //-> check all fds
 			if (_pollFds[i].revents & POLLIN) { //-> check if there is data to read
 				if (_pollFds[i].fd == _serverFd) //-> check if the event is from the server socket

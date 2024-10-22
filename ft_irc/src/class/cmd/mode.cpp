@@ -6,13 +6,11 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:42:51 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/21 17:19:40 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:30:41 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mode.hpp"
-#include <cctype>
-#include <map>
 
 // ################################################################################
 // #                         constructor / destructor                             #
@@ -90,12 +88,13 @@ void Mode::mode_info(Channel* channel,std::vector<std::string> &values){
 			_modes_info += " " + channel->get_password();
 	}					
 	std::string chanmode = ":" + std::string(SERVER_NAME) + " 324 " + _client_actif->get_nickname() + "#" + channel->get_name() + " " + channel->get_name() + " " + _modes_info + "\r\n";
-	send(_client_fd, chanmode.c_str(), chanmode.length(), 0);
+	send_message(_client_fd, chanmode);
 	
 	// Créer le message RPL_CREATIONTIME
 	std::time_t creation_time = channel->get_creation_date();
 	std::string creationtime = RPL_CREATIONTIME(std::string(SERVER_NAME), values[0], int_to_string(creation_time));
-	send(_client_fd, creationtime.c_str(), creationtime.length(), 0);
+	send_message(_client_fd, creationtime);
+
 }
 
 void Mode::channel_mode(std::vector<std::string> &values){
@@ -111,7 +110,7 @@ void Mode::channel_mode(std::vector<std::string> &values){
 				return ;
 			}
 			else { // -> si plusieurs arguments, verifie que le client est operateur du chan
-				if (values[i] == "b")
+				if (values[1] == "b")
 					return;
 				if (_channels_array[i]->is_operator(_client_actif->get_nickname()) == false){
 					std::string notope = ERR_CHANOPRIVSNEEDED(std::string(SERVER_NAME), _client_actif->get_nickname(),_channels_array[i]->get_name());

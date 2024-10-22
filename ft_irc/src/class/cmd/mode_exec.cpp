@@ -6,13 +6,11 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:54:41 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/21 17:14:32 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:30:58 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mode.hpp"
-#include <cctype>
-#include <map>
 
 //  i : Définir/supprimer le canal sur invitation uniquement
 void Mode::i_mode(Channel *channel, char signe){
@@ -92,7 +90,7 @@ void Mode::o_mode(Channel *channel, char signe, std::vector<std::string> values)
 		return ;
 	else if (channel->is_in_channel(values[rang])) // -> check if user is in the channel
 	{
-		if (channel->is_operator(values[rang]) == true && signe == '-') { // si il est ope mais quon veut le retirer
+		if (channel->is_operator(values[rang]) == true && signe == '-') { // if is operator
 			channel->remove_operator(values[rang]);
 			std::string sign(1, signe);
 			fill_modes_exec("o", sign, values[rang]);
@@ -101,7 +99,7 @@ void Mode::o_mode(Channel *channel, char signe, std::vector<std::string> values)
 			send_message(_client_fd, message_op);
 			channel->send_message_to_all(message_op, _client_fd);
 		}
-		else if (channel->is_operator(values[rang]) == false && signe == '+') {// si il est pas operateur, mais quón veut lui donner ce role
+		else if (channel->is_operator(values[rang]) == false && signe == '+') {// if is not yet operator
 			channel->add_operator(values[rang]);
 			std::string sign(1, signe);
 			fill_modes_exec("o", sign, values[rang]);
@@ -112,10 +110,10 @@ void Mode::o_mode(Channel *channel, char signe, std::vector<std::string> values)
 		}
 	}
 	else {
-		std::string str1 =  ERR_NOTONCHANNEL1(std::string(SERVER_NAME), values[rang], channel->get_name()); // yo :No such nick/channel
-		std::string str =  ERR_NOTONCHANNEL2(std::string(SERVER_NAME), values[rang], channel->get_name()); // yo #camtrooo They aren't on that channel
-		send(_client_fd, str1.c_str(), str1.length(), 0);
-		send(_client_fd, str.c_str(), str.length(), 0);
+		std::string str1 =  ERR_NOTONCHANNEL1(std::string(SERVER_NAME), values[rang], channel->get_name()); // "No such nick/channel"
+		std::string str =  ERR_NOTONCHANNEL2(std::string(SERVER_NAME), values[rang], channel->get_name()); // "They aren't on that channel"
+		send_message(_client_fd, str1);
+		send_message(_client_fd, str);
 	}
 }
 

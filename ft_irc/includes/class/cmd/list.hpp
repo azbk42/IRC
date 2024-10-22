@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:05:01 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/21 17:22:36 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:31:11 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 #include "channel.hpp"
 #include "include.hpp"
+
+#include <sstream> // Pour std::ostringstream
 
 class List {
 	private:

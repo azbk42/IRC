@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 14:22:48 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/17 14:49:22 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:30:16 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 #include "server.hpp"
 #include "client.hpp"
+
+#include <iostream>
 
 class Pass
 {

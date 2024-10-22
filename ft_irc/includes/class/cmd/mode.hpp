@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:43:04 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/21 16:55:40 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:30:46 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@
 
 #include <sstream>
 #include <vector>
-
+#include <cctype>
+#include <map>
 
 class Mode
 {
@@ -40,7 +41,6 @@ class Mode
 
 		void exec_mode(Channel* channel, std::vector<std::string> values);
 		void mode_message(std::string mode, Channel* channel);
-		// void send_unknown_char(char value);
 		void print_modes(Channel* channel);
 
 		void i_mode(Channel *channel, char signe);

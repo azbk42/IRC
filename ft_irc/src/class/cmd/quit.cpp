@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:02:05 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/21 15:14:46 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:26:28 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Quit::~Quit() {};
 
 void Quit::send_quit_msg() {
 	if (_reason[0] == ':')
-		_reason.erase(0, 1); //->Supprime le premier espace
+		_reason.erase(0, 1); //->Supprime les : sinon doublon
 
 	std::string quit_message = QUIT_MESSAGE(_client->get_nickname(), _client->get_username(), _client->get_hostname(), "Quit: " + _reason);
 

@@ -6,13 +6,12 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 14:22:58 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/21 15:13:16 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:30:05 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pass.hpp"
 #include "server.hpp"
-#include <iostream>
 
 Pass::Pass(int fd, std::string value, Client *client, std::string server_pwd) : 
 _fd(fd), _enteredPwd(value), _serverPwd(server_pwd), _client(client){}

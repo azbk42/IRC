@@ -9,7 +9,9 @@
 #include <vector>
 #include <unistd.h>
 #include <sys/socket.h>
-
+#include <string.h>
+#include <stdio.h>
+#include <sstream>
 
 class Channel;
 class Client;
@@ -20,7 +22,6 @@ class Whois;
 class Kick;
 class Topic;
 class Invite;
-
 
 class Parse
 {

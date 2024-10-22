@@ -6,13 +6,12 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:04:57 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/21 17:26:29 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:31:07 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "list.hpp"
 #include "include.hpp"
-#include <sstream> // Pour std::ostringstream
 
 // ################################################################################
 // #                         Constructor / Destructor                             #
@@ -31,9 +30,9 @@ void List::list_with_args(std::string client_name){
 	std::string msg_list = "Channel Users Name\r\n";
 	send_message(_client_fd, msg_list);
 
-	std::vector<std::string> channels_listed = split_by_comma(_value); //->separer la liste de channels selon coma
+	std::vector<std::string> channels_listed = split_by_comma(_value); //->separe la liste de channels selon coma
 
-	for (size_t j = 0; j < channels_listed.size(); j++){ //->checker pour chq channel liste si # et si le channel existe
+	for (size_t j = 0; j < channels_listed.size(); j++){ //->checke pour chq channel liste si # et si le channel existe
 		if (channels_listed[j][0] == '#'){
 			for (size_t i = 0; i < _channels_array.size(); i++){
 				if (to_uppercase(_channels_array[i]->get_name()) == to_uppercase(channels_listed[j]))
