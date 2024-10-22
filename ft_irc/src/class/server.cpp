@@ -151,15 +151,20 @@ void Server::find_command(int fd, Client* client_actif, Parse &parser, const std
     else if (cmd == "NICK") {
         parser.parse_nick(_clients_array, fd, *client_actif, _channels_array, this);
     }
-	else if (cmd == "USER"){
-		if (parser.parse_user(_clients_array, fd, *client_actif) == false){
-			CloseClientSocket(fd);
+	if (client_actif->GetFirstNick() == false){
+		if (cmd == "USER"){
+			if (parser.parse_user(_clients_array, fd, *client_actif) == false){
+				CloseClientSocket(fd);
+			}
 		}
+		else
+    		parser.find_cmd_type(cmd, _clients_array, fd, *client_actif, _channels_array);
 	}
-        
-    else {
-        parser.find_cmd_type(cmd, _clients_array, fd, *client_actif, _channels_array);
-    }
+	else{
+		std::string error_first_nick = ERR_NONICKNAMEGIVEN(std::string(SERVER_NAME));
+		send_message(fd, error_first_nick);
+		CloseClientSocket(fd);
+	}	
 }
 
 void Server::check_password(int fd, Client* client_actif, Parse &parser, const std::string &cmd)

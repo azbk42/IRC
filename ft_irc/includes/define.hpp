@@ -13,9 +13,9 @@
 // ################################################################################
 
 // ERROR NICK
-#define ERR_NICKNAMEINUSE(server, nick) (server + " " + nick + " :Nickname is already in use\r\n").c_str()
-#define ERR_ERRONEUSNICKNAME(server, nick) (server + " " + nick + " :Erroneous nickname\r\n").c_str()
-#define ERR_NONICKNAMEGIVEN(server) (server + " :No nickname given\r\n").c_str()
+#define ERR_NICKNAMEINUSE(server, nick) (":" + server + " " + nick + " :Nickname is already in use\r\n")
+#define ERR_ERRONEUSNICKNAME(server, nick) (":" + server + " " + nick + " :Erroneous nickname\r\n")
+#define ERR_NONICKNAMEGIVEN(server) (":" + server + " :No nickname given\r\n")
 // ERROR USER
 #define ERR_NEEDMOREPARAMS(command, server) (":" + server_name + " 461 " + server + " " + command + " :Not enough parameters \r\n").c_str()
 #define ERR_ALREADYREGISTERED(server) (":" + server_name + " 462 " + server + " :You may not reregister\r\n").c_str()
@@ -53,6 +53,8 @@
 // PRIVMSG
 #define ERR_INPUTTOOLONG(server, client) \
     (":" + server + " 417 " + client + " :Your message is too long (maximum is 400 characters)\r\n")
+#define ERR_NORECIPIENT(server, command) (":" + server + " 411 :No recipient given (" + command + ")\r\n")
+#define ERR_NOTEXTTOSEND(server) (":" + server + " 412 :No text to send\r\n")
 
 // TOPIC
 #define ERR_NOSUCHCHANNEL_TOPIC(server, nickname, channel) (":" + server + " 403 " + nickname + " " + channel + " :No such channel\r\n")

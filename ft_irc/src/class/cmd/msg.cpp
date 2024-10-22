@@ -77,12 +77,29 @@ void Msg::send_message_to_channel(const std::string &target, const std::string &
 bool Msg::init_cmd_msg(const std::string &value)
 {
     size_t pos = value.find(" ");
-	std::cout << "pos = " << pos << std::endl;
-	std::cout << "ERROR" << std::endl;
+
+    if (pos == std::string::npos) {
+        std::string error_message = ERR_NORECIPIENT(std::string(SERVER_NAME), std::string("PRIVMSG"));
+        send_message(_client_actif->get_socket_fd(), error_message);
+        return false;
+    }
+
     std::string target = value.substr(0, pos);
-	std::cout << "SALUT" << std::endl;
-    std::string privmsg = value.substr(pos + 2);
-	std::cout << "LOOOL" << std::endl;
+    std::string privmsg = value.substr(pos + 1);
+
+    if (privmsg[0] != ':') {
+        std::string error_message = ERR_NOTEXTTOSEND(std::string(SERVER_NAME));
+        send_message(_client_actif->get_socket_fd(), error_message);
+        return false;
+    }
+
+    privmsg = privmsg.substr(1);
+
+    if (privmsg.empty()) {
+        std::string error_message = ERR_NOTEXTTOSEND(std::string(SERVER_NAME));
+        send_message(_client_actif->get_socket_fd(), error_message);
+        return false;
+    }
 
     std::string sender = _client_actif->get_nickname();
     std::string server_name = SERVER_NAME;

@@ -93,8 +93,8 @@ bool Nick::init_cmd_nick(const std::string &new_nickname, Server *server)
             server->CloseClientSocket(_fd);
         return false;
     }
-
-    _client_actif->SetFirstNick();
+    if (_client_actif->GetFirstNick() == true)
+        _client_actif->SetFirstNick();
     return true;
 }
 
