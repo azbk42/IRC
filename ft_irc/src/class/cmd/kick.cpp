@@ -127,13 +127,15 @@ void Kick::process_kick(const std::string &canal_name, const std::string &target
 void Kick::init_cmd_kick(const std::string &value)
 {
     int pos = value.find(" ");
-    std::string canal_name = value.substr(0, pos);
-    std::string new_str = value.substr(pos +1);
-    pos = new_str.find(" ");
-    std::string target_name = new_str.substr(0, pos);
-    std::string message = new_str.substr(pos + 2);
-    
-    process_kick(canal_name, target_name, message);
+    if (pos != std::string::npos){
+        std::string canal_name = value.substr(0, pos);
+        std::string new_str = value.substr(pos +1);
+        pos = new_str.find(" ");
+        std::string target_name = new_str.substr(0, pos);
+        std::string message = new_str.substr(pos + 2);
+        
+        process_kick(canal_name, target_name, message);
+    }
 }
 
 // ################################################################################
