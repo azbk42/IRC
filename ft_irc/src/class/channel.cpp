@@ -210,13 +210,12 @@ int Channel::remove_client(const std::string &name, Client &client_actif)
     	client_actif.minus_nb_channel();
 		return 1;
 	}
-	// pas supprime des invitations??
+
 	return 0;
 }
 
 bool Channel::authorization_check(const std::string &nickname)
 {
-    // si cest en invite only on check si il est dans la liste des noms
     if (_i == true){
         
         for (size_t i = 0; i < _invite_name.size(); i++){

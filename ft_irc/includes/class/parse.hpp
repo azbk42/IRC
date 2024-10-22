@@ -32,8 +32,6 @@ class Parse
         std::string get_cmd() const;
 		std::string get_value() const;
 
-        // pour le parsing traiter le 1er mot comme si il etait en majuscule tout le temps
-        // function pour separer le premier mot du reste de la phrase (car dans IRC le premier mot est toujours une commande)
         void split_cmd_value(const std::string &_str);
         
         void find_cmd_type(const std::string &cmd, std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);

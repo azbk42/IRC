@@ -50,14 +50,10 @@ class Client
 
         time_t get_connection_time() const;
 
-        // changer le pseudo
         void handle_cmd_nick(const std::string &new_nickname, int client_socket);
-        // rejoindre un channel
 
     private:
         
-        //a regarder si cest la premiere fois que ce client envois un message
-        //cela voudra dire que cest pour setup ses infos    
         bool _user_setup;
         bool _away;
         bool _connected;

@@ -79,12 +79,11 @@ void Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
     (void)clients_list;
     std::string server_name = SERVER_NAME;
 
-    // Verif if USER is already done
     if (client_actif.get_user_setup() == true){
         send_message(client_fd, ERR_ALREADYREGISTERED(server_name));
         return ;
     }
-    // Verif nb_parameter
+
     if (std::count(_value.begin(), _value.end(), ' ') < 3){
         send_message(client_fd, ERR_NEEDMOREPARAMS("USER", server_name));
     }

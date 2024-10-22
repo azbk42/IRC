@@ -137,7 +137,6 @@ void Invite::add_client_to_invite(const std::string &chan_name, const std::strin
 
 void Invite::send_invite_confirmation(const std::string &chan_name, const std::string &target, const std::string &client_nick)
 {
-    // ajouter client invite list
     add_client_to_invite(chan_name, target);
 
     std::string invite_confirm_msg = ":" + std::string(SERVER_NAME) + " 341 " + client_nick + " " + target + " " + chan_name + "\r\n";
@@ -145,7 +144,6 @@ void Invite::send_invite_confirmation(const std::string &chan_name, const std::s
 
     int fd_target = return_fd_target(target);
 
-    // send invite message
     std::string invite_msg = ":" + client_nick + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " INVITE " + target + " :" + chan_name + "\r\n";
     send_message(fd_target, invite_msg);
 }

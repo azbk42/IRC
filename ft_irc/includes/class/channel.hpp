@@ -45,7 +45,7 @@ class Channel
         std::map<std::string, int> get_clients() const;
 		size_t get_nb_client() const;
 		std::time_t get_creation_date() const;
-        // std::vector<std::string> get_operators() const;
+
         bool get_i() const;
 		bool get_t() const;
 
@@ -54,7 +54,7 @@ class Channel
         std::vector<std::string> get_invite_name() const;
 
         void set_limite(int x);
-        // void set_i(const std::string &i);
+
         void set_i(const char &i);
 		void set_t(const char &t);
 		void set_pass(bool x);
@@ -69,7 +69,6 @@ class Channel
 
     private:
 
-        // variable a false si pas de mdp ou true si yen a un
         bool _pass;
         size_t _nb_client;
 

@@ -9,7 +9,7 @@ int checkPort(char *argv)
 			}
 		}
 		int Port = atoi(argv);
-		if (Port < 1024 || Port > 49151){ 	// confirmer 49151, 65535 d'apres beej
+		if (Port < 1024 || Port > 49151){
 			std::cout << "Error: Port must be between 1024 and 49151" << std::endl;
 			return -1;
 		}

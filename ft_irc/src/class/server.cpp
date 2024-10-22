@@ -190,7 +190,7 @@ void Server::process_message(int fd)
 			}
 		}
 		std::string cmd = parser.get_cmd();
-		// Vérifier si un client a été trouvé
+		
 		if (client_actif != NULL && client_actif->get_checked_pwd() == false) {
 			check_password(fd, client_actif, parser, cmd);
 		}

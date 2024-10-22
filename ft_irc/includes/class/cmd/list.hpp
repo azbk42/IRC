@@ -18,6 +18,7 @@
 
 class List {
 	private:
+	
 		int _client_fd;
 		std::vector<Channel*> &_channels_array;
 		Client *_client;

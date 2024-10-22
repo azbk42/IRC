@@ -42,8 +42,6 @@ class Bot
         void handle_server_response();
         void send_message_error(int fd, const std::string &message);
 
-        // Ajout de la logique des commandes de la classe Bot
-        //void handle_time();
         void handle_help();
         void handle_heads();
         void handle_tails();

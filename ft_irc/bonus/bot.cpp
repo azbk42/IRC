@@ -93,7 +93,6 @@ void Bot::connect_to_server()
 
 void Bot::handle_help() 
 {
-    // Initialisation du vector avec push_back pour C++98
     std::vector<std::string> help_lines;
     help_lines.push_back("Available commands:");
     help_lines.push_back("1. NICK <nickname> - Change your nickname.");
@@ -105,7 +104,6 @@ void Bot::handle_help()
     help_lines.push_back("7. MSG <nickname> <message> - Send a private message to a user.");
     help_lines.push_back("8. QUIT <message>- Disconnect from the server.");
 
-    // Utilisation d'une boucle classique pour parcourir les éléments
     for (size_t i = 0; i < help_lines.size(); ++i) {
         send_message_error(_socket_fd,help_lines[i]);
     }

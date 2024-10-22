@@ -21,6 +21,7 @@
 
 class Part{
 	private:
+	
 		int _fd;
 		std::string _value;
 		Client *_client_actif;

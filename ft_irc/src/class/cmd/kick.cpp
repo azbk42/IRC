@@ -73,9 +73,8 @@ void Kick::kick_client_from_channel(Channel &Chan, const std::string &target_nam
                                         + "@" + _client_actif->get_hostname() + " KICK " + \
                                         Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
 
-        // send message kick client
         send_message(fd, message_to_target);
-        // send message to all except client
+        
         std::string message_to_all = ":" + _client_actif->get_nickname() + "!" + _client_actif->get_username() + "@" + _client_actif->get_hostname() + " KICK " + 
                                         Chan.get_name() + " " + client_target->get_nickname() + " :" + message + "\r\n";
         Chan.send_message_to_all(message_to_all, fd);

@@ -54,14 +54,8 @@ bool Whois::process_two_arg(const std::string &value, const std::string &server_
         return false;
     }
     std::string target = value.substr(pos + 1);
-    // if (find_target(target) == CLIENT_NOT_FOUND){
-    //     std::string message = ":" + server_name + " 401 " + sender + " " + " :No such nick/channel\r\n";
-    //     send(_fd, message.c_str(), message.size(), 0);
-    //     return false;
-    // }
-    // else{
-        send_whois_message(target);
-    //}
+    send_whois_message(target);
+
     return true;
 }
 
@@ -87,8 +81,6 @@ bool Whois::init_cmd_msg(const std::string &value)
     return true;
     
 }
-
-
 
 // ################################################################################
 // #                         constructor / destructor                             #

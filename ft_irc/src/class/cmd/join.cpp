@@ -18,7 +18,6 @@ std::map<std::string, std::string> Join::_init_channel_map(std::string str, std:
         names = str;
     }
 
-    // Separer les noms des canaux des password
     std::vector<std::string> channels_list = split_by_comma(names);
     std::vector<std::string> passwords_list = split_by_comma(passwords);
 
@@ -41,26 +40,26 @@ bool Join::_check_invalid_char_join(const std::string &chan_name, int client_fd,
         send_message(client_fd, error_message);
         return false;
     }
-    // check si ya un # au debut du nom
+
     if (chan_name.length() > 0 && chan_name[0] != '#') {
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
         send_message(client_fd, error_message);
         return false;
     }
-    // check si apres le # il ny a rien
+
     if (chan_name.length() > 0 && chan_name[0] == '#' && chan_name[1] == '\0') {
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
         send_message(client_fd, error_message);
         return false;
     }
 
-    // checi si , ou : ou space
+
     if (chan_name.find(",") != std::string::npos || chan_name.find(":") != std::string::npos){
         std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
         send_message(client_fd, error_message);
         return false;
     }
-    // char non printable
+
     for (size_t i = 0; i < chan_name.size(); i++) {
         if (chan_name[i] < 32 || chan_name[i] > 127) {
             std::string error_message = ERR_NOSUCHCHANNEL(client_actif.get_nickname(), chan_name);
@@ -75,7 +74,7 @@ void Join::creation_channel(std::string channel_name, std::string nickname)
 {
     Channel *chan = new Channel(channel_name);
     _channels_list.push_back(chan);
-    int len = _channels_list.size() - 1; // -> on doit calculer a chaque fois pour bien utiliser les method du dernier channel de la list ( celui quon vient de creer)
+    int len = _channels_list.size() - 1;
     _channels_list[len]->add_client(nickname, _fd, *_client_actif);
 }
 
@@ -145,7 +144,7 @@ void Join::_process_channel(const std::string &chan_name, const std::string &pas
     }
 
     std::string channel_name = chan_name.substr(0);
-    // ajout channel existant
+
     for (size_t i = 0; i < _channels_list.size(); i++){
 
         if (to_uppercase(_channels_list[i]->get_name()) == to_uppercase(channel_name)){
@@ -153,7 +152,7 @@ void Join::_process_channel(const std::string &chan_name, const std::string &pas
             return;
         }
     }
-    // ajout channel non cree
+
     creation_channel(channel_name, nickname);
 }
 bool Join::init_cmd_join()

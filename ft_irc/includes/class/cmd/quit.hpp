@@ -26,6 +26,7 @@ class Quit
 		std::vector<Channel*> &_channels;
 		
 	public:
+
 		Quit(int fd, Client* client, std::string reason, std::vector<Channel*> &channels);
 		~Quit();
 

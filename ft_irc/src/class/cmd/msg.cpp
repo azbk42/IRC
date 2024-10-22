@@ -30,7 +30,6 @@ int Msg::find_client_target(const std::string &target)
 
 void Msg::send_message_to_client(const std::string &target, const std::string &privmsg, const std::string &sender, const std::string &server_name)
 {
-
     int target_fd;
     std::string message;
     target_fd = find_client_target(target);

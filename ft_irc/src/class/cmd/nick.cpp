@@ -14,13 +14,11 @@ bool Nick::check_all_errors(const std::string &new_nickname)
         return false;
     }
 
-    // verif taille du pseudo
     if (new_nickname.size() > 15 || !isalpha(new_nickname[0])) {
         send_message(_fd, ERR_ERRONEUSNICKNAME(server_name, new_nickname));
         return false;
     }
 
-    // verif char invalid
     for (size_t i = 1; i < new_nickname.size(); ++i) {
         if (!isalnum(new_nickname[i]) && new_nickname.find_first_of("-[]\\{}_|") == std::string::npos) {
             send_message(_fd, ERR_ERRONEUSNICKNAME(server_name, new_nickname));
@@ -31,7 +29,6 @@ bool Nick::check_all_errors(const std::string &new_nickname)
     std::string uppercase_nickname = to_uppercase(new_nickname);
     std::string nick_compare;
 
-    // verif si le pseudo est déjà utilisé
     for (size_t i = 0; i < _clients_list.size(); i++){
         nick_compare = _clients_list[i]->get_nickname();
         if (to_uppercase(nick_compare) == uppercase_nickname){
@@ -52,11 +49,10 @@ void Nick::send_message_to_all_one_time(const std::string &message, const int i,
     for (it = map.begin(); it != map.end(); ++it) {
         int client_fd = it->second;
 
-        // verif si le client a deja ete notif
         if (clients_already_notified.find(client_fd) == clients_already_notified.end()) {
             
             send_message(client_fd, message);
-            // add le client a la liste des clients qui ont deja recu le mess
+
             clients_already_notified.insert(client_fd);
         }
     }
@@ -69,14 +65,12 @@ bool Nick::modification_actual_nickname(const std::string &new_nickname)
 
     _client_actif->set_nickname(new_nickname);
     
-    // send emeteur client
     std::string confirmation_message = ":" + old_nickname + " NICK :" + new_nickname + "\n";
     send_message(_fd, confirmation_message);
 
     std::set<int> clients_already_notified;
     clients_already_notified.insert(_fd);
 
-    // send a tous les gens qui se trouve dans le meme chan
     for (size_t i = 0; i < _channels_list.size(); i++){
         if (_channels_list[i]->is_in_channel(old_nickname)){
             

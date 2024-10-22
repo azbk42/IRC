@@ -1,19 +1,11 @@
 
-Erreurs a check:
-    - Regarder le password pour join.
-    - regarder pour quand on join un channel qui a une autre syntax genre: mdr et Mdr -> doivent rejoindre le meme chan.
-
 Commandes restantes:
     sever class:
 
 Camille
-    - au delq du premier join, pas de message de date de creation? Je n'arrive pas a comprendre comment fonctionne irssi a ce niveau, mais sur la doc ce nest pas obligatoire
-    Ok jai trouve, cest quand on fait MODE #<nom du chan>
-    que irssi nous envoie ca en commande et nous on lui rep la date du chan.
 
 Elouan
     quand le dernier mec d'un chan fait /quit, il reste dans la base de donnee
-    refaire l'ordre des channels quand on va les creer ( ordre alphabetique)
 
     other class:
     - parsing de PART 
