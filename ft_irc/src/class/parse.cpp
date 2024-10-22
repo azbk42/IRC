@@ -69,28 +69,32 @@ void Parse::parse_ping(std::vector<Client*> &clients_list, int client_fd, Client
 {
     (void)clients_list;
     (void)client_actif;
-    std::string pong = "PONG :" + _value + "\r\n";
+
+    std::string pong = "PONG "+ std::string(SERVER_NAME) + " :" + _value + "\r\n";
     send_message(client_fd, pong);
 
 }
 
-void Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
+bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif)
 {
     (void)clients_list;
     std::string server_name = SERVER_NAME;
 
     if (client_actif.get_user_setup() == true){
         send_message(client_fd, ERR_ALREADYREGISTERED(server_name));
-        return ;
+        return true;
     }
 
     if (std::count(_value.begin(), _value.end(), ' ') < 3){
         send_message(client_fd, ERR_NEEDMOREPARAMS("USER", server_name));
+        return false;
     }
 
-
     // Si tout est bon on recupere les donnees et on informe le client pour valider la connexion
-    extract_user_info(_value, client_actif);
+    if (extract_user_info(_value, client_actif) == false){
+        send_message(client_fd, ERR_NEEDMOREPARAMS("USER", server_name));
+        return false;
+    }
     
     std::string welcome_message = ":" + server_name + " 001 " + client_actif.get_nickname() + 
                               " :\x03""04Welcome to the Internet Relay Network " + 
@@ -99,6 +103,7 @@ void Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
                               " - ft_irc 42 Paris\x03""\r\n";
 
     send_message(client_fd, welcome_message);
+    return true;
 }
 
 void Parse::parse_list(int client_fd, Client &client_actif, std::vector<Channel*> &channels)
@@ -142,8 +147,6 @@ void Parse::find_cmd_type(const std::string &cmd, std::vector<Client*> &clients_
         parse_whois(clients_list, client_fd, client_actif);
     if (cmd == "PING")
         parse_ping(clients_list, client_fd, client_actif);
-    if (cmd == "USER")
-        parse_user(clients_list, client_fd, client_actif);
 }
 // ################################################################################
 // #                                SETUP CMD USER                                #
@@ -174,13 +177,15 @@ void Parse::split_cmd_value(const std::string &full_command)
     std::cout << GREEN << "Value = " << WHITE << _value << std::endl;
 }
 
-void Parse::extract_user_info(const std::string& value, Client& client_actif)
+bool Parse::extract_user_info(const std::string& value, Client& client_actif)
 {
     size_t pos = value.find(":");
     if (pos != std::string::npos) {
         std::string real_name = value.substr(pos + 1);
         client_actif.set_real_name(real_name);
     }
+    else
+        return false;
 
     pos = value.find(" ");
     if (pos != std::string::npos) {
@@ -198,6 +203,7 @@ void Parse::extract_user_info(const std::string& value, Client& client_actif)
             }
         }
     }
+    return true;
 }
 
 void Parse::init_command_map()

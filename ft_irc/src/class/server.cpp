@@ -92,7 +92,7 @@ void Server::CloseServerFd()
 
 void Server::CloseClientSocket(int fd)
 {
-	std::cout << RED <<"Closing client socket" << std::endl;
+	std::cout << RED <<"Closing client socket <" << fd << ">" << std::endl;
 	if (close(fd) == -1)
 		std::cout << "Failed to close client socket" << std::endl;
 	for (size_t i = 0; i < _pollFds.size(); i++) {
@@ -151,6 +151,12 @@ void Server::find_command(int fd, Client* client_actif, Parse &parser, const std
     else if (cmd == "NICK") {
         parser.parse_nick(_clients_array, fd, *client_actif, _channels_array, this);
     }
+	else if (cmd == "USER"){
+		if (parser.parse_user(_clients_array, fd, *client_actif) == false){
+			CloseClientSocket(fd);
+		}
+	}
+        
     else {
         parser.find_cmd_type(cmd, _clients_array, fd, *client_actif, _channels_array);
     }
@@ -190,7 +196,7 @@ void Server::process_message(int fd)
 			}
 		}
 		std::string cmd = parser.get_cmd();
-		
+
 		if (client_actif != NULL && client_actif->get_checked_pwd() == false) {
 			check_password(fd, client_actif, parser, cmd);
 		}

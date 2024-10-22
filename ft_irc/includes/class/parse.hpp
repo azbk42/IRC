@@ -39,7 +39,7 @@ class Parse
         void parse_whois(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         void parse_msg(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
         void parse_nick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels, Server* server);
-        void parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
+        bool parse_user(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         void parse_ping(std::vector<Client*> &clients_list, int client_fd, Client &client_actif);
         void parse_join(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
         void parse_kick(std::vector<Client*> &clients_list, int client_fd, Client &client_actif, std::vector<Channel*> &channels);
@@ -56,7 +56,7 @@ class Parse
         std::string _command;
         std::string _value;
 
-        void extract_user_info(const std::string& value, Client& client_actif);
+        bool extract_user_info(const std::string& value, Client& client_actif);
 
         typedef void (Parse::*f)(std::vector<Client*>&, int, Client&, std::vector<Channel*>&);
         std::map<std::string, f> _command_map;
