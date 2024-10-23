@@ -126,16 +126,23 @@ void Kick::process_kick(const std::string &canal_name, const std::string &target
 void Kick::init_cmd_kick(const std::string &value)
 {
     size_t pos = value.find(" ");
-    if (pos != std::string::npos){
+    if (pos != std::string::npos) {
         std::string canal_name = value.substr(0, pos);
-        std::string new_str = value.substr(pos +1);
+        std::string new_str = value.substr(pos + 1);
         pos = new_str.find(" ");
         std::string target_name = new_str.substr(0, pos);
-        std::string message = new_str.substr(pos + 2);
-        
+
+        std::string message = "";
+        if (pos != std::string::npos && pos + 1 < new_str.size()) {
+            std::string rest_of_str = new_str.substr(pos + 1);
+            if (rest_of_str[0] == ':') {
+                message = rest_of_str.substr(1);
+            }
+        }
         process_kick(canal_name, target_name, message);
     }
 }
+
 
 // ################################################################################
 // #                         constructor / destructor                             #
