@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:42:51 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/22 18:30:41 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/23 11:12:27 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,10 @@ void Mode::channel_mode(std::vector<std::string> &values){
 
 void Mode::init_cmd_mode(){
 	std::vector<std::string> values = split_by_space(_value); //-> split value by " " to get a vector of strings
-	
+	if (values.empty()){
+		std::cout << "please enter argument" << std::endl;
+		return;	
+	}
 	for (size_t i = 0; i < _clients.size(); i++){ 
 		if (_clients[i]->get_nickname() == values[0]){ // -> check if the first value is a user
 			return ; // user modes are not covered in the subject

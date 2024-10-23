@@ -6,7 +6,7 @@
 /*   By: ctruchot <ctruchot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 17:59:40 by ctruchot          #+#    #+#             */
-/*   Updated: 2024/10/22 18:34:31 by ctruchot         ###   ########.fr       */
+/*   Updated: 2024/10/23 11:14:13 by ctruchot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void Server::CloseClientSocket(int fd)
 	std::cout << RED <<"Closing client socket <" << fd << ">" << std::endl;
 	if (close(fd) == -1)
 		std::cout << "Failed to close client socket" << std::endl;
+	_partial_message.erase(fd);
 	for (size_t i = 0; i < _pollFds.size(); i++) {
 		if (_pollFds[i].fd == fd){
 			_pollFds.erase(_pollFds.begin() + i); //-> erase the client's fd from pollFds
