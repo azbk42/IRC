@@ -175,6 +175,14 @@ void Channel::remove_operator(const std::string &name)
     }
 }
 
+void Channel::remove_invite(const std::string &name)
+{
+    for (size_t i = 0; i < _invite_name.size(); i++){
+        if (_invite_name[i] == name)
+            _invite_name.erase(_invite_name.begin() + i);
+    }
+}
+
 void Channel::add_client(const std::string &name, const int fd_client, Client &client_actif)
 {
 	this->_client[name] = fd_client;

@@ -71,8 +71,16 @@ bool Nick::modification_actual_nickname(const std::string &new_nickname)
     clients_already_notified.insert(_fd);
 
     for (size_t i = 0; i < _channels_list.size(); i++){
+        if (_channels_list[i]->authorization_check(old_nickname) == true){
+            _channels_list[i]->remove_invite(old_nickname);
+            _channels_list[i]->add_invite(new_nickname);
+        }
         if (_channels_list[i]->is_in_channel(old_nickname)){
-            
+            if (_channels_list[i]->is_operator(old_nickname)){
+                _channels_list[i]->remove_operator(old_nickname);
+                _channels_list[i]->add_operator(new_nickname);
+            }
+
             std::string message = NICK_CHANGE(old_nickname, new_nickname);
 
             send_message_to_all_one_time(message, i, clients_already_notified);
