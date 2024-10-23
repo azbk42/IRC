@@ -153,7 +153,7 @@ void Server::find_command(int fd, Client* client_actif, Parse &parser, const std
 		return;
     }
 	if (client_actif->GetFirstNick() == false){
-		if (cmd == "USER"){
+		if (cmd == "USER" && client_actif->get_first_user() == true){
 			if (parser.parse_user(_clients_array, fd, *client_actif) == false){
 				CloseClientSocket(fd);
 			}

@@ -54,6 +54,8 @@ bool Client::get_checked_pwd() const {return _checked_pwd;};
 
 bool Client::GetFirstNick() const {return _first_nick;};
 
+bool Client::get_first_user() const {return _first_user;};
+
 time_t Client::get_connection_time() const {return _connection_time;};
 
 
@@ -62,6 +64,8 @@ time_t Client::get_connection_time() const {return _connection_time;};
 // ################################################################################
 
 void Client::SetFirstNick() { _first_nick = false;};
+
+void Client::set_first_user() { _first_user = false;};
 
 void Client::set_nickname(const std::string &nickname)
 {
@@ -111,7 +115,7 @@ void Client::set_checked_pwd(bool status)
 // #                             CONSTRUCTOR DESTRUCTOR                           #
 // ################################################################################
 
-Client::Client(int socket): _user_setup(false), _away(false), _connected(true), _first_nick(true),\
+Client::Client(int socket): _user_setup(false), _away(false), _connected(true), _first_nick(true), _first_user(true),
             _real_name("real_name"), _server_name("server"), _host_name("host"), \
             _username("username"), _checked_pwd(false), _nb_chan(0),
             _socket_fd(socket), _connection_time(time(0))

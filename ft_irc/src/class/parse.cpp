@@ -100,6 +100,7 @@ bool Parse::parse_user(std::vector<Client*> &clients_list, int client_fd, Client
                               " - ft_irc 42 Paris\x03""\r\n";
 
     send_message(client_fd, welcome_message);
+    client_actif.set_first_user();
     return true;
 }
 
