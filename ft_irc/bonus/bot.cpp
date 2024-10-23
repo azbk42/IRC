@@ -147,26 +147,40 @@ void Bot::run()
     int flags = fcntl(_socket_fd, F_GETFL, 0);
     fcntl(_socket_fd, F_SETFL, flags | O_NONBLOCK);
 
+    struct pollfd fds[1];
+    fds[0].fd = _socket_fd;
+    fds[0].events = POLLIN;
+
     while (!Bot::_signal) {
-        char buffer[1024];
-        int bytes = recv(_socket_fd, buffer, sizeof(buffer), 0);
+        int poll_count = poll(fds, 1, -1);
 
-        if (bytes > 0) {
-            buffer[bytes] = '\0';
-            std::string message = buffer;
-            std::cout << "Message received: " << message << std::endl;
-
-            process_command(message);
-               
-        } 
-        else if (bytes == -1 && errno != EWOULDBLOCK) {
-            std::cerr << "Error receiving data\n";
+        if (poll_count == -1) {
+            std::cerr << "Poll error occurred\n";
             break;
+        }
+        if (fds[0].revents & POLLIN) {
+            char buffer[1024];
+            int bytes = recv(_socket_fd, buffer, sizeof(buffer), 0);
+
+            if (bytes > 0) {
+                buffer[bytes] = '\0';
+                std::string message = buffer;
+                std::cout << "Message received: " << message << std::endl;
+
+                process_command(message);
+            } 
+            else if (bytes == 0) {
+                std::cout << "Server closed the connection\n";
+                break;
+            }
+            else {
+                std::cerr << "Error receiving data\n";
+                break;
+            }
         }
     }
     std::cout << "Bot shutting down...\n";
 }
-
 // ################################################################################
 // #                       INIT ARRAY OF FUNCTION POINTERS                        #
 // ################################################################################
