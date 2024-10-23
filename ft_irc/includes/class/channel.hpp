@@ -65,6 +65,7 @@ class Channel
 		int remove_client(const std::string &name, Client &client_actif);
         void add_operator(const std::string &name);
         void remove_operator(const std::string &name);
+        void remove_invite(const std::string &name);
 		
 
     private:

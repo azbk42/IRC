@@ -37,8 +37,7 @@ Server::Server(const Server &rhs)
 }
 
 Server::~Server()
-{ 
-	std::cout << "destructeur called" << std::endl;
+{
 	CloseServerFd(); 
 }
 
@@ -147,9 +146,11 @@ void Server::find_command(int fd, Client* client_actif, Parse &parser, const std
         Quit quit(fd, client_actif, parser.get_value(), _channels_array);
         quit.send_quit_msg();
         CloseClientSocket(fd);
+		return;
     }
     else if (cmd == "NICK") {
         parser.parse_nick(_clients_array, fd, *client_actif, _channels_array, this);
+		return;
     }
 	if (client_actif->GetFirstNick() == false){
 		if (cmd == "USER"){
@@ -200,13 +201,14 @@ void Server::process_message(int fd)
 				break;
 			}
 		}
-		std::string cmd = parser.get_cmd();
 
+
+		std::string cmd = parser.get_cmd();
 		if (client_actif != NULL && client_actif->get_checked_pwd() == false) {
 			check_password(fd, client_actif, parser, cmd);
 		}
 		else if (client_actif != NULL && client_actif->get_checked_pwd() == true) {
-            find_command(fd, client_actif, parser, cmd); // Appel à la nouvelle fonction
+            find_command(fd, client_actif, parser, cmd);
 		}
 		else {
 			std::cerr << "Client non trouvé pour le socket " << fd << std::endl;
